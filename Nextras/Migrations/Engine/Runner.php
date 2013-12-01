@@ -80,6 +80,7 @@ class Runner
 			if ($mode === self::MODE_RESET)
 			{
 				$this->driver->emptyDatabase();
+				$this->driver->lock();
 				$this->printer->printReset();
 			}
 
