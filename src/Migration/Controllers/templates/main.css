@@ -1,0 +1,67 @@
+body {
+	font-size: 24px;
+	font-family: Consolas, monospace;
+	padding: 0;
+	margin: 0;
+}
+
+h1 {
+	font-size: 32px;
+	font-family: Calibri, sans-serif;
+	color: #0045BE;
+	padding: 0 10px 10px 10px;
+	border-bottom: 2px solid #0045BE;
+}
+
+h2 {
+	font-size: 28px;
+	font-family: Calibri, sans-serif;
+	margin: 15px 10px 10px 10px;
+}
+
+h2.continue {
+	color: #00A700;
+}
+
+h2.reset {
+	color: #EE0000;
+}
+
+a {
+	text-decoration: none;
+	color: #1848ae;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+ul {
+	list-style-type: none;
+	margin: 0 0 0 20px;
+	padding: 0;
+}
+
+.error-message {
+	color: red;
+}
+
+.output > div {
+	line-height: 42px;
+	white-space: pre;
+	padding: 0 15px;
+}
+
+.output .success, .output .error {
+	color: white;
+	padding: 5px 15px;
+	margin-top: 20px;
+}
+
+.output .error {
+	background-color: #CD1818;
+}
+
+.output .success {
+	background-color: #00A700;
+}

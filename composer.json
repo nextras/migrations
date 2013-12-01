@@ -1,0 +1,19 @@
+{
+	"name": "clevis/migration",
+	"description": "Simple database migrations runner",
+	"type": "library",
+	"require": {
+		"php": "~5.3",
+		"dibi/dibi": "~2.1"
+	},
+	"require-dev": {
+		"php": "~5.4",
+		"nette/tester": "0.9.*",
+		"mockery/mockery": "~0.8"
+	},
+	"autoload": {
+        "psr-0": {
+	        "Migration\\": "src/"
+        }
+    }
+}
