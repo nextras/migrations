@@ -1,9 +1,9 @@
 <?php
 namespace Nextras\Migrations\Controllers;
 
-use DibiConnection;
 use Nextras\Migrations\Engine;
 use Nextras\Migrations\Entities\Group;
+use Nextras\Migrations\IDriver;
 use Nextras\Migrations\Printers;
 
 
@@ -18,10 +18,10 @@ class ConsoleController
 	/** @var array (name => Group) */
 	private $groups;
 
-	public function __construct(DibiConnection $dibi)
+	public function __construct(IDriver $driver)
 	{
 		$printer = new Printers\Console();
-		$this->runner = new Engine\Runner($dibi, $printer);
+		$this->runner = new Engine\Runner($driver, $printer);
 		$this->mode = Engine\Runner::MODE_CONTINUE;
 	}
 

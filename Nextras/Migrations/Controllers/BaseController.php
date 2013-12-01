@@ -1,9 +1,9 @@
 <?php
 namespace Nextras\Migrations\Controllers;
 
-use DibiConnection;
 use Nextras\Migrations\Engine;
 use Nextras\Migrations\Entities\Group;
+use Nextras\Migrations\IDriver;
 use Nextras\Migrations\IExtensionHandler;
 use Nextras\Migrations\Printers;
 
@@ -19,10 +19,10 @@ abstract class BaseController
 	/** @var array (name => Group) */
 	protected $groups;
 
-	public function __construct(DibiConnection $dibi)
+	public function __construct(IDriver $driver)
 	{
 		$printer = $this->createPrinter();
-		$this->runner = new Engine\Runner($dibi, $printer);
+		$this->runner = new Engine\Runner($driver, $printer);
 		$this->mode = Engine\Runner::MODE_CONTINUE;
 		$this->groups = array();
 	}

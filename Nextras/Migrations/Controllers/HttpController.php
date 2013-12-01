@@ -1,7 +1,6 @@
 <?php
 namespace Nextras\Migrations\Controllers;
 
-use DibiConnection;
 use Nextras\Migrations\Engine;
 use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\Printers;

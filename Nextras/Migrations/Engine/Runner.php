@@ -2,11 +2,12 @@
 namespace Nextras\Migrations\Engine;
 
 use DateTime;
-use DibiConnection;
 use Nextras\Migrations\Entities\File;
 use Nextras\Migrations\Entities\Group;
+use Nextras\Migrations\Entities\Migration;
 use Nextras\Migrations\Exception;
 use Nextras\Migrations\ExecutionException;
+use Nextras\Migrations\IDriver;
 use Nextras\Migrations\IExtensionHandler;
 use Nextras\Migrations\IPrinter;
 use Nextras\Migrations\LogicException;
@@ -28,11 +29,8 @@ class Runner
 	/** @var Group[] */
 	private $groups = array();
 
-	/** @var DatabaseHelpers */
-	private $dbHelper;
-
-	/** @var MigrationsTable */
-	private $table;
+	/** @var IDriver */
+	private $driver;
 
 	/** @var Finder */
 	private $finder;
@@ -40,11 +38,10 @@ class Runner
 	/** @var OrderResolver */
 	private $orderResolver;
 
-	public function __construct(DibiConnection $dibi, IPrinter $printer)
+	public function __construct(IDriver $driver, IPrinter $printer)
 	{
+		$this->driver = $driver;
 		$this->printer = $printer;
-		$this->dbHelper = new DatabaseHelpers($dibi);
-		$this->table = new MigrationsTable($dibi, 'migrations');
 		$this->finder = new Finder();
 		$this->orderResolver = new OrderResolver();
 	}
@@ -78,16 +75,16 @@ class Runner
 	{
 		try
 		{
-			$this->dbHelper->setup();
-			$this->dbHelper->lock();
+			$this->driver->setupConnection();
+			$this->driver->lock();
 			if ($mode === self::MODE_RESET)
 			{
-				$this->dbHelper->wipeDatabase();
+				$this->driver->emptyDatabase();
 				$this->printer->printReset();
 			}
 
-			$this->table->create();
-			$migrations = $this->table->getAllMigrations();
+			$this->driver->createTable();
+			$migrations = $this->driver->getAllMigrations();
 			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
 			$toExecute = $this->orderResolver->resolve($migrations, $this->groups, $files, $mode);
 			$this->printer->printToExecute($toExecute);
@@ -126,17 +123,17 @@ class Runner
 	 */
 	protected function execute(File $file)
 	{
-		$this->dbHelper->beginTransaction();
+		$this->driver->beginTransaction();
 		// Note: MySQL implicitly commits after some operations, such as CREATE or ALTER TABLE, see http://dev.mysql.com/doc/refman/5.6/en/implicit-commit.html
 		// proto se radeji kontroluje jestli bylo dokonceno
 
-		$id = $this->table->insert(array(
-			'group' => $file->group->name,
-			'file' => $file->name,
-			'checksum' => $file->checksum,
-			'executed' => new DateTime('now'),
-			'ready' => (int) FALSE,
-		));
+		$migration = new Migration();
+		$migration->group = $file->group->name;
+		$migration->filename = $file->name;
+		$migration->checksum = $file->checksum;
+		$migration->executedAt = new DateTime('now');
+
+		$this->driver->insertMigration($migration);
 
 		try
 		{
@@ -144,12 +141,12 @@ class Runner
 		}
 		catch (\Exception $e)
 		{
-			$this->dbHelper->rollbackTransaction();
+			$this->driver->rollbackTransaction();
 			throw new ExecutionException(sprintf('Executing migration "%s" has failed.', $file->getPath()), NULL, $e);
 		}
 
-		$this->table->markAsReady($id);
-		$this->dbHelper->commitTransaction();
+		$this->driver->markMigrationAsReady($migration);
+		$this->driver->commitTransaction();
 
 		return $queriesCount;
 	}
