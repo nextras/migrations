@@ -4,6 +4,7 @@ namespace Nextras\Migrations\Controllers;
 use Nextras\Migrations\Engine;
 use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\IDriver;
+use Nextras\Migrations\IExtensionHandler;
 use Nextras\Migrations\Printers;
 
 
@@ -34,6 +35,12 @@ class ConsoleController
 		$group->enabled = FALSE;
 
 		$this->groups[$name] = $group;
+		return $this;
+	}
+
+	public function addExtension($extension, IExtensionHandler $handler)
+	{
+		$this->runner->addExtensionHandler($extension, $handler);
 		return $this;
 	}
 
