@@ -1,15 +1,14 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 
-$dibi = new DibiConnection(array(
-	'database' => 'test',
-	'username' => 'root',
-	'password' => 'toor',
-));
+$connection = new Nette\Database\Connection('mysql:dbname=testdb', 'root', 'root');
+$context = new Nette\Database\Context($connection);
 
-$controller = new Nextras\Migrations\Controllers\HttpController($dibi);
+$driver = new Nextras\Migrations\Drivers\MySqlNetteDbDriver($context, 'migrations');
+
+$controller = new Nextras\Migrations\Controllers\HttpController($driver);
 $controller->addGroup('structures', __DIR__ . '/structures');
 $controller->addGroup('data', __DIR__ . '/data', ['structures']);
-$controller->addExtension('sql', new Nextras\Migrations\Extensions\Sql($dibi));
+$controller->addExtension('sql', new Nextras\Migrations\Extensions\NetteDbSql($context));
 
 $controller->run();
