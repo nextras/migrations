@@ -1,7 +1,7 @@
 <?php
 namespace Nextras\Migrations\Extensions;
 
-use DibiConnection;
+use Nette\Database\Context;
 use Nextras\Migrations\Entities\File;
 use Nextras\Migrations\IExtensionHandler;
 use Nextras\Migrations\IOException;
@@ -11,18 +11,16 @@ use Nextras\Migrations\LogicException;
 /**
  * @author Petr Procházka
  */
-class Sql implements IExtensionHandler
+class NetteDbSql implements IExtensionHandler
 {
 
-	/** @var DibiConnection */
-	private $dibi;
+	/** @var Context */
+	private $context;
 
-	/**
-	 * @param DibiConnection
-	 */
-	public function __construct(DibiConnection $dibi)
+
+	public function __construct(Context $context)
 	{
-		$this->dibi = $dibi;
+		$this->context = $context;
 	}
 
 	/**
@@ -55,7 +53,9 @@ class Sql implements IExtensionHandler
 	 * @param    DibiConnection
 	 * @returns  int number of executed queries
 	 *
-	 * @author   Jakub Vrána, Jan Tvrdík, Michael Moravec
+	 * @author   Jakub Vrána
+	 * @author   Jan Tvrdík
+	 * @author   Michael Moravec
 	 * @license  Apache License
 	 */
 	protected function loadFile($file)
@@ -85,7 +85,7 @@ class Sql implements IExtensionHandler
 					$q = substr($query, 0, $match[0][1]);
 
 					$queries++;
-					$this->dibi->nativeQuery($q);
+					$this->context->query($q);
 
 					$query = substr($query, $offset);
 					$offset = 0;

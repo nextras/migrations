@@ -4,7 +4,7 @@
 	"type": "library",
 	"require": {
 		"php": "~5.3",
-		"dibi/dibi": "~2.1"
+		"nette/nette": "dev-master"
 	},
 	"require-dev": {
 		"php": "~5.4",
