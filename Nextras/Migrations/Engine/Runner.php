@@ -82,9 +82,9 @@ class Runner
 				$this->driver->emptyDatabase();
 				$this->driver->lock();
 				$this->printer->printReset();
+				$this->driver->createTable();
 			}
 
-			$this->driver->createTable();
 			$migrations = $this->driver->getAllMigrations();
 			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
 			$toExecute = $this->orderResolver->resolve($migrations, $this->groups, $files, $mode);
