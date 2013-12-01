@@ -1,11 +1,10 @@
 <?php
-namespace Migration\Engine;
+namespace Nextras\Migrations\Engine;
 
 use DibiConnection;
 use DibiDriverException;
-use Migration;
-use Migration\Exceptions\LockException;
-use Migration\Exceptions\LogicException;
+use Nextras\Migrations\LockException;
+use Nextras\Migrations\LogicException;
 
 
 class DatabaseHelpers
@@ -106,7 +105,7 @@ class DatabaseHelpers
 	 * Acquires unique lock.
 	 *
 	 * @return void
-	 * @throws \Migration\Exceptions\LockException if acquiring lock fails
+	 * @throws LockException if acquiring lock fails
 	 */
 	public function lock()
 	{
@@ -122,8 +121,8 @@ class DatabaseHelpers
 	 * Releases lock.
 	 *
 	 * @return void
-	 * @throws \Migration\Exceptions\LogicException if we don't hold the lock
-	 * @throws \Migration\Exceptions\LockException if the lock is already released
+	 * @throws LogicException if we don't hold the lock
+	 * @throws LockException if the lock is already released
 	 */
 	public function unlock()
 	{

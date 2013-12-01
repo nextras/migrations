@@ -1,8 +1,7 @@
 <?php
-namespace Migration;
+namespace Nextras\Migrations;
 
-use Migration\Entities\File;
-use Migration\Exceptions\Exception;
+use Nextras\Migrations\Entities\File;
 
 /**
  * @author Petr Procházka
@@ -20,7 +19,7 @@ interface IPrinter
 	/**
 	 * List of migrations which should be executed has been completed.
 	 *
-	 * @param  Entities\File[]
+	 * @param  File[]
 	 * @return void
 	 */
 	public function printToExecute(array $toExecute);

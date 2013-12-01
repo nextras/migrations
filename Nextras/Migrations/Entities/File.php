@@ -1,5 +1,5 @@
 <?php
-namespace Migration\Entities;
+namespace Nextras\Migrations\Entities;
 
 use DateTime;
 

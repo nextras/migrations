@@ -1,8 +1,9 @@
 <?php
-namespace Migration\Printers;
+namespace Nextras\Migrations\Printers;
 
-use Migration\Exceptions\Exception;
-use Migration;
+use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\Exception;
+use Nextras\Migrations\IPrinter;
 
 
 /**
@@ -10,7 +11,7 @@ use Migration;
  *
  * @author Petr Procházka
  */
-class HtmlDump implements Migration\IPrinter
+class HtmlDump implements IPrinter
 {
 
 	/** @var int number of migrations to be executed */
@@ -48,7 +49,7 @@ class HtmlDump implements Migration\IPrinter
 	/**
 	 * @inheritdoc
 	 */
-	public function printExecute(Migration\Entities\File $file, $count)
+	public function printExecute(File $file, $count)
 	{
 		$format = '%0' . strlen($this->count) . 'd';
 		$name = htmlspecialchars($file->group->name . '/' . $file->name);

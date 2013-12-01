@@ -1,8 +1,9 @@
 <?php
-namespace Migration\Printers;
+namespace Nextras\Migrations\Printers;
 
-use Migration\Exceptions\Exception;
-use Migration;
+use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\Exception;
+use Nextras\Migrations\IPrinter;
 
 
 /**
@@ -10,7 +11,7 @@ use Migration;
  *
  * @author Petr Procházka
  */
-class DevNull implements Migration\IPrinter
+class DevNull implements IPrinter
 {
 
 	/**
@@ -32,7 +33,7 @@ class DevNull implements Migration\IPrinter
 	/**
 	 * @inheritdoc
 	 */
-	public function printExecute(Migration\Entities\File $file, $count)
+	public function printExecute(File $file, $count)
 	{
 
 	}

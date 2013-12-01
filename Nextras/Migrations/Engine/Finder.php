@@ -1,9 +1,11 @@
 <?php
-namespace Migration\Engine;
+namespace Nextras\Migrations\Engine;
 
-use Migration;
-use Migration\Entities\Group;
-use Migration\Entities\File;
+use Nextras\Migrations\Entities\Group;
+use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\Exception;
+use Nextras\Migrations\IOException;
+use Nextras\Migrations\LogicException;
 
 
 class Finder
@@ -15,7 +17,7 @@ class Finder
 	 * @param  Group[]
 	 * @param  string[]
 	 * @return File[]
-	 * @throws \Migration\Exceptions\Exception
+	 * @throws Exception
 	 */
 	public function find(array $groups, array $extensions)
 	{
@@ -26,7 +28,7 @@ class Finder
 			$items = @scandir($group->directory); // directory may not exist
 			if ($items === FALSE)
 			{
-				throw new Migration\Exceptions\IOException(sprintf('Finder: Directory "%s" does not exist.', $group->directory));
+				throw new IOException(sprintf('Finder: Directory "%s" does not exist.', $group->directory));
 			}
 
 			foreach ($items as $fileName)
@@ -51,7 +53,7 @@ class Finder
 	 * @param  File
 	 * @param  string[]
 	 * @return string
-	 * @throws \Migration\Exceptions\Exception
+	 * @throws Exception
 	 */
 	private function getExtension(File $file, array $extensions)
 	{
@@ -63,7 +65,7 @@ class Finder
 			{
 				if ($fileExt !== NULL)
 				{
-					throw new Migration\Exceptions\LoginException(sprintf(
+					throw new LoginException(sprintf(
 						'Finder: Extension of "%s" is ambiguous, both "%s" and "%s" can be used.',
 						$file->group->directory . '/' . $file->name, $fileExt, $extension
 					));
@@ -77,7 +79,7 @@ class Finder
 
 		if ($fileExt === NULL)
 		{
-			throw new Migration\Exceptions\LoginException(sprintf(
+			throw new LoginException(sprintf(
 				'Finder: No extension matched "%s". Supported extensions are %s.',
 				$file->group->directory . '/' . $file->name, '"' . implode('", "', $extensions) . '"'
 			));

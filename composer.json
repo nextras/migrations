@@ -1,5 +1,5 @@
 {
-	"name": "clevis/migration",
+	"name": "nextras/migrations",
 	"description": "Simple database migrations runner",
 	"type": "library",
 	"require": {
@@ -12,8 +12,7 @@
 		"mockery/mockery": "~0.8"
 	},
 	"autoload": {
-        "psr-0": {
-	        "Migration\\": "src/"
-        }
-    }
+		"psr-0": { "Nextras\\Migrations": "" },
+		"classmap": ["Nextras/Migrations/exceptions.php"]
+	}
 }

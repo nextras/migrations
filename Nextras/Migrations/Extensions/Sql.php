@@ -1,15 +1,17 @@
 <?php
-namespace Migration\Extensions;
+namespace Nextras\Migrations\Extensions;
 
 use DibiConnection;
-use Migration;
-use RuntimeException;
+use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\IExtensionHandler;
+use Nextras\Migrations\IOException;
+use Nextras\Migrations\LogicException;
 
 
 /**
  * @author Petr Procházka
  */
-class Sql implements Migration\IExtensionHandler
+class Sql implements IExtensionHandler
 {
 
 	/** @var DibiConnection */
@@ -33,15 +35,15 @@ class Sql implements Migration\IExtensionHandler
 	}
 
 	/**
-	 * @param Migration\Entities\File
+	 * @param  File
 	 * @return int number of queries
 	 */
-	public function execute(Migration\Entities\File $sql)
+	public function execute(File $sql)
 	{
 		$count = $this->loadFile($sql->getPath());
 		if ($count === 0)
 		{
-			throw new Migration\Exception("{$sql->file} neobsahuje zadne sql.");
+			throw new LogicException("{$sql->file} neobsahuje zadne sql.");
 		}
 		return $count;
 	}
@@ -59,7 +61,7 @@ class Sql implements Migration\IExtensionHandler
 	protected function loadFile($file)
 	{
 		$query = @file_get_contents($file);
-		if (!$query) throw new RuntimeException("Cannot open file '$file'.");
+		if (!$query) throw new IOException("Cannot open file '$file'.");
 
 		$delimiter = ';';
 		$offset = 0;

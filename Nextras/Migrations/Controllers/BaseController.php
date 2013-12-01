@@ -1,11 +1,11 @@
 <?php
-namespace Migration\Controllers;
+namespace Nextras\Migrations\Controllers;
 
 use DibiConnection;
-use Migration\Engine;
-use Migration\Entities\Group;
-use Migration\IExtensionHandler;
-use Migration\Printers;
+use Nextras\Migrations\Engine;
+use Nextras\Migrations\Entities\Group;
+use Nextras\Migrations\IExtensionHandler;
+use Nextras\Migrations\Printers;
 
 
 abstract class BaseController

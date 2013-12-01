@@ -1,5 +1,7 @@
 <?php
-namespace Migration;
+namespace Nextras\Migrations;
+
+use Nextras\Migrations\Entities\File;
 
 
 /**
@@ -10,9 +12,9 @@ interface IExtensionHandler
 {
 
 	/**
-	 * @param  Entities\File
+	 * @param  File
 	 * @return int number of queries
 	 */
-	public function execute(Entities\File $file);
+	public function execute(File $file);
 
 }

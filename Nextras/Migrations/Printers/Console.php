@@ -1,14 +1,15 @@
 <?php
-namespace Migration\Printers;
+namespace Nextras\Migrations\Printers;
 
-use Migration\Exceptions\Exception;
-use Migration;
+use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\Exception;
+use Nextras\Migrations\IPrinter;
 
 
 /**
  * @author Mikulas Dite, Jan Tvrdik
  */
-class Console implements Migration\IPrinter
+class Console implements IPrinter
 {
 
 	/** console colors */
@@ -50,7 +51,7 @@ class Console implements Migration\IPrinter
 	/**
 	 * @inheritdoc
 	 */
-	public function printExecute(Migration\Entities\File $file, $count)
+	public function printExecute(File $file, $count)
 	{
 		$this->output($file->group->name . '/' . $file->name . '; ' . $count . ' queries');
 	}

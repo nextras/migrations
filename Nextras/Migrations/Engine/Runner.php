@@ -1,15 +1,15 @@
 <?php
-namespace Migration\Engine;
+namespace Nextras\Migrations\Engine;
 
 use DateTime;
 use DibiConnection;
-use Migration\Entities\File;
-use Migration\Entities\Group;
-use Migration\Exceptions\Exception;
-use Migration\Exceptions\ExecutionException;
-use Migration\Exceptions\LoginException;
-use Migration\IExtensionHandler;
-use Migration\IPrinter;
+use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\Entities\Group;
+use Nextras\Migrations\Exception;
+use Nextras\Migrations\ExecutionException;
+use Nextras\Migrations\IExtensionHandler;
+use Nextras\Migrations\IPrinter;
+use Nextras\Migrations\LogicException;
 
 
 class Runner
@@ -64,7 +64,7 @@ class Runner
 	{
 		if (isset($this->extensionsHandlers[$extension]))
 		{
-			throw new LoginException("Extension '$extension' has already been defined.");
+			throw new LogicException("Extension '$extension' has already been defined.");
 		}
 
 		$this->extensionsHandlers[$extension] = $handler;
@@ -115,7 +115,7 @@ class Runner
 	{
 		if (!isset($this->extensionsHandlers[$name]))
 		{
-			throw new LoginException("Extension '$name' not found.");
+			throw new LogicException("Extension '$name' not found.");
 		}
 		return $this->extensionsHandlers[$name];
 	}

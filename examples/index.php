@@ -7,9 +7,9 @@ $dibi = new DibiConnection(array(
 	'password' => 'toor',
 ));
 
-$controller = new \Migration\Controllers\HttpController($dibi);
+$controller = new Nextras\Migrations\Controllers\HttpController($dibi);
 $controller->addGroup('structures', __DIR__ . '/structures');
 $controller->addGroup('data', __DIR__ . '/data', ['structures']);
-$controller->addExtension('sql', new \Migration\Extensions\Sql($dibi));
+$controller->addExtension('sql', new Nextras\Migrations\Extensions\Sql($dibi));
 
 $controller->run();

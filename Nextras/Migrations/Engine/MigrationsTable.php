@@ -1,8 +1,8 @@
 <?php
-namespace Migration\Engine;
+namespace Nextras\Migrations\Engine;
 
 use DibiConnection;
-use Migration\Entities\Migration;
+use Nextras\Migrations\Entities\Migration;
 
 
 class MigrationsTable

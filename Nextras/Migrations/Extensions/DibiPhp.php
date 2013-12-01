@@ -1,5 +1,5 @@
 <?php
-namespace Migration\Extensions;
+namespace Nextras\Migrations\Extensions;
 
 use DibiConnection;
 

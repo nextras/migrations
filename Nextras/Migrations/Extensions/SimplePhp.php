@@ -1,13 +1,14 @@
 <?php
-namespace Migration\Extensions;
+namespace Nextras\Migrations\Extensions;
 
-use Migration;
+use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\IExtensionHandler;
 
 
 /**
  * @author Petr Procházka
  */
-class SimplePhp implements Migration\IExtensionHandler
+class SimplePhp implements IExtensionHandler
 {
 
 	/** @var array name => value */
@@ -53,10 +54,10 @@ class SimplePhp implements Migration\IExtensionHandler
 	}
 
 	/**
-	 * @param Migration\Entities\File
+	 * @param  File
 	 * @return int number of queries
 	 */
-	public function execute(Migration\Entities\File $sql)
+	public function execute(File $sql)
 	{
 		extract($this->getParameters());
 		return include $sql->path;

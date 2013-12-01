@@ -1,16 +1,16 @@
 <?php
 /**
- * Test: Migration\Engine\OrderResolver
+ * Test: Nextras\Migrations\Engine\OrderResolver
  *
- * @testCase Migration\Tests\OrderResolverTest
+ * @testCase Nextras\Migrations\Tests\OrderResolverTest
  */
 
-namespace Migration\Tests;
+namespace Nextras\Migrations\Tests;
 
-use Migration\Engine\OrderResolver;
-use Migration\Entities\Group;
-use Migration\Entities\File;
-use Migration\Entities\Migration;
+use Nextras\Migrations\Engine\OrderResolver;
+use Nextras\Migrations\Entities\Group;
+use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\Entities\Migration;
 use Mockery;
 use Tester;
 use Tester\Assert;
@@ -173,7 +173,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileB],
 				$resolver::MODE_CONTINUE
 			);
-		}, 'Migration\Exceptions\LogicException', 'Previously executed migration "structures/1s" is missing.');
+		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" is missing.');
 	}
 
 	public function testErrorChangedChecksum()
@@ -193,7 +193,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileB, $fileA],
 				$resolver::MODE_CONTINUE
 			);
-		}, 'Migration\Exceptions\LogicException', 'Previously executed migration "structures/1s" has been changed.');
+		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" has been changed.');
 	}
 
 	public function testErrorIncompleteMigration()
@@ -213,7 +213,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileB, $fileA],
 				$resolver::MODE_CONTINUE
 			);
-		}, 'Migration\Exceptions\LogicException', 'Previously executed migration "structures/1s" did not succeed. Please fix this manually or reset the migrations.');
+		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" did not succeed. Please fix this manually or reset the migrations.');
 	}
 
 	public function testErrorNewMigrationInTheMiddleOfExistingOnes()
@@ -235,7 +235,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileA, $fileB, $fileC],
 				$resolver::MODE_CONTINUE
 			);
-		}, 'Migration\Exceptions\LogicException', 'New migration "structures/2s" must follow after the latest executed migration "structures/3s".');
+		}, 'Nextras\Migrations\LogicException', 'New migration "structures/2s" must follow after the latest executed migration "structures/3s".');
 	}
 
 	public function testErrorMigrationDependingOnUnknownGroup()
@@ -251,7 +251,7 @@ class OrderResolverTest extends Tester\TestCase
 				[],
 				$resolver::MODE_CONTINUE
 			);
-		}, 'Migration\Exceptions\LogicException', 'Existing migrations depend on unknown group "foo".');
+		}, 'Nextras\Migrations\LogicException', 'Existing migrations depend on unknown group "foo".');
 	}
 
 	public function testErrorGroupDependingOnUnknownGroup()
@@ -267,7 +267,7 @@ class OrderResolverTest extends Tester\TestCase
 				[],
 				$resolver::MODE_CONTINUE
 			);
-		}, 'Migration\Exceptions\LogicException', 'Group "data" depends on unknown group "structures".');
+		}, 'Nextras\Migrations\LogicException', 'Group "data" depends on unknown group "structures".');
 	}
 
 	public function testErrorDisablingRequiredGroup()
@@ -284,7 +284,7 @@ class OrderResolverTest extends Tester\TestCase
 				[],
 				$resolver::MODE_CONTINUE
 			);
-		}, 'Migration\Exceptions\LogicException', 'Group "data" depends on disabled group "structures". Please enable group "structures" to continue.');
+		}, 'Nextras\Migrations\LogicException', 'Group "data" depends on disabled group "structures". Please enable group "structures" to continue.');
 	}
 
 	private function createMigration($groupName, $fileName, $checksum = NULL, $completed = TRUE)
