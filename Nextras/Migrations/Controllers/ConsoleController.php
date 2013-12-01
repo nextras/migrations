@@ -92,8 +92,7 @@ class ConsoleController
 				}
 				else
 				{
-					fprintf(STDERR, "Error: Unknown group '%s', the following groups are registered:\n", $argument);
-					fprintf(STDERR, "       %s\n", implode(', ', array_keys($this->groups)));
+					fprintf(STDERR, "Error: Unknown group '%s'\n", $argument);
 					$error = TRUE;
 				}
 			}
@@ -113,6 +112,11 @@ class ConsoleController
 		if ($help || $error)
 		{
 			printf("Usage: %s group1 [, group2, ...] [--reset] [--help]\n", basename($_SERVER['argv'][0]));
+			printf("Registered groups:\n");
+			foreach (array_keys($this->groups) as $group) {
+				printf("  %s\n", $group);
+			}
+			printf("\nSwitches:\n");
 			printf("  --reset      drop all tables and views in database and start from scratch\n");
 			printf("  --help       show this help\n");
 			exit(intval($error));
