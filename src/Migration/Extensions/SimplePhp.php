@@ -53,10 +53,10 @@ class SimplePhp implements Migration\IExtensionHandler
 	}
 
 	/**
-	 * @param Migration\File
+	 * @param Migration\Entities\File
 	 * @return int number of queries
 	 */
-	public function execute(Migration\File $sql)
+	public function execute(Migration\Entities\File $sql)
 	{
 		extract($this->getParameters());
 		return include $sql->path;
