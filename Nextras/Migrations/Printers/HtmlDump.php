@@ -25,7 +25,7 @@ class HtmlDump implements IPrinter
 	 */
 	public function printReset()
 	{
-		$this->output('RESET: All tables, views and data has been destroyed!');
+		$this->output('     RESET: All tables, views and data has been destroyed!');
 	}
 
 	/**
@@ -35,7 +35,7 @@ class HtmlDump implements IPrinter
 	{
 		if ($toExecute)
 		{
-			$this->output(count($toExecute) . ' migrations need to be executed.');
+			$this->output('     ' . count($toExecute) . ' migrations need to be executed.');
 		}
 		else
 		{

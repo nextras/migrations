@@ -1,35 +1,30 @@
 body {
-	font-size: 24px;
-	font-family: Consolas, monospace;
+	font-size: 22px;
+	font-family: Calibri, sans-serif;
 	padding: 0;
 	margin: 0;
 }
 
 h1 {
-	font-size: 32px;
-	font-family: Calibri, sans-serif;
-	color: #0045BE;
-	padding: 0 10px 10px 10px;
-	border-bottom: 2px solid #0045BE;
+	font-size: 40px;
+	font-weight: normal;
+	color: white;
+	background: #00509E;
+	margin: 0;
+	padding: 10px 30px;
 }
 
 h2 {
+	color: #444;
 	font-size: 28px;
-	font-family: Calibri, sans-serif;
-	margin: 15px 10px 10px 10px;
-}
-
-h2.continue {
-	color: #00A700;
-}
-
-h2.reset {
-	color: #EE0000;
+	font-weight: normal;
+	margin: 10px 0 0;
+	padding: 10px 30px;
 }
 
 a {
 	text-decoration: none;
-	color: #1848ae;
+	color: #00509E;
 }
 
 a:hover {
@@ -37,24 +32,34 @@ a:hover {
 }
 
 ul {
-	list-style-type: none;
-	margin: 0 0 0 20px;
+	font-size: 15px;
+	margin: 0 0 0 60px;
 	padding: 0;
+}
+
+ul li a {
+	font-size: 22px;
+	margin-left: 10px;
 }
 
 .error-message {
 	color: red;
 }
 
+.output {
+	margin-top: 20px;
+}
+
 .output > div {
-	line-height: 42px;
+	font-family: Consolas, monospace;
+	line-height: 32px;
 	white-space: pre;
-	padding: 0 15px;
+	padding: 0 30px;
 }
 
 .output .success, .output .error {
 	color: white;
-	padding: 5px 15px;
+	padding: 5px 30px;
 	margin-top: 20px;
 }
 
