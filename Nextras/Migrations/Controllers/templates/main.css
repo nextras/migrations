@@ -46,6 +46,14 @@ ul li a {
 	color: red;
 }
 
+.mode {
+	padding-bottom: 20px;
+}
+
+.mode-1 {
+	background: rgb(254, 192, 192);
+}
+
 .output {
 	margin-top: 20px;
 }
