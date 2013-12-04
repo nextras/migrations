@@ -70,6 +70,12 @@ class Console implements IPrinter
 	}
 
 
+	public function printSource($code)
+	{
+		$this->output($code);
+	}
+
+
 	/**
 	 * Prints text to a console, optionally in a specific color.
 	 * @param  string

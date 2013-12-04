@@ -46,4 +46,9 @@ class DevNull implements IPrinter
 	{
 	}
 
+
+	public function printSource($code)
+	{
+	}
+
 }

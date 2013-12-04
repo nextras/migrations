@@ -26,6 +26,7 @@ class Runner
 	/** @const modes */
 	const MODE_CONTINUE = 'continue';
 	const MODE_RESET = 'reset';
+	const MODE_INIT = 'init';
 
 	/** @var IPrinter */
 	private $printer;
@@ -79,10 +80,18 @@ class Runner
 
 
 	/**
-	 * @param string self::MODE_CONTINUE or self::MODE_RESET
+	 * @param string self::MODE_CONTINUE|self::MODE_RESET|self::MODE_INIT
 	 */
 	public function run($mode = self::MODE_CONTINUE)
 	{
+		if ($mode === self::MODE_INIT) {
+			$this->printer->printSource($this->driver->getInitTableSource());
+			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
+			$files = $this->orderResolver->resolve([], $this->groups, $files, self::MODE_RESET);
+			$this->printer->printSource($this->driver->getInitMigrationsSource($files));
+			return;
+		}
+
 		try {
 
 			$this->driver->setupConnection();

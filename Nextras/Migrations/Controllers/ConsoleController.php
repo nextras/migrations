@@ -14,6 +14,7 @@ use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\IDriver;
 use Nextras\Migrations\IExtensionHandler;
 use Nextras\Migrations\Printers;
+use Tester\Runner\Runner;
 
 
 class ConsoleController
@@ -58,8 +59,8 @@ class ConsoleController
 
 	public function run()
 	{
-		$this->printHeader();
 		$this->processArguments();
+		$this->printHeader();
 		$this->registerGroups();
 		$this->runner->run($this->mode);
 	}
@@ -67,8 +68,12 @@ class ConsoleController
 
 	private function printHeader()
 	{
-		printf("Migrations\n");
-		printf("------------------------------------------------------------\n");
+		if ($this->mode === Engine\Runner::MODE_INIT) {
+			printf("-- Migrations init\n");
+		} else {
+			printf("Migrations\n");
+			printf("------------------------------------------------------------\n");
+		}
 	}
 
 
@@ -76,13 +81,14 @@ class ConsoleController
 	{
 		$arguments = array_slice($_SERVER['argv'], 1);
 		$help = count($arguments) === 0;
-		$groups = FALSE;
-		$error = FALSE;
+		$groups = $error = FALSE;
 
 		foreach ($arguments as $argument) {
 			if (strncmp($argument, '--', 2) === 0) {
 				if ($argument === '--reset') {
 					$this->mode = Engine\Runner::MODE_RESET;
+				} elseif ($argument === '--init-sql') {
+					$this->mode = Engine\Runner::MODE_INIT;
 				} elseif ($argument === '--help') {
 					$help = TRUE;
 				} else {
@@ -118,6 +124,7 @@ class ConsoleController
 			}
 			printf("\nSwitches:\n");
 			printf("  --reset      drop all tables and views in database and start from scratch\n");
+			printf("  --init-sql   prints initialization sql for all present migrations\n");
 			printf("  --help       show this help\n");
 			exit(intval($error));
 		}

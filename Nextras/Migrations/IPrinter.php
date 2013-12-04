@@ -51,4 +51,11 @@ interface IPrinter
 	 */
 	function printError(Exception $e);
 
+
+	/**
+	 * Prints init source code.
+	 * @param  string
+	 */
+	function printSource($code);
+
 }

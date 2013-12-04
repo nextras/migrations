@@ -69,6 +69,12 @@ class HtmlDump implements IPrinter
 	}
 
 
+	public function printSource($code)
+	{
+		$this->output($code);
+	}
+
+
 	/**
 	 * @param  string HTML string
 	 * @param  string

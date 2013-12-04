@@ -18,10 +18,6 @@ use Nextras\Migrations\LogicException;
 
 class OrderResolver
 {
-	/** @const modes */
-	const MODE_CONTINUE = 'continue';
-	const MODE_RESET = 'reset';
-
 
 	/**
 	 * @param  Migration[]
@@ -36,8 +32,10 @@ class OrderResolver
 		$groups = $this->getAssocGroups($groups);
 		$this->validateGroups($groups);
 
-		if ($mode === self::MODE_RESET) {
+		if ($mode === Runner::MODE_RESET) {
 			return $this->sortFiles($files);
+		} elseif ($mode !== Runner::MODE_CONTINUE) {
+			throw new LogicException('Unsupported mode.');
 		}
 
 		$migrations = $this->getAssocMigrations($migrations);

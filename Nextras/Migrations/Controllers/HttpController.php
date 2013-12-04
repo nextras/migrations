@@ -65,8 +65,18 @@ class HttpController extends BaseController
 				goto error;
 			}
 
-			if (isset($_GET['reset']) && $_GET['reset'] === '1') {
-				$this->mode = Engine\Runner::MODE_RESET;
+			if (!isset($_GET['mode'])) {
+				$error = 'Missing mode parameter.';
+				goto error;
+			}
+
+			switch ($_GET['mode']) {
+				case '0': $this->mode = Engine\Runner::MODE_CONTINUE; break;
+				case '1': $this->mode = Engine\Runner::MODE_RESET; break;
+				case '2': $this->mode = Engine\Runner::MODE_INIT; break;
+				default:
+					$error = 'Unknown mode.';
+					goto error;
 			}
 		}
 
@@ -93,14 +103,15 @@ class HttpController extends BaseController
 		$modes = array(
 			0 => '<h2 class="continue">Continue</h2>',
 			1 => '<h2 class="reset">Reset = all tables, views and data will be DESTROYED!</h2>',
+			2 => '<h2 class="init">Init SQL</h2>',
 		);
 
 		echo "<h1>Migrations</h1>\n";
-		foreach ($modes as $reset => $heading) {
+		foreach ($modes as $mode => $heading) {
 			echo "$heading\n";
 			echo "<ul>\n";
 			foreach ($combinations as $combination) {
-				$query = htmlspecialchars(http_build_query(array('action' => 'run' , 'groups' => $combination, 'reset' => $reset)));
+				$query = htmlspecialchars(http_build_query(array('action' => 'run' , 'groups' => $combination, 'mode' => $mode)));
 				$text = htmlspecialchars(implode(' + ', $combination));
 				echo "\t<li><a href=\"?$query\">Run $text</a>\n";
 			}

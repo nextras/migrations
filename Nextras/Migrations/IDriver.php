@@ -10,6 +10,7 @@
 namespace Nextras\Migrations;
 
 use Nextras\Migrations\Entities\Migration;
+use Nextras\Migrations\Entities\File;
 
 
 /**
@@ -92,5 +93,20 @@ interface IDriver
 	 * @return Migration[]
 	 */
 	function getAllMigrations();
+
+
+	/**
+	 * Returns source code for migration table initialization.
+	 * @return string
+	 */
+	function getInitTableSource();
+
+
+	/**
+	 * Returns source code for migration table data initialization.
+	 * @param  File[]
+	 * @return string
+	 */
+	function getInitMigrationsSource(array $files);
 
 }

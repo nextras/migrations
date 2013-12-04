@@ -28,18 +28,7 @@ class PgSqlNetteDbDriver extends NetteDbDriver
 
 	public function createTable()
 	{
-		$this->context->query('
-			CREATE TABLE public.' . $this->delimitedTableName . ' (
-				"id" serial4 NOT NULL,
-				"group" varchar(100) NOT NULL,
-				"file" varchar(100) NOT NULL,
-				"checksum" char(32) NOT NULL,
-				"executed" timestamp NOT NULL,
-				"ready" bool NULL,
-				PRIMARY KEY (id),
-				CONSTRAINT "type_file" UNIQUE ("group", "file")
-			) WITH (OIDS=FALSE);
-		');
+		$this->context->query($this->getInitTableSource());
 	}
 
 
@@ -87,6 +76,38 @@ class PgSqlNetteDbDriver extends NetteDbDriver
 		}
 
 		return $migrations;
+	}
+
+
+	public function getInitTableSource()
+	{
+		return '
+CREATE TABLE public.' . $this->delimitedTableName . ' (
+	"id" serial4 NOT NULL,
+	"group" varchar(100) NOT NULL,
+	"file" varchar(100) NOT NULL,
+	"checksum" char(32) NOT NULL,
+	"executed" timestamp NOT NULL,
+	"ready" bool NULL,
+	PRIMARY KEY (id),
+	CONSTRAINT "type_file" UNIQUE ("group", "file")
+) WITH (OIDS=FALSE);
+		';
+	}
+
+
+	public function getInitMigrationsSource(array $files)
+	{
+		$out = '';
+		foreach ($files as $file) {
+			$out .= sprintf(
+				'INSERT INTO public.' . $this->delimitedTableName
+			. ' ("group", "file", "checksum", "executed", "ready") VALUES'
+			. " ('%s', '%s', '%s', '%s', true);\n",
+			$file->group->name, $file->name,  $file->checksum, date('Y-m-d H:i:s')
+			);
+		}
+		return $out;
 	}
 
 
