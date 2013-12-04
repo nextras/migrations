@@ -92,8 +92,8 @@ class ConsoleController
 				} elseif ($argument === '--help') {
 					$help = TRUE;
 				} else {
-					fprintf(STDERR, "Error: Unknown option '%s'\n", $argument);
-					$error = TRUE;
+					fprintf(STDERR, "Warning: Unknown option '%s'\n", $argument);
+					continue;
 				}
 
 			} else {
