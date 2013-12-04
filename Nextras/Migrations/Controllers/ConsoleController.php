@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * This file is part of the Nextras community extensions of Nette Framework
+ *
+ * @license    New BSD License
+ * @link       https://github.com/nextras/migrations
+ */
+
 namespace Nextras\Migrations\Controllers;
 
 use Nextras\Migrations\Engine;
@@ -19,16 +27,18 @@ class ConsoleController
 	/** @var array (name => Group) */
 	private $groups;
 
+
 	public function __construct(IDriver $driver)
 	{
-		$printer = new Printers\Console();
+		$printer = new Printers\Console;
 		$this->runner = new Engine\Runner($driver, $printer);
 		$this->mode = Engine\Runner::MODE_CONTINUE;
 	}
 
+
 	public function addGroup($name, $dir, array $dependencies = array())
 	{
-		$group = new Group();
+		$group = new Group;
 		$group->name = $name;
 		$group->directory = $dir;
 		$group->dependencies = $dependencies;
@@ -38,11 +48,13 @@ class ConsoleController
 		return $this;
 	}
 
+
 	public function addExtension($extension, IExtensionHandler $handler)
 	{
 		$this->runner->addExtensionHandler($extension, $handler);
 		return $this;
 	}
+
 
 	public function run()
 	{
@@ -52,65 +64,53 @@ class ConsoleController
 		$this->runner->run($this->mode);
 	}
 
+
 	private function printHeader()
 	{
 		printf("Migrations\n");
 		printf("------------------------------------------------------------\n");
 	}
 
+
 	private function processArguments()
 	{
 		$arguments = array_slice($_SERVER['argv'], 1);
-		$help = (count($arguments) === 0);
+		$help = count($arguments) === 0;
 		$groups = FALSE;
 		$error = FALSE;
 
-		foreach ($arguments as $argument)
-		{
-			if (strncmp($argument, '--', 2) === 0)
-			{
-				if ($argument === '--reset')
-				{
+		foreach ($arguments as $argument) {
+			if (strncmp($argument, '--', 2) === 0) {
+				if ($argument === '--reset') {
 					$this->mode = Engine\Runner::MODE_RESET;
-				}
-				else if ($argument === '--help')
-				{
+				} elseif ($argument === '--help') {
 					$help = TRUE;
-				}
-				else
-				{
+				} else {
 					fprintf(STDERR, "Error: Unknown option '%s'\n", $argument);
 					$error = TRUE;
 				}
-			}
-			else
-			{
-				if (isset($this->groups[$argument]))
-				{
+
+			} else {
+				if (isset($this->groups[$argument])) {
 					$this->groups[$argument]->enabled = TRUE;
 					$groups = TRUE;
-				}
-				else
-				{
+				} else {
 					fprintf(STDERR, "Error: Unknown group '%s'\n", $argument);
 					$error = TRUE;
 				}
 			}
 		}
 
-		if (!$groups && !$help)
-		{
+		if (!$groups && !$help) {
 			fprintf(STDERR, "Error: At least one group must be enabled.\n");
 			$error = TRUE;
 		}
 
-		if ($error)
-		{
+		if ($error) {
 			printf("\n");
 		}
 
-		if ($help || $error)
-		{
+		if ($help || $error) {
 			printf("Usage: %s group1 [, group2, ...] [--reset] [--help]\n", basename($_SERVER['argv'][0]));
 			printf("Registered groups:\n");
 			foreach (array_keys($this->groups) as $group) {
@@ -123,11 +123,12 @@ class ConsoleController
 		}
 	}
 
+
 	private function registerGroups()
 	{
-		foreach ($this->groups as $group)
-		{
+		foreach ($this->groups as $group) {
 			$this->runner->addGroup($group);
 		}
 	}
+
 }

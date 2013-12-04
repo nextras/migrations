@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * This file is part of the Nextras community extensions of Nette Framework
+ *
+ * @license    New BSD License
+ * @link       https://github.com/nextras/migrations
+ */
+
 namespace Nextras\Migrations\Engine;
 
 use DateTime;
@@ -15,8 +23,7 @@ use Nextras\Migrations\LogicException;
 
 class Runner
 {
-
-	/** modes */
+	/** @const modes */
 	const MODE_CONTINUE = 'continue';
 	const MODE_RESET = 'reset';
 
@@ -38,19 +45,22 @@ class Runner
 	/** @var OrderResolver */
 	private $orderResolver;
 
+
 	public function __construct(IDriver $driver, IPrinter $printer)
 	{
 		$this->driver = $driver;
 		$this->printer = $printer;
-		$this->finder = new Finder();
-		$this->orderResolver = new OrderResolver();
+		$this->finder = new Finder;
+		$this->orderResolver = new OrderResolver;
 	}
+
 
 	public function addGroup(Group $group)
 	{
 		$this->groups[] = $group;
 		return $this;
 	}
+
 
 	/**
 	 * @param  string
@@ -59,8 +69,7 @@ class Runner
 	 */
 	public function addExtensionHandler($extension, IExtensionHandler $handler)
 	{
-		if (isset($this->extensionsHandlers[$extension]))
-		{
+		if (isset($this->extensionsHandlers[$extension])) {
 			throw new LogicException("Extension '$extension' has already been defined.");
 		}
 
@@ -68,17 +77,18 @@ class Runner
 		return $this;
 	}
 
+
 	/**
 	 * @param string self::MODE_CONTINUE or self::MODE_RESET
 	 */
 	public function run($mode = self::MODE_CONTINUE)
 	{
-		try
-		{
+		try {
+
 			$this->driver->setupConnection();
 			$this->driver->lock();
-			if ($mode === self::MODE_RESET)
-			{
+
+			if ($mode === self::MODE_RESET) {
 				$this->driver->emptyDatabase();
 				$this->driver->lock();
 				$this->printer->printReset();
@@ -90,16 +100,14 @@ class Runner
 			$toExecute = $this->orderResolver->resolve($migrations, $this->groups, $files, $mode);
 			$this->printer->printToExecute($toExecute);
 
-			foreach ($toExecute as $file)
-			{
+			foreach ($toExecute as $file) {
 				$queriesCount = $this->execute($file);
 				$this->printer->printExecute($file, $queriesCount);
 			}
 
 			$this->printer->printDone();
-		}
-		catch (Exception $e)
-		{
+
+		} catch (Exception $e) {
 			$this->printer->printError($e);
 		}
 	}
@@ -111,12 +119,12 @@ class Runner
 	 */
 	public function getExtension($name)
 	{
-		if (!isset($this->extensionsHandlers[$name]))
-		{
+		if (!isset($this->extensionsHandlers[$name])) {
 			throw new LogicException("Extension '$name' not found.");
 		}
 		return $this->extensionsHandlers[$name];
 	}
+
 
 	/**
 	 * @param  File
@@ -128,7 +136,7 @@ class Runner
 		// Note: MySQL implicitly commits after some operations, such as CREATE or ALTER TABLE, see http://dev.mysql.com/doc/refman/5.6/en/implicit-commit.html
 		// proto se radeji kontroluje jestli bylo dokonceno
 
-		$migration = new Migration();
+		$migration = new Migration;
 		$migration->group = $file->group->name;
 		$migration->filename = $file->name;
 		$migration->checksum = $file->checksum;
@@ -136,12 +144,9 @@ class Runner
 
 		$this->driver->insertMigration($migration);
 
-		try
-		{
+		try {
 			$queriesCount = $this->getExtension($file->extension)->execute($file);
-		}
-		catch (\Exception $e)
-		{
+		} catch (\Exception $e) {
 			$this->driver->rollbackTransaction();
 			throw new ExecutionException(sprintf('Executing migration "%s" has failed.', $file->getPath()), NULL, $e);
 		}

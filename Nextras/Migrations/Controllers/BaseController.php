@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * This file is part of the Nextras community extensions of Nette Framework
+ *
+ * @license    New BSD License
+ * @link       https://github.com/nextras/migrations
+ */
+
 namespace Nextras\Migrations\Controllers;
 
 use Nextras\Migrations\Engine;
@@ -19,6 +27,7 @@ abstract class BaseController
 	/** @var array (name => Group) */
 	protected $groups;
 
+
 	public function __construct(IDriver $driver)
 	{
 		$printer = $this->createPrinter();
@@ -27,9 +36,10 @@ abstract class BaseController
 		$this->groups = array();
 	}
 
+
 	public function addGroup($name, $dir, array $dependencies = array())
 	{
-		$group = new Group();
+		$group = new Group;
 		$group->name = $name;
 		$group->directory = $dir;
 		$group->dependencies = $dependencies;
@@ -39,22 +49,26 @@ abstract class BaseController
 		return $this;
 	}
 
+
 	public function addExtension($extension, IExtensionHandler $handler)
 	{
 		$this->runner->addExtensionHandler($extension, $handler);
 		return $this;
 	}
 
+
 	protected function registerGroups()
 	{
 		$enabled = array();
-		foreach ($this->groups as $group)
-		{
+		foreach ($this->groups as $group) {
 			$this->runner->addGroup($group);
-			if ($group->enabled) $enabled[] = $group->name;
+			if ($group->enabled) {
+				$enabled[] = $group->name;
+			}
 		}
 		return $enabled;
 	}
+
 
 	protected function setupPhp()
 	{
@@ -62,5 +76,7 @@ abstract class BaseController
 		@ini_set('memory_limit', '1G');
 	}
 
+
 	abstract protected function createPrinter();
+
 }

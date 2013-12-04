@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * This file is part of the Nextras community extensions of Nette Framework
+ *
+ * @license    New BSD License
+ * @link       https://github.com/nextras/migrations
+ */
+
 namespace Nextras\Migrations\Engine;
 
 use Nextras\Migrations\Entities\File;
@@ -10,9 +18,10 @@ use Nextras\Migrations\LogicException;
 
 class OrderResolver
 {
-
+	/** @const modes */
 	const MODE_CONTINUE = 'continue';
 	const MODE_RESET = 'reset';
+
 
 	/**
 	 * @param  Migration[]
@@ -27,16 +36,16 @@ class OrderResolver
 		$groups = $this->getAssocGroups($groups);
 		$this->validateGroups($groups);
 
-		if ($mode === self::MODE_RESET) return $this->sortFiles($files);
+		if ($mode === self::MODE_RESET) {
+			return $this->sortFiles($files);
+		}
 
 		$migrations = $this->getAssocMigrations($migrations);
 		$files = $this->getAssocFiles($files);
 		$lastMigration = NULL;
 
-		foreach ($migrations as $groupName => $mg)
-		{
-			if (!isset($groups[$groupName]))
-			{
+		foreach ($migrations as $groupName => $mg) {
+			if (!isset($groups[$groupName])) {
 				throw new LogicException(sprintf(
 					'Existing migrations depend on unknown group "%s".',
 					$groupName
@@ -44,38 +53,32 @@ class OrderResolver
 			}
 
 			$group = $groups[$groupName];
-			foreach ($mg as $filename => $migration)
-			{
-				if (!$migration->completed)
-				{
+			foreach ($mg as $filename => $migration) {
+				if (!$migration->completed) {
 					throw new LogicException(sprintf(
 						'Previously executed migration "%s/%s" did not succeed. Please fix this manually or reset the migrations.',
 						$groupName, $filename
 					));
 				}
 
-				if (isset($files[$groupName][$filename]))
-				{
+				if (isset($files[$groupName][$filename])) {
 					$file = $files[$groupName][$filename];
-					if ($migration->checksum !== $file->checksum)
-					{
+					if ($migration->checksum !== $file->checksum) {
 						throw new LogicException(sprintf(
 							'Previously executed migration "%s/%s" has been changed.',
 							$groupName, $filename
 						));
 					}
 					unset($files[$groupName][$filename]);
-				}
-				elseif ($group->enabled)
-				{
+
+				} elseif ($group->enabled) {
 					throw new LogicException(sprintf(
 						'Previously executed migration "%s/%s" is missing.',
 						$groupName, $filename
 					));
 				}
 
-				if ($lastMigration === NULL || strcmp($migration->filename, $lastMigration->filename) > 0)
-				{
+				if ($lastMigration === NULL || strcmp($migration->filename, $lastMigration->filename) > 0) {
 					$lastMigration = $migration;
 				}
 			}
@@ -83,11 +86,9 @@ class OrderResolver
 
 		$files = $this->getFlatFiles($files);
 		$files = $this->sortFiles($files);
-		if ($files && $lastMigration)
-		{
+		if ($files && $lastMigration) {
 			$firstFile = reset($files);
-			if (strcmp($firstFile->name, $lastMigration->filename) < 0)
-			{
+			if (strcmp($firstFile->name, $lastMigration->filename) < 0) {
 				throw new LogicException(sprintf(
 					'New migration "%s/%s" must follow after the latest executed migration "%s/%s".',
 					$firstFile->group->name, $firstFile->name, $lastMigration->group, $lastMigration->filename
@@ -97,6 +98,7 @@ class OrderResolver
 
 		return $files;
 	}
+
 
 	/**
 	 * @param  File[]
@@ -111,33 +113,48 @@ class OrderResolver
 		return $files;
 	}
 
+
 	protected function getAssocMigrations(array $migrations)
 	{
 		$assoc = array();
-		foreach ($migrations as $migration) $assoc[$migration->group][$migration->filename] = $migration;
+		foreach ($migrations as $migration) {
+			$assoc[$migration->group][$migration->filename] = $migration;
+		}
 		return $assoc;
 	}
+
 
 	protected function getAssocGroups(array $groups)
 	{
 		$assoc = array();
-		foreach ($groups as $group) $assoc[$group->name] = $group;
+		foreach ($groups as $group) {
+			$assoc[$group->name] = $group;
+		}
 		return $assoc;
 	}
+
 
 	protected function getAssocFiles(array $files)
 	{
 		$assoc = array();
-		foreach ($files as $file) $assoc[$file->group->name][$file->name] = $file;
+		foreach ($files as $file) {
+			$assoc[$file->group->name][$file->name] = $file;
+		}
 		return $assoc;
 	}
+
 
 	protected function getFlatFiles(array $files)
 	{
 		$flat = array();
-		foreach ($files as $tmp) foreach ($tmp as $file) $flat[] = $file;
+		foreach ($files as $tmp) {
+			foreach ($tmp as $file) {
+				$flat[] = $file;
+			}
+		}
 		return $flat;
 	}
+
 
 	/**
 	 * @param  Group[]
@@ -146,19 +163,15 @@ class OrderResolver
 	 */
 	private function validateGroups(array $groups)
 	{
-		foreach ($groups as $group)
-		{
-			foreach ($group->dependencies as $dependency)
-			{
-				if (!isset($groups[$dependency]))
-				{
+		foreach ($groups as $group) {
+			foreach ($group->dependencies as $dependency) {
+				if (!isset($groups[$dependency])) {
 					throw new LogicException(sprintf(
 						'Group "%s" depends on unknown group "%s".',
 						$group->name, $dependency
 					));
-				}
-				elseif (!$groups[$dependency]->enabled)
-				{
+
+				} elseif (!$groups[$dependency]->enabled) {
 					throw new LogicException(sprintf(
 						'Group "%s" depends on disabled group "%s". Please enable group "%s" to continue.',
 						$group->name, $dependency, $dependency

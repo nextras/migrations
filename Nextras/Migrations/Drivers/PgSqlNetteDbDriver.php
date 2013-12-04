@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * This file is part of the Nextras community extensions of Nette Framework
+ *
+ * @license    New BSD License
+ * @link       https://github.com/nextras/migrations
+ */
+
 namespace Nextras\Migrations\Drivers;
 
 use Nextras\Migrations\Entities\Migration;
@@ -67,7 +75,7 @@ class PgSqlNetteDbDriver extends NetteDbDriver
 		$migrations = [];
 		$result = $this->context->query("SELECT * FROM public.{$this->delimitedTableName}");
 		foreach ($result as $row) {
-			$migration = new Migration();
+			$migration = new Migration;
 			$migration->id = $row['id'];
 			$migration->group = $row['group'];
 			$migration->filename = $row['file'];

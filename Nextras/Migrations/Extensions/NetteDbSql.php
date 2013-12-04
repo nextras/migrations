@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * This file is part of the Nextras community extensions of Nette Framework
+ *
+ * @license    New BSD License
+ * @link       https://github.com/nextras/migrations
+ */
+
 namespace Nextras\Migrations\Extensions;
 
 use Nette\Database\Context;
@@ -12,12 +20,11 @@ use Nextras\Migrations\LogicException;
 
 
 /**
- * @author Petr Procházka
  * @author Jan Skrasek
+ * @author Petr Procházka
  */
 class NetteDbSql implements IExtensionHandler
 {
-
 	/** @var Context */
 	private $context;
 
@@ -26,6 +33,7 @@ class NetteDbSql implements IExtensionHandler
 	{
 		$this->context = $context;
 	}
+
 
 	/**
 	 * Unique extension name.
@@ -36,6 +44,7 @@ class NetteDbSql implements IExtensionHandler
 		return 'sql';
 	}
 
+
 	/**
 	 * @param  File
 	 * @return int number of queries
@@ -43,12 +52,12 @@ class NetteDbSql implements IExtensionHandler
 	public function execute(File $sql)
 	{
 		$count = $this->loadFile($sql->getPath());
-		if ($count === 0)
-		{
+		if ($count === 0) {
 			throw new LogicException("{$sql->file} neobsahuje zadne sql.");
 		}
 		return $count;
 	}
+
 
 	/**
 	 * Import taken from Adminer, slightly modified

@@ -1,34 +1,96 @@
 <?php
+
+/**
+ * This file is part of the Nextras community extensions of Nette Framework
+ *
+ * @license    New BSD License
+ * @link       https://github.com/nextras/migrations
+ */
+
 namespace Nextras\Migrations;
 
 use Nextras\Migrations\Entities\Migration;
 
 
+/**
+ * @author Jan Skrasek
+ */
 interface IDriver
 {
 
-	public function setupConnection();
+	/**
+	 * Setups the connection, such as encoding, default schema, etc.
+	 */
+	function setupConnection();
 
-	public function emptyDatabase();
 
-	public function beginTransaction();
+	/**
+	 * Drops the database / schema. Shoudl removes all db objects (tables, views, procedures, sequences, ...)
+	 * @return mixed
+	 */
+	function emptyDatabase();
 
-	public function commitTransaction();
 
-	public function rollbackTransaction();
+	/**
+	 * Starts transaction.
+	 */
+	function beginTransaction();
 
-	public function lock();
 
-	public function unlock();
+	/**
+	 * Commit transaction.
+	 */
+	function commitTransaction();
 
-	public function createTable();
 
-	public function dropTable();
+	/**
+	 * Rollback transation.
+	 */
+	function rollbackTransaction();
 
-	public function insertMigration(Migration $migration);
 
-	public function markMigrationAsReady(Migration $migration);
+	/**
+	 * Locks database for running migrations.
+	 */
+	function lock();
 
-	public function getAllMigrations();
+
+	/**
+	 * Unlocks database.
+	 */
+	function unlock();
+
+
+	/**
+	 * Creates migration table.
+	 */
+	function createTable();
+
+
+	/**
+	 * Drop migration table.
+	 */
+	function dropTable();
+
+
+	/**
+	 * Inserts migration info into migration table.
+	 * @param  Migration
+	 */
+	function insertMigration(Migration $migration);
+
+
+	/**
+	 * Updated migration as executed.
+	 * @param  Migration
+	 */
+	function markMigrationAsReady(Migration $migration);
+
+
+	/**
+	 * Returns all migrations stored in migration table.
+	 * @return Migration[]
+	 */
+	function getAllMigrations();
 
 }

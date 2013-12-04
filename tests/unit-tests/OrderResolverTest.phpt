@@ -1,9 +1,4 @@
 <?php
-/**
- * Test: Nextras\Migrations\Engine\OrderResolver
- *
- * @testCase Nextras\Migrations\Tests\OrderResolverTest
- */
 
 namespace Nextras\Migrations\Tests;
 
@@ -15,6 +10,7 @@ use Mockery;
 use Tester;
 use Tester\Assert;
 
+
 require __DIR__ . '/bootstrap.php';
 
 
@@ -23,7 +19,7 @@ class OrderResolverTest extends Tester\TestCase
 
 	public function testFirstRun()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
 		$fileA = $this->createFile('1s', $groupA);
@@ -38,9 +34,10 @@ class OrderResolverTest extends Tester\TestCase
 		));
 	}
 
+
 	public function testFirstRunTwoGroups()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('1g');
 		$groupB = $this->createGroup('2g');
@@ -57,9 +54,10 @@ class OrderResolverTest extends Tester\TestCase
 		));
 	}
 
+
 	public function testSecondRunContinue()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
 		$migrationA = $this->createMigration($groupA->name, '1s');
@@ -75,9 +73,10 @@ class OrderResolverTest extends Tester\TestCase
 		));
 	}
 
+
 	public function testSecondRunContinueNothingToDo()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
 		$migrationA = $this->createMigration($groupA->name, '1s');
@@ -94,9 +93,10 @@ class OrderResolverTest extends Tester\TestCase
 		));
 	}
 
+
 	public function testSecondRunContinueTwoGroups()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
 		$groupB = $this->createGroup('data');
@@ -118,9 +118,10 @@ class OrderResolverTest extends Tester\TestCase
 		));
 	}
 
+
 	public function testSecondRunContinueDisabledGroup()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
 		$groupB = $this->createGroup('data', FALSE);
@@ -140,9 +141,10 @@ class OrderResolverTest extends Tester\TestCase
 		));
 	}
 
+
 	public function testSecondRunReset()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
 		$migrationA = $this->createMigration($groupA->name, '1s');
@@ -157,9 +159,10 @@ class OrderResolverTest extends Tester\TestCase
 		));
 	}
 
+
 	public function testErrorRemovedFile()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
 		$migrationA = $this->createMigration($groupA->name, '1s');
@@ -176,9 +179,10 @@ class OrderResolverTest extends Tester\TestCase
 		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" is missing.');
 	}
 
+
 	public function testErrorChangedChecksum()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
 		$migrationA = $this->createMigration($groupA->name, '1s', '1s.md5.X');
@@ -196,9 +200,10 @@ class OrderResolverTest extends Tester\TestCase
 		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" has been changed.');
 	}
 
+
 	public function testErrorIncompleteMigration()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
 		$migrationA = $this->createMigration($groupA->name, '1s', NULL, FALSE);
@@ -216,9 +221,10 @@ class OrderResolverTest extends Tester\TestCase
 		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" did not succeed. Please fix this manually or reset the migrations.');
 	}
 
+
 	public function testErrorNewMigrationInTheMiddleOfExistingOnes()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
 		$migrationA = $this->createMigration($groupA->name, '1s');
@@ -238,9 +244,10 @@ class OrderResolverTest extends Tester\TestCase
 		}, 'Nextras\Migrations\LogicException', 'New migration "structures/2s" must follow after the latest executed migration "structures/3s".');
 	}
 
+
 	public function testErrorMigrationDependingOnUnknownGroup()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$migrationA = $this->createMigration('foo', '1s');
 
@@ -254,9 +261,10 @@ class OrderResolverTest extends Tester\TestCase
 		}, 'Nextras\Migrations\LogicException', 'Existing migrations depend on unknown group "foo".');
 	}
 
+
 	public function testErrorGroupDependingOnUnknownGroup()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupB = $this->createGroup('data', TRUE, ['structures']);
 
@@ -270,9 +278,10 @@ class OrderResolverTest extends Tester\TestCase
 		}, 'Nextras\Migrations\LogicException', 'Group "data" depends on unknown group "structures".');
 	}
 
+
 	public function testErrorDisablingRequiredGroup()
 	{
-		$resolver = new OrderResolver();
+		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures', FALSE);
 		$groupB = $this->createGroup('data', TRUE, ['structures']);
@@ -287,9 +296,10 @@ class OrderResolverTest extends Tester\TestCase
 		}, 'Nextras\Migrations\LogicException', 'Group "data" depends on disabled group "structures". Please enable group "structures" to continue.');
 	}
 
+
 	private function createMigration($groupName, $fileName, $checksum = NULL, $completed = TRUE)
 	{
-		$migration = new Migration();
+		$migration = new Migration;
 		$migration->group = $groupName;
 		$migration->filename = $fileName;
 		$migration->checksum = $checksum ?: "$fileName.md5";
@@ -297,18 +307,20 @@ class OrderResolverTest extends Tester\TestCase
 		return $migration;
 	}
 
+
 	private function createFile($name, $group, $checksum = NULL)
 	{
-		$file = new File();
+		$file = new File;
 		$file->name = $name;
 		$file->group = $group;
 		$file->checksum = $checksum ?: "$name.md5";
 		return $file;
 	}
 
+
 	private function createGroup($name, $enabled = TRUE, $deps = [])
 	{
-		$group = new Group();
+		$group = new Group;
 		$group->name = $name;
 		$group->enabled = $enabled;
 		$group->dependencies = $deps;

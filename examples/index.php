@@ -1,4 +1,5 @@
 <?php
+
 require __DIR__ . '/../vendor/autoload.php';
 
 $connection = new Nette\Database\Connection('mysql:dbname=testdb', 'root', 'root');

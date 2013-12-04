@@ -1,4 +1,5 @@
 <?php
+
 $loader = require __DIR__ . '/../../vendor/autoload.php';
 
 Tester\Environment::setup();
@@ -15,8 +16,7 @@ $_SERVER['REQUEST_TIME'] = 1234567890;
 $_ENV = $_GET = $_POST = array();
 
 
-if (extension_loaded('xdebug'))
-{
+if (extension_loaded('xdebug')) {
 	xdebug_disable();
 	Tester\CodeCoverage\Collector::start(__DIR__ . '/coverage.dat');
 }
