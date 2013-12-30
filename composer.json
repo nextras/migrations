@@ -11,6 +11,11 @@
 		"nette/tester": "0.9.*",
 		"mockery/mockery": "~0.8"
 	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "2.1-dev"
+		}
+	},
 	"autoload": {
 		"psr-0": { "Nextras\\Migrations": "" },
 		"classmap": ["Nextras/Migrations/exceptions.php"]
