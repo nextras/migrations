@@ -44,7 +44,8 @@ class Console implements IPrinter
 	public function printToExecute(array $toExecute)
 	{
 		if ($toExecute) {
-			$this->output(count($toExecute) . ' migrations need to be executed.');
+			$count = count($toExecute);
+			$this->output($count . ' migration' . ($count > 1 ? 's' : '') . ' need' . ($count > 1 ? '' : 's') . ' to be executed.');
 		} else {
 			$this->output('No migration needs to be executed.');
 		}
