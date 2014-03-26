@@ -12,9 +12,12 @@ use Tester;
 use Tester\Assert;
 
 
-require __DIR__ . '/bootstrap.php';
+require __DIR__ . '/../bootstrap.php';
 
 
+/**
+ * @testCase
+ */
 class OrderResolverTest extends Tester\TestCase
 {
 
@@ -344,4 +347,5 @@ class OrderResolverTest extends Tester\TestCase
 
 }
 
-run(new OrderResolverTest);
+$test = new OrderResolverTest();
+$test->run();
