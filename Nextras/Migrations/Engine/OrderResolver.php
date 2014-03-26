@@ -40,7 +40,6 @@ class OrderResolver
 
 		$migrations = $this->getAssocMigrations($migrations);
 		$files = $this->getAssocFiles($files);
-		$lastMigration = NULL;
 
 		foreach ($migrations as $groupName => $mg) {
 			if (!isset($groups[$groupName])) {
@@ -75,25 +74,11 @@ class OrderResolver
 						$groupName, $filename
 					));
 				}
-
-				if ($lastMigration === NULL || strcmp($migration->filename, $lastMigration->filename) > 0) {
-					$lastMigration = $migration;
-				}
 			}
 		}
 
 		$files = $this->getFlatFiles($files);
 		$files = $this->sortFiles($files);
-		if ($files && $lastMigration) {
-			$firstFile = reset($files);
-			if (strcmp($firstFile->name, $lastMigration->filename) < 0) {
-				throw new LogicException(sprintf(
-					'New migration "%s/%s" must follow after the latest executed migration "%s/%s".',
-					$firstFile->group->name, $firstFile->name, $lastMigration->group, $lastMigration->filename
-				));
-			}
-		}
-
 		return $files;
 	}
 
