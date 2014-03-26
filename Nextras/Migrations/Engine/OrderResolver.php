@@ -169,7 +169,7 @@ class OrderResolver
 						$group->name, $dependency
 					));
 
-				} elseif (!$groups[$dependency]->enabled) {
+				} elseif ($group->enabled && !$groups[$dependency]->enabled) {
 					throw new LogicException(sprintf(
 						'Group "%s" depends on disabled group "%s". Please enable group "%s" to continue.',
 						$group->name, $dependency, $dependency

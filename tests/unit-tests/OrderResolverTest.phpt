@@ -161,6 +161,21 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
+	public function testRunWithDisabledGroups()
+	{
+		$groupA = $this->createGroup('structures');
+		$groupB = $this->createGroup('data', FALSE, ['structures']);
+		$groupC = $this->createGroup('test-data', FALSE, ['data']);
+
+		$method = new \ReflectionMethod('Nextras\Migrations\Engine\OrderResolver', 'validateGroups');
+		$method->setAccessible(TRUE);
+		$method->invoke(new OrderResolver, [
+			'structures' => $groupA,
+			'data' => $groupB,
+			'test-data' => $groupC,
+		]);
+	}
+
 
 	public function testErrorRemovedFile()
 	{
