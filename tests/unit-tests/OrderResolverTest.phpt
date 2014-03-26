@@ -3,6 +3,7 @@
 namespace Nextras\Migrations\Tests;
 
 use Nextras\Migrations\Engine\OrderResolver;
+use Nextras\Migrations\Engine\Runner;
 use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\Entities\File;
 use Nextras\Migrations\Entities\Migration;
@@ -30,7 +31,7 @@ class OrderResolverTest extends Tester\TestCase
 			[],
 			[$groupA],
 			[$fileB, $fileA],
-			$resolver::MODE_CONTINUE
+			Runner::MODE_CONTINUE
 		));
 	}
 
@@ -50,7 +51,7 @@ class OrderResolverTest extends Tester\TestCase
 			[],
 			[$groupA, $groupB],
 			[$fileC, $fileB, $fileA],
-			$resolver::MODE_CONTINUE
+			Runner::MODE_CONTINUE
 		));
 	}
 
@@ -69,7 +70,7 @@ class OrderResolverTest extends Tester\TestCase
 			[$migrationA],
 			[$groupA],
 			[$fileB, $fileA],
-			$resolver::MODE_CONTINUE
+			Runner::MODE_CONTINUE
 		));
 	}
 
@@ -89,7 +90,7 @@ class OrderResolverTest extends Tester\TestCase
 			[$migrationA, $migrationB],
 			[$groupA],
 			[$fileB, $fileA],
-			$resolver::MODE_CONTINUE
+			Runner::MODE_CONTINUE
 		));
 	}
 
@@ -114,7 +115,7 @@ class OrderResolverTest extends Tester\TestCase
 			[$migrationB, $migrationA],
 			[$groupA, $groupB],
 			[$fileB, $fileA, $fileD, $fileC],
-			$resolver::MODE_CONTINUE
+			Runner::MODE_CONTINUE
 		));
 	}
 
@@ -137,7 +138,7 @@ class OrderResolverTest extends Tester\TestCase
 			[$migrationB, $migrationA],
 			[$groupA, $groupB],
 			[$fileD, $fileA],
-			$resolver::MODE_CONTINUE
+			Runner::MODE_CONTINUE
 		));
 	}
 
@@ -155,9 +156,10 @@ class OrderResolverTest extends Tester\TestCase
 			[$migrationA],
 			[$groupA],
 			[$fileB, $fileA],
-			$resolver::MODE_RESET
+			Runner::MODE_RESET
 		));
 	}
+
 
 
 	public function testErrorRemovedFile()
@@ -174,7 +176,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$migrationA],
 				[$groupA],
 				[$fileB],
-				$resolver::MODE_CONTINUE
+				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" is missing.');
 	}
@@ -195,7 +197,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$migrationA],
 				[$groupA],
 				[$fileB, $fileA],
-				$resolver::MODE_CONTINUE
+				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" has been changed.');
 	}
@@ -216,7 +218,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$migrationA],
 				[$groupA],
 				[$fileB, $fileA],
-				$resolver::MODE_CONTINUE
+				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" did not succeed. Please fix this manually or reset the migrations.');
 	}
@@ -239,7 +241,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$migrationC, $migrationA],
 				[$groupA],
 				[$fileA, $fileB, $fileC],
-				$resolver::MODE_CONTINUE
+				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'New migration "structures/2s" must follow after the latest executed migration "structures/3s".');
 	}
@@ -256,7 +258,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$migrationA],
 				[],
 				[],
-				$resolver::MODE_CONTINUE
+				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'Existing migrations depend on unknown group "foo".');
 	}
@@ -273,7 +275,7 @@ class OrderResolverTest extends Tester\TestCase
 				[],
 				[$groupB],
 				[],
-				$resolver::MODE_CONTINUE
+				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'Group "data" depends on unknown group "structures".');
 	}
@@ -291,7 +293,7 @@ class OrderResolverTest extends Tester\TestCase
 				[],
 				[$groupA, $groupB],
 				[],
-				$resolver::MODE_CONTINUE
+				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'Group "data" depends on disabled group "structures". Please enable group "structures" to continue.');
 	}
