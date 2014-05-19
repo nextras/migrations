@@ -71,7 +71,7 @@ class SimplePhp implements IExtensionHandler
 	public function execute(File $sql)
 	{
 		extract($this->getParameters());
-		return include $sql->path;
+		return include $sql->getPath();
 	}
 
 }
