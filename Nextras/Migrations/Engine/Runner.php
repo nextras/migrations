@@ -114,6 +114,7 @@ class Runner
 				$this->printer->printExecute($file, $queriesCount);
 			}
 
+			$this->driver->unlock();
 			$this->printer->printDone();
 
 		} catch (Exception $e) {
