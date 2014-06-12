@@ -34,8 +34,14 @@ class MySqlNetteDbDriver extends NetteDbDriver
 	{
 		$dbName = $this->context->fetchField('SELECT DATABASE()');
 		$dbName = $this->context->getConnection()->getSupplementalDriver()->delimite($dbName);
+
+		$collation = $this->context->fetch('SHOW VARIABLES LIKE "collation_database"');
+		if ($collation) {
+			$collation = $collation->Value;
+		}
+
 		$this->context->query('DROP DATABASE ' . $dbName);
-		$this->context->query('CREATE DATABASE ' . $dbName);
+		$this->context->query('CREATE DATABASE ' . $dbName . ($collation ? (' COLLATE="' . $collation . '"') : ''));
 		$this->context->query('USE ' . $dbName);
 	}
 
