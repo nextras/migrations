@@ -87,7 +87,7 @@ class Runner
 		if ($mode === self::MODE_INIT) {
 			$this->printer->printSource($this->driver->getInitTableSource());
 			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
-			$files = $this->orderResolver->resolve([], $this->groups, $files, self::MODE_RESET);
+			$files = $this->orderResolver->resolve(array(), $this->groups, $files, self::MODE_RESET);
 			$this->printer->printSource($this->driver->getInitMigrationsSource($files));
 			return;
 		}

@@ -81,7 +81,7 @@ class MySqlNetteDbDriver extends NetteDbDriver
 
 	public function getAllMigrations()
 	{
-		$migrations = [];
+		$migrations = array();
 		$result = $this->context->query("SELECT * FROM {$this->delimitedTableName}");
 		foreach ($result as $row) {
 			$migration = new Migration;
