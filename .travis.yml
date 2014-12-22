@@ -5,10 +5,11 @@ php:
     - 5.6
     - hhvm
 
+env:
+    - PHP_BIN=php
 
 before_script:
     - composer install --no-interaction
 
-
 script:
-    - ./vendor/bin/tester -s ./tests/cases
+    - ./vendor/bin/tester -p $PHP_BIN -s ./tests/cases
