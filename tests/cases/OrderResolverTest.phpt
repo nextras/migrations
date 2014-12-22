@@ -198,6 +198,7 @@ class OrderResolverTest extends Tester\TestCase
 			'data' => $groupB,
 			'test-data' => $groupC,
 		]);
+		Tester\Environment::$checkAssertions = FALSE;
 	}
 
 
