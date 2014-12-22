@@ -1,6 +1,10 @@
 Migrations
 ==========
 
+[![Build Status](https://travis-ci.org/nextras/migrations.svg?branch=master)](https://travis-ci.org/nextras/migrations)
+[![Downloads this Month](https://img.shields.io/packagist/dm/nextras/migrations.svg?style=flat)](https://packagist.org/packages/nextras/migrations)
+[![Stable version](http://img.shields.io/packagist/v/nextras/migrations.svg?style=flat)](https://packagist.org/packages/nextras/migrations)
+
 Migrations for Nette Framework Database (and others db layers).
 
 Forked [Clevis\Migrations](https://github.com/clevis/migration), enhanced and updated for Nette Database.
