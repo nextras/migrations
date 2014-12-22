@@ -1,19 +1,18 @@
 {
 	"name": "nextras/migrations",
-	"description": "Simple database migrations runner",
+	"description": "Database migrations runner",
 	"type": "library",
 	"require": {
-		"php": "~5.3",
+		"php": "~5.4",
 		"nette/database": "~2.2"
 	},
 	"require-dev": {
-		"php": "~5.4",
-		"nette/tester": "~1.0.0",
-		"mockery/mockery": "~0.8"
+		"nette/tester": "~1.3",
+		"mockery/mockery": "~0.9"
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "2.3-dev"
+			"dev-master": "3.0-dev"
 		}
 	},
 	"autoload": {
