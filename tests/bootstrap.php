@@ -1,19 +1,6 @@
 <?php
 
-namespace Nextras\Migrations\Tests;
-
-use Tester;
-use Nette;
-
-
 require __DIR__ . '/../vendor/autoload.php';
 
+date_default_timezone_set('Europe/Prague');
 Tester\Environment::setup();
-
-$configurator = new Nette\Configurator;
-$configurator->setTempDirectory(__DIR__ . '/temp');
-$configurator->createRobotLoader()
-	->addDirectory(__DIR__ . '/../Nextras')
-	->register();
-
-return $configurator->createContainer();
