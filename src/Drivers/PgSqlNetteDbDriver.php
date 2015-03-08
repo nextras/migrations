@@ -9,6 +9,7 @@
 
 namespace Nextras\Migrations\Drivers;
 
+use Nette\Database\Context;
 use Nextras\Migrations\Entities\Migration;
 use Nextras\Migrations\LockException;
 
@@ -18,11 +19,19 @@ use Nextras\Migrations\LockException;
  */
 class PgSqlNetteDbDriver extends NetteDbDriver
 {
+    /** @var  string */
+    protected $delimitedSchema;
+
+    public function __construct(Context $context, $tableName, $schema = 'public')
+    {
+        parent::__construct($context, $tableName);
+        $this->delimitedSchema = $context->getConnection()->getSupplementalDriver()->delimite($schema);
+    }
 
 	public function emptyDatabase()
 	{
-		$this->context->query("DROP SCHEMA IF EXISTS public CASCADE;");
-		$this->context->query("CREATE SCHEMA public;");
+		$this->context->query("DROP SCHEMA IF EXISTS {$this->delimitedSchema} CASCADE;");
+		$this->context->query("CREATE SCHEMA {$this->delimitedSchema};");
 	}
 
 
@@ -34,7 +43,7 @@ class PgSqlNetteDbDriver extends NetteDbDriver
 
 	public function dropTable()
 	{
-		$this->context->query("DROP TABLE public.{$this->delimitedTableName}");
+		$this->context->query("DROP TABLE {$this->delimitedSchema}.{$this->delimitedTableName}");
 	}
 
 
@@ -48,21 +57,21 @@ class PgSqlNetteDbDriver extends NetteDbDriver
 			'ready' => FALSE,
 		);
 
-		$this->context->query("INSERT INTO public.{$this->delimitedTableName}", $row);
+		$this->context->query("INSERT INTO {$this->delimitedSchema}.{$this->delimitedTableName}", $row);
 		$migration->id = $this->context->getConnection()->getInsertId('"migrations_id_seq"');
 	}
 
 
 	public function markMigrationAsReady(Migration $migration)
 	{
-		$this->context->query("UPDATE public.{$this->delimitedTableName} SET \"ready\" = TRUE WHERE \"id\" = ?", $migration->id);
+		$this->context->query("UPDATE {$this->delimitedSchema}.{$this->delimitedTableName} SET \"ready\" = TRUE WHERE \"id\" = ?", $migration->id);
 	}
 
 
 	public function getAllMigrations()
 	{
 		$migrations = array();
-		$result = $this->context->query("SELECT * FROM public.{$this->delimitedTableName}");
+		$result = $this->context->query("SELECT * FROM {$this->delimitedSchema}.{$this->delimitedTableName}");
 		foreach ($result as $row) {
 			$migration = new Migration;
 			$migration->id = $row['id'];
@@ -82,7 +91,7 @@ class PgSqlNetteDbDriver extends NetteDbDriver
 	public function getInitTableSource()
 	{
 		return '
-CREATE TABLE public.' . $this->delimitedTableName . ' (
+CREATE TABLE ' . $this->delimitedSchema . '.' . $this->delimitedTableName . ' (
 	"id" serial4 NOT NULL,
 	"group" varchar(100) NOT NULL,
 	"file" varchar(100) NOT NULL,
@@ -101,7 +110,7 @@ CREATE TABLE public.' . $this->delimitedTableName . ' (
 		$out = '';
 		foreach ($files as $file) {
 			$out .= sprintf(
-				'INSERT INTO public.' . $this->delimitedTableName
+				'INSERT INTO '. $this->delimitedSchema . '.' . $this->delimitedTableName
 			. ' ("group", "file", "checksum", "executed", "ready") VALUES'
 			. " ('%s', '%s', '%s', '%s', true);\n",
 			$file->group->name, $file->name,  $file->checksum, date('Y-m-d H:i:s')
@@ -114,7 +123,7 @@ CREATE TABLE public.' . $this->delimitedTableName . ' (
 	protected function tryLock()
 	{
 		try {
-			$this->context->query("CREATE TABLE public.{$this->delimitedLockTableName} (\"foo\" INT)");
+			$this->context->query("CREATE TABLE {$this->delimitedSchema}.{$this->delimitedLockTableName} (\"foo\" INT)");
 			return TRUE;
 		} catch (\PDOException $e) {
 			if ($e->getCode() === '42P07') { // already exists
@@ -129,7 +138,7 @@ CREATE TABLE public.' . $this->delimitedTableName . ' (
 	protected function tryUnlock()
 	{
 		try {
-			$this->context->query("DROP TABLE public.{$this->delimitedLockTableName}");
+			$this->context->query("DROP TABLE {$this->delimitedSchema}.{$this->delimitedLockTableName}");
 		} catch (\PDOException $e) {
 			if ($e->getCode() === '42P01') {
 				throw new LockException('Unable to release lock, because it has been already released.');
