@@ -20,6 +20,8 @@ Workflow
 $connection = new Nette\Database\Connection('mysql:dbname=testdb', 'root', 'root');
 $context = new Nette\Database\Context($connection);
 $driver = new Nextras\Migrations\Drivers\MySqlNetteDbDriver($context, 'migrations');
+// PostgreSQL driver with optional schema
+$driver = new Nextras\Migrations\Drivers\PgSqlNetteDbDriver($context, 'migrations', 'customSchema');
 
 // create controller
 // choose http or cli controller
