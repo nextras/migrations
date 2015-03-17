@@ -4,7 +4,7 @@
 	"type": "library",
 	"license": "BSD-3-Clause",
 	"require": {
-		"php": "~5.4",
+		"php": ">=5.4",
 		"nette/database": "~2.2"
 	},
 	"require-dev": {
