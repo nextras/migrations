@@ -12,11 +12,12 @@ matrix:
     allow_failures:
         - php: 7.0
 
-env:
-    - PHP_BIN=php
-
 before_script:
+    - cp ./tests/php-unix.sample.ini ./tests/php.ini
+    - cp ./tests/dbals.sample.ini ./tests/dbals.ini
+    - cp ./tests/drivers.sample.ini ./tests/drivers.ini
+    - mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
     - composer install --no-interaction
 
 script:
-    - ./vendor/bin/tester -p $PHP_BIN -s ./tests/cases
+    - ./vendor/bin/tester -p php -s -c ./tests/php.ini ./tests/cases

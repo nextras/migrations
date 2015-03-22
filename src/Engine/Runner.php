@@ -85,7 +85,7 @@ class Runner
 	public function run($mode = self::MODE_CONTINUE)
 	{
 		if ($mode === self::MODE_INIT) {
-			$this->printer->printSource($this->driver->getInitTableSource());
+			$this->printer->printSource($this->driver->getInitTableSource() . "\n");
 			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
 			$files = $this->orderResolver->resolve(array(), $this->groups, $files, self::MODE_RESET);
 			$this->printer->printSource($this->driver->getInitMigrationsSource($files));
@@ -99,7 +99,6 @@ class Runner
 
 			if ($mode === self::MODE_RESET) {
 				$this->driver->emptyDatabase();
-				$this->driver->lock();
 				$this->printer->printReset();
 				$this->driver->createTable();
 			}
@@ -114,9 +113,11 @@ class Runner
 				$this->printer->printExecute($file, $queriesCount);
 			}
 
+			$this->driver->unlock();
 			$this->printer->printDone();
 
 		} catch (Exception $e) {
+			$this->driver->unlock();
 			$this->printer->printError($e);
 		}
 	}
