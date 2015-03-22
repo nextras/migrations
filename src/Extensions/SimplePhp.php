@@ -9,69 +9,13 @@
 
 namespace Nextras\Migrations\Extensions;
 
-use Nextras\Migrations\Entities\File;
-use Nextras\Migrations\IExtensionHandler;
-
-
 /**
- * @author Petr Procházka
+ * @deprecated
  */
-class SimplePhp implements IExtensionHandler
+class SimplePhp extends PhpHandler
 {
-	/** @var array name => value */
-	private $parameters = array();
-
-
-	/**
-	 * @param array name => value
-	 */
-	public function __construct(array $parameters = array())
+	public function __construct(array $params = [])
 	{
-		foreach ($parameters as $name => $value) {
-			$this->addParameter($name, $value);
-		}
+		parent::__construct($params, 'simple.php');
 	}
-
-
-	/**
-	 * @param string
-	 * @param mixed
-	 * @return SimplePhp $this
-	 */
-	public function addParameter($name, $value)
-	{
-		$this->parameters[$name] = $value;
-		return $this;
-	}
-
-
-	/**
-	 * @return array name => value
-	 */
-	public function getParameters()
-	{
-		return $this->parameters;
-	}
-
-
-	/**
-	 * Unique extension name.
-	 * @return string
-	 */
-	public function getName()
-	{
-		return 'simple.php';
-	}
-
-
-	/**
-	 * @param  File
-	 * @return int number of queries
-	 */
-	public function execute(File $sql)
-	{
-		extract($this->getParameters());
-		return include $sql->getPath();
-	}
-
 }

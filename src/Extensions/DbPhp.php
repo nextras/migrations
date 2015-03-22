@@ -9,20 +9,16 @@
 
 namespace Nextras\Migrations\Extensions;
 
-use Nette\Database\Context;
+use Nette;
 
 
-class DbPhp extends SimplePhp
+/**
+ * @deprecated
+ */
+class DbPhp extends PhpHandler
 {
-
-	public function __construct(Context $context)
+	public function __construct(Nette\Database\Context $context)
 	{
-		parent::__construct(array('db' => $context));
+		parent::__construct(['db' => $context], 'db.php');
 	}
-
-	public function getName()
-	{
-		return 'db.php';
-	}
-
 }
