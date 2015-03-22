@@ -20,4 +20,4 @@ before_script:
     - composer install --no-interaction
 
 script:
-    - ./vendor/bin/tester -p php -s -c ./tests/php.ini ./tests/cases
+    - ./tests/run.sh ./tests/cases
