@@ -13,6 +13,16 @@ Implemented drivers for:
 - Nette Database **MySQL**
 - Nette Database **PostgreSQL**
 
+Installation
+------------
+Add to your composer.json:
+
+```
+"require-dev": {
+	"nextras/migrations": "@dev"
+}
+```
+
 Workflow
 --------
 ```php
