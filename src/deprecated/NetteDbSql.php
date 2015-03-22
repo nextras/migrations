@@ -22,6 +22,7 @@ class NetteDbSql extends SqlHandler
 {
 	public function __construct(Nette\Database\Context $context)
 	{
+		trigger_error(sprintf('Class %s is deprecated, use class SqlHandler instead.', __CLASS__), E_USER_DEPRECATED);
 		$connection = $context->getConnection();
 		$driver = $connection->getSupplementalDriver();
 		$dbal = new NetteAdapter($connection);

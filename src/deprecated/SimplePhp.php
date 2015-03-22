@@ -16,6 +16,7 @@ class SimplePhp extends PhpHandler
 {
 	public function __construct(array $params = [])
 	{
+		trigger_error(sprintf('Class %s is deprecated, use class PhpHandler instead.', __CLASS__), E_USER_DEPRECATED);
 		parent::__construct($params, 'simple.php');
 	}
 }

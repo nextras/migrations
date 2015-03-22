@@ -19,6 +19,7 @@ class DbPhp extends PhpHandler
 {
 	public function __construct(Nette\Database\Context $context)
 	{
+		trigger_error(sprintf('Class %s is deprecated, use class PhpHandler instead.', __CLASS__), E_USER_DEPRECATED);
 		parent::__construct(['db' => $context], 'db.php');
 	}
 }
