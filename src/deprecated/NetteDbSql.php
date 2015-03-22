@@ -37,4 +37,10 @@ class NetteDbSql extends SqlHandler
 			throw new \LogicException();
 		}
 	}
+
+
+	public function getName()
+	{
+		return 'sql';
+	}
 }

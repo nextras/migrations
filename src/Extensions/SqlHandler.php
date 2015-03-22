@@ -23,29 +23,13 @@ class SqlHandler implements IExtensionHandler
 	/** @var IDriver */
 	private $driver;
 
-	/** @var string */
-	private $extension;
-
 
 	/**
 	 * @param IDriver $driver
-	 * @param string  $extension
 	 */
-	public function __construct(IDriver $driver, $extension = 'sql')
+	public function __construct(IDriver $driver)
 	{
 		$this->driver = $driver;
-		$this->extension = $extension;
-	}
-
-
-	/**
-	 * Unique extension name.
-	 *
-	 * @return string
-	 */
-	public function getName()
-	{
-		return $this->extension;
 	}
 
 

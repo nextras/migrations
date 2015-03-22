@@ -22,15 +22,10 @@ class PhpHandler implements IExtensionHandler
 	/** @var array name => value */
 	private $params = [];
 
-	/** @var string */
-	private $extension;
-
-
 	/**
 	 * @param array  $params name => value
-	 * @param string $extension
 	 */
-	public function __construct(array $params = [], $extension = 'php')
+	public function __construct(array $params = [])
 	{
 		foreach ($params as $name => $value) {
 			$this->addParameter($name, $value);
@@ -56,16 +51,6 @@ class PhpHandler implements IExtensionHandler
 	public function getParameters()
 	{
 		return $this->params;
-	}
-
-
-	/**
-	 * Unique extension name.
-	 * @return string
-	 */
-	public function getName()
-	{
-		return $this->extension;
 	}
 
 
