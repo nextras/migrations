@@ -12,11 +12,17 @@ matrix:
     allow_failures:
         - php: 7.0
 
-env:
-    - PHP_BIN=php
-
 before_script:
+    - cp ./tests/php-unix.sample.ini ./tests/php.ini
+    - if [ "$TRAVIS_PHP_VERSION" == "hhvm" -o "$TRAVIS_PHP_VERSION" == "hhvm-nightly" ]; then cp ./tests/dbals.hhvm.ini ./tests/dbals.ini; fi
+    - if ! [ "$TRAVIS_PHP_VERSION" == "hhvm" -o "$TRAVIS_PHP_VERSION" == "hhvm-nightly" ]; then cp ./tests/dbals.sample.ini ./tests/dbals.ini; fi
+    - cp ./tests/drivers.sample.ini ./tests/drivers.ini
+
+    - psql -c 'CREATE DATABASE nextras_migrations_test' -U postgres
+    - mysql -e 'CREATE DATABASE nextras_migrations_test;'
+    - mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
+
     - composer install --no-interaction
 
 script:
-    - ./vendor/bin/tester -p $PHP_BIN -s ./tests/cases
+    - ./tests/run.sh ./tests/cases

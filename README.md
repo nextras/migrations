@@ -18,10 +18,11 @@ Workflow
 ```php
 // prepare driver
 $connection = new Nette\Database\Connection('mysql:dbname=testdb', 'root', 'root');
-$context = new Nette\Database\Context($connection);
-$driver = new Nextras\Migrations\Drivers\MySqlNetteDbDriver($context, 'migrations');
+$dbal = new Nextras\Migrations\Dbal\NetteAdapter($connection);
+
+$driver = new Nextras\Migrations\Drivers\MySqlDriver($dbal, 'migrations');
 // PostgreSQL driver with optional schema
-$driver = new Nextras\Migrations\Drivers\PgSqlNetteDbDriver($context, 'migrations', 'customSchema');
+$driver = new Nextras\Migrations\Drivers\PgSqlDriver($dbal, 'migrations', 'customSchema');
 
 // create controller
 // choose http or cli controller

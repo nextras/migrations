@@ -4,12 +4,20 @@
 	"type": "library",
 	"license": "BSD-3-Clause",
 	"require": {
-		"php": ">=5.4",
-		"nette/database": "~2.2"
+		"php": ">=5.4"
 	},
 	"require-dev": {
+		"dibi/dibi": "~2.3",
+		"nette/database": "~2.2",
 		"nette/tester": "~1.3",
-		"mockery/mockery": "~0.9"
+		"nextras/dbal": "@dev",
+		"mockery/mockery": "~0.9",
+		"ext-openssl": "*"
+	},
+	"suggest": {
+		"dibi/dibi": "to use DibiAdapter",
+		"nette/database": "to use NetteAdapter",
+		"nextras/dbal": "to use NextrasAdapter"
 	},
 	"extra": {
 		"branch-alias": {
@@ -18,6 +26,6 @@
 	},
 	"autoload": {
 		"psr-4": { "Nextras\\Migrations\\": "src/" },
-		"classmap": ["src/exceptions.php"]
+		"classmap": ["src/exceptions.php", "src/deprecated"]
 	}
 }

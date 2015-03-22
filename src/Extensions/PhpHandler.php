@@ -15,42 +15,47 @@ use Nextras\Migrations\IExtensionHandler;
 
 /**
  * @author Petr Procházka
+ * @author Jan Tvrdík
  */
-class SimplePhp implements IExtensionHandler
+class PhpHandler implements IExtensionHandler
 {
 	/** @var array name => value */
-	private $parameters = array();
+	private $params = [];
+
+	/** @var string */
+	private $extension;
 
 
 	/**
-	 * @param array name => value
+	 * @param array  $params name => value
+	 * @param string $extension
 	 */
-	public function __construct(array $parameters = array())
+	public function __construct(array $params = [], $extension = 'php')
 	{
-		foreach ($parameters as $name => $value) {
+		foreach ($params as $name => $value) {
 			$this->addParameter($name, $value);
 		}
 	}
 
 
 	/**
-	 * @param string
-	 * @param mixed
-	 * @return SimplePhp $this
+	 * @param  string $name
+	 * @param  mixed  $value
+	 * @return self
 	 */
 	public function addParameter($name, $value)
 	{
-		$this->parameters[$name] = $value;
+		$this->params[$name] = $value;
 		return $this;
 	}
 
 
 	/**
-	 * @return array name => value
+	 * @return array (name => value)
 	 */
 	public function getParameters()
 	{
-		return $this->parameters;
+		return $this->params;
 	}
 
 
@@ -60,17 +65,13 @@ class SimplePhp implements IExtensionHandler
 	 */
 	public function getName()
 	{
-		return 'simple.php';
+		return $this->extension;
 	}
 
 
-	/**
-	 * @param  File
-	 * @return int number of queries
-	 */
 	public function execute(File $sql)
 	{
-		extract($this->getParameters());
+		extract($this->params);
 		return include $sql->getPath();
 	}
 
