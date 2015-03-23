@@ -9,18 +9,17 @@
 
 namespace Nextras\Migrations;
 
-
-abstract class Exception extends \Exception
+interface Exception
 {
 }
 
 
-abstract class RuntimeException extends Exception
+abstract class RuntimeException extends \RuntimeException implements Exception
 {
 }
 
 
-class LogicException extends Exception
+class LogicException extends \LogicException implements Exception
 {
 }
 
