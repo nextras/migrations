@@ -33,7 +33,7 @@ abstract class BaseDriver implements IDriver
 	 * @param IDbal  $dbal
 	 * @param string $tableName
 	 */
-	public function __construct(IDbal $dbal, $tableName)
+	public function __construct(IDbal $dbal, $tableName = 'migrations')
 	{
 		$this->dbal = $dbal;
 		$this->tableName = $dbal->escapeIdentifier($tableName);

@@ -38,7 +38,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	 * @param string $tableName
 	 * @param string $schema
 	 */
-	public function __construct(IDbal $dbal, $tableName, $schema = 'public')
+	public function __construct(IDbal $dbal, $tableName = 'migrations', $schema = 'public')
 	{
 		parent::__construct($dbal, $tableName);
 		$this->schema = $dbal->escapeIdentifier($schema);
