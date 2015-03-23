@@ -22,8 +22,8 @@ class Finder
 	/**
 	 * Finds files.
 	 *
-	 * @param  Group[]
-	 * @param  string[]
+	 * @param  Group[]  $groups
+	 * @param  string[] $extensions
 	 * @return File[]
 	 * @throws Exception
 	 */
@@ -34,26 +34,34 @@ class Finder
 			if (!$group->enabled) {
 				continue;
 			}
-			$items = @scandir($group->directory); // directory may not exist
-			if ($items === FALSE) {
-				throw new IOException(sprintf('Finder: Directory "%s" does not exist.', $group->directory));
-			}
 
-			foreach ($items as $fileName) {
-				if ($fileName[0] === '.') {
-					continue; // skip '.', '..' and hidden files
-				}
-
+			foreach ($this->getFilesRecursive($group->directory) as $path) {
 				$file = new File;
 				$file->group = $group;
-				$file->name = $fileName;
+				$file->name = $this->getName($path);
+				$file->path = $group->directory . '/' . $path;
 				$file->extension = $this->getExtension($file, $extensions);
-				$file->checksum = md5_file($group->directory . '/' . $file->name);
+				$file->checksum = $this->getChecksum($file);
 
 				$files[] = $file;
 			}
 		}
 		return $files;
+	}
+
+
+	/**
+	 * Returns logical name of migration file.
+	 * @param  string $path relative path to group directory
+	 * @return string
+	 */
+	protected function getName($path)
+	{
+		$parts = explode('/', $path);
+		$dirName = implode('-', array_slice($parts, 0, -1));
+		$fileName = implode('-', array_slice($parts, -1));
+		$isPrefix = strncmp($fileName, $dirName, strlen($dirName)) === 0;
+		return ($isPrefix ? $fileName : "$dirName-$fileName");
 	}
 
 
@@ -64,7 +72,7 @@ class Finder
 	 * @return string
 	 * @throws Exception
 	 */
-	private function getExtension(File $file, array $extensions)
+	protected function getExtension(File $file, array $extensions)
 	{
 		$fileExt = NULL;
 
@@ -90,6 +98,57 @@ class Finder
 		}
 
 		return $fileExt;
+	}
+
+
+	/**
+	 * @param  File $file
+	 * @return string
+	 */
+	protected function getChecksum($file)
+	{
+		return md5_file($file->path);
+	}
+
+
+	/**
+	 * @param  string  $dir
+	 * @return string[]
+	 * @throws IOException
+	 */
+	protected function getFilesRecursive($dir)
+	{
+		$items = $this->getItems($dir);
+		foreach ($items as $i => $item) {
+			// skip '.', '..' and hidden files
+			if ($item[0] === '.') {
+				unset($items[$i]);
+
+			// year or month
+			} elseif (ctype_digit($item) /*&& is_dir($item)*/) {
+				unset($items[$i]);
+				foreach ($this->getFilesRecursive("$dir/$item") as $subItem) {
+					$items[] = "$item/$subItem";
+				}
+			}
+		}
+
+		return array_values($items);
+	}
+
+
+	/**
+	 * @param  string $dir
+	 * @return array
+	 * @throws IOException
+	 */
+	protected function getItems($dir)
+	{
+		$items = @scandir($dir); // directory may not exist
+		if ($items === FALSE) {
+			throw new IOException(sprintf('Finder: Directory "%s" does not exist.', $dir));
+		}
+		return $items;
 	}
 
 }
