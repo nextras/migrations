@@ -21,7 +21,6 @@ use Nextras\Migrations\IOException;
  */
 abstract class BaseDriver implements IDriver
 {
-
 	/** @var IDbal */
 	protected $dbal;
 

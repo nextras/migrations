@@ -17,7 +17,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 class FirstRunTest extends IntegrationTestCase
 {
-
 	public function testReset()
 	{
 		$this->runner->run(Runner::MODE_RESET);
@@ -59,6 +58,7 @@ class FirstRunTest extends IntegrationTestCase
 		$this->runner->run(Runner::MODE_INIT);
 		Assert::matchFile(__DIR__ . "/Runner.FirstRun.init.$options[driver].txt", $this->printer->out);
 	}
+
 }
 
 

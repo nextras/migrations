@@ -104,4 +104,5 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			throw new Nextras\Migrations\LogicException('Invalid dbal value');
 		}
 	}
+
 }

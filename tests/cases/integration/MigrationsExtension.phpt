@@ -6,7 +6,6 @@
 
 namespace NextrasTests\Migrations;
 
-use DibiConnection;
 use Nette;
 use Nextras\Migrations\Bridges\NetteDI\MigrationsExtension;
 use Tester;

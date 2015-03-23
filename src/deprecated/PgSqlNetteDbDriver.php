@@ -23,4 +23,5 @@ class PgSqlNetteDbDriver extends PgSqlDriver
 		trigger_error(sprintf('Class %s is deprecated, use class PgSqlDriver instead.', __CLASS__), E_USER_DEPRECATED);
 		parent::__construct(new NetteAdapter($context->getConnection()), $tableName, $schema);
 	}
+
 }

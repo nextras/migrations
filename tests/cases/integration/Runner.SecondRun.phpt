@@ -17,7 +17,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 class SecondRunTest extends IntegrationTestCase
 {
-
 	public function testReset()
 	{
 		$this->driver->loadFile($this->fixtureDir . '/3ok.sql');
@@ -80,6 +79,7 @@ class SecondRunTest extends IntegrationTestCase
 		$this->runner->run(Runner::MODE_INIT);
 		Assert::matchFile(__DIR__ . "/Runner.FirstRun.init.$options[driver].txt", $this->printer->out);
 	}
+
 }
 
 

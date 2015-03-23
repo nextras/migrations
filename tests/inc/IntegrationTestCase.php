@@ -134,7 +134,6 @@ abstract class IntegrationTestCase extends TestCase
 				]));
 
 			case 'nette':
-				var_dump("$options[driver]:host=$options[host];dbname=$options[database]");
 				return new NetteAdapter(new Nette\Database\Connection(
 					"$options[driver]:host=$options[host];dbname=$options[database]",
 					$options['username'],

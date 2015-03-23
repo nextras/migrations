@@ -8,7 +8,6 @@ namespace NextrasTests\Migrations;
 
 use Mockery;
 use Nextras\Migrations\Engine\Finder;
-use Nextras\Migrations\Entities\File;
 use Nextras\Migrations\Entities\Group;
 use Tester;
 use Tester\Assert;

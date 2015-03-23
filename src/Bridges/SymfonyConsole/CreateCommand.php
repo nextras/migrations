@@ -20,7 +20,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateCommand extends BaseCommand
 {
-
 	protected function configure()
 	{
 		$this->setName('migrations:create');

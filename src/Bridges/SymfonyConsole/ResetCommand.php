@@ -19,7 +19,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ResetCommand extends BaseCommand
 {
-
 	protected function configure()
 	{
 		$this->setName('migrations:reset');

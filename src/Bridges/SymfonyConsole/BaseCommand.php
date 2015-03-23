@@ -19,7 +19,6 @@ use Symfony\Component\Console\Command\Command;
 
 abstract class BaseCommand extends Command
 {
-
 	/** @var IDriver */
 	private $driver;
 
@@ -104,4 +103,5 @@ abstract class BaseCommand extends Command
 			'php' => new Extensions\PhpHandler($this->phpParams),
 		];
 	}
+
 }

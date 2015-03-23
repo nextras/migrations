@@ -1,6 +1,10 @@
 <?php
 
-namespace Nextras\Migrations\Tests;
+/**
+ * @testCase
+ */
+
+namespace NextrasTests\Migrations;
 
 use Nextras\Migrations\Engine\OrderResolver;
 use Nextras\Migrations\Engine\Runner;
@@ -11,16 +15,11 @@ use Mockery;
 use Tester;
 use Tester\Assert;
 
-
 require __DIR__ . '/../../bootstrap.php';
 
 
-/**
- * @testCase
- */
 class OrderResolverTest extends Tester\TestCase
 {
-
 	public function testFirstRun()
 	{
 		$resolver = new OrderResolver;

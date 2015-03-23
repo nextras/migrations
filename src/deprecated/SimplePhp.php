@@ -25,4 +25,5 @@ class SimplePhp extends PhpHandler
 	{
 		return 'simple.php';
 	}
+
 }

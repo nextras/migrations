@@ -19,7 +19,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ContinueCommand extends BaseCommand
 {
-
 	protected function configure()
 	{
 		$this->setName('migrations:continue');

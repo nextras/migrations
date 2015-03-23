@@ -43,4 +43,5 @@ class NetteDbSql extends SqlHandler
 	{
 		return 'sql';
 	}
+
 }

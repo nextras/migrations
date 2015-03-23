@@ -17,7 +17,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 class EmptyRunTest extends IntegrationTestCase
 {
-
 	public function testReset()
 	{
 		$this->runner->run(Runner::MODE_RESET);
@@ -35,6 +34,7 @@ class EmptyRunTest extends IntegrationTestCase
 	{
 		return [];
 	}
+
 }
 
 

@@ -18,7 +18,6 @@ use Nextras\Migrations\LogicException;
 
 class Finder
 {
-
 	/**
 	 * Finds files.
 	 *
