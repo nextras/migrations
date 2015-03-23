@@ -100,9 +100,9 @@ class Runner
 			if ($mode === self::MODE_RESET) {
 				$this->driver->emptyDatabase();
 				$this->printer->printReset();
-				$this->driver->createTable();
 			}
 
+			$this->driver->createTable();
 			$migrations = $this->driver->getAllMigrations();
 			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
 			$toExecute = $this->orderResolver->resolve($migrations, $this->groups, $files, $mode);

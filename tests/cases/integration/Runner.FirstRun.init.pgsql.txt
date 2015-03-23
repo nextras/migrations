@@ -1,4 +1,4 @@
-CREATE TABLE "%a%"."m" (
+CREATE TABLE IF NOT EXISTS "%a%"."m" (
 	"id" serial4 NOT NULL,
 	"group" varchar(100) NOT NULL,
 	"file" varchar(100) NOT NULL,
