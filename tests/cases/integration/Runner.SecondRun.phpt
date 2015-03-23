@@ -78,7 +78,7 @@ class SecondRunTest extends IntegrationTestCase
 		$options = Tester\Environment::loadData();
 		$this->driver->loadFile($this->fixtureDir . '/3ok.sql');
 		$this->runner->run(Runner::MODE_INIT);
-		Assert::matchFile(__DIR__ . "/FirstRun.init.$options[driver].txt", $this->printer->out);
+		Assert::matchFile(__DIR__ . "/Runner.FirstRun.init.$options[driver].txt", $this->printer->out);
 	}
 }
 
