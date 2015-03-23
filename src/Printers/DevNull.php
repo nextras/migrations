@@ -20,7 +20,6 @@ use Nextras\Migrations\IPrinter;
  */
 class DevNull implements IPrinter
 {
-
 	public function printReset()
 	{
 

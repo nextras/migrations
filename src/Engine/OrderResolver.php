@@ -18,7 +18,6 @@ use Nextras\Migrations\LogicException;
 
 class OrderResolver
 {
-
 	/**
 	 * @param  Migration[]
 	 * @param  Group[]

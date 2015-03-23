@@ -22,16 +22,13 @@ class File
 	/** @var string */
 	public $extension;
 
-	/** @var string */
+	/** @var string logical name, may or may not correspond to filename */
 	public $name;
+
+	/** @var string absolute path */
+	public $path;
 
 	/** @var string */
 	public $checksum;
-
-
-	public function getPath()
-	{
-		return $this->group->directory . '/' . $this->name;
-	}
 
 }

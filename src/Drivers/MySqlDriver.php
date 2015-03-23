@@ -22,7 +22,6 @@ use Nextras\Migrations\LockException;
  */
 class MySqlDriver extends BaseDriver implements IDriver
 {
-
 	public function setupConnection()
 	{
 		$this->dbal->query('SET NAMES "utf8"');

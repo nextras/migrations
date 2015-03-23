@@ -28,4 +28,5 @@ class DbPhp extends PhpHandler
 	{
 		return 'db.php';
 	}
+
 }

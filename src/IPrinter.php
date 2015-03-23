@@ -17,7 +17,6 @@ use Nextras\Migrations\Entities\File;
  */
 interface IPrinter
 {
-
 	/**
 	 * Database has been wiped. Occurs only in reset mode.
 	 */

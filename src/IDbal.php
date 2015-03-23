@@ -17,7 +17,6 @@ use DateTime;
  */
 interface IDbal
 {
-
 	/**
 	 * @param  string $sql
 	 * @return array|NULL list of rows represented by assoc. arrays

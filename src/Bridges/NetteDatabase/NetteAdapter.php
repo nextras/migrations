@@ -7,7 +7,7 @@
  * @link       https://github.com/nextras/migrations
  */
 
-namespace Nextras\Migrations\Dbal;
+namespace Nextras\Migrations\Bridges\NetteDatabase;
 
 use DateTime;
 use Nette\Database\Connection;

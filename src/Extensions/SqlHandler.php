@@ -35,10 +35,9 @@ class SqlHandler implements IExtensionHandler
 
 	public function execute(File $sql)
 	{
-		$path = $sql->getPath();
-		$count = $this->driver->loadFile($path);
+		$count = $this->driver->loadFile($sql->path);
 		if ($count === 0) {
-			throw new LogicException("$path is empty");
+			throw new LogicException("{$sql->path} is empty");
 		}
 		return $count;
 	}

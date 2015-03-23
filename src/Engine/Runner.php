@@ -100,9 +100,9 @@ class Runner
 			if ($mode === self::MODE_RESET) {
 				$this->driver->emptyDatabase();
 				$this->printer->printReset();
-				$this->driver->createTable();
 			}
 
+			$this->driver->createTable();
 			$migrations = $this->driver->getAllMigrations();
 			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
 			$toExecute = $this->orderResolver->resolve($migrations, $this->groups, $files, $mode);
@@ -158,7 +158,7 @@ class Runner
 			$queriesCount = $this->getExtension($file->extension)->execute($file);
 		} catch (\Exception $e) {
 			$this->driver->rollbackTransaction();
-			throw new ExecutionException(sprintf('Executing migration "%s" has failed.', $file->getPath()), NULL, $e);
+			throw new ExecutionException(sprintf('Executing migration "%s" has failed.', $file->path), NULL, $e);
 		}
 
 		$this->driver->markMigrationAsReady($migration);

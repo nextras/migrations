@@ -38,7 +38,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	 * @param string $tableName
 	 * @param string $schema
 	 */
-	public function __construct(IDbal $dbal, $tableName, $schema = 'public')
+	public function __construct(IDbal $dbal, $tableName = 'migrations', $schema = 'public')
 	{
 		parent::__construct($dbal, $tableName);
 		$this->schema = $dbal->escapeIdentifier($schema);
@@ -159,7 +159,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function getInitTableSource()
 	{
 		return preg_replace('#^\t{3}#m', '', trim("
-			CREATE TABLE {$this->schema}.{$this->tableName} (" . '
+			CREATE TABLE IF NOT EXISTS {$this->schema}.{$this->tableName} (" . '
 				"id" serial4 NOT NULL,
 				"group" varchar(100) NOT NULL,
 				"file" varchar(100) NOT NULL,

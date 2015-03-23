@@ -7,7 +7,7 @@
  * @link       https://github.com/nextras/migrations
  */
 
-namespace Nextras\Migrations\Dbal;
+namespace Nextras\Migrations\Bridges\NextrasDbal;
 
 use DateTime;
 use Nextras\Dbal\Connection;
