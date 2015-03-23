@@ -10,7 +10,7 @@
 namespace Nextras\Migrations\Extensions;
 
 use Nette;
-use Nextras\Migrations\Dbal\NetteAdapter;
+use Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter;
 use Nextras\Migrations\Drivers\MySqlDriver;
 use Nextras\Migrations\Drivers\PgSqlDriver;
 

@@ -10,7 +10,7 @@
 namespace Nextras\Migrations\Drivers;
 
 use Nette;
-use Nextras\Migrations\Dbal\NetteAdapter;
+use Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter;
 
 
 /**

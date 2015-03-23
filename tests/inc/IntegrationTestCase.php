@@ -5,8 +5,9 @@ namespace NextrasTests\Migrations;
 use DibiConnection;
 use Nette;
 use Nextras;
-use Nextras\Migrations\Dbal\DibiAdapter;
-use Nextras\Migrations\Dbal\NextrasAdapter;
+use Nextras\Migrations\Bridges\Dibi\DibiAdapter;
+use Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter;
+use Nextras\Migrations\Bridges\NextrasDbal\NextrasAdapter;
 use Nextras\Migrations\Engine\Runner;
 use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\IDbal;
@@ -134,7 +135,7 @@ abstract class IntegrationTestCase extends TestCase
 
 			case 'nette':
 				var_dump("$options[driver]:host=$options[host];dbname=$options[database]");
-				return new Nextras\Migrations\Dbal\NetteAdapter(new Nette\Database\Connection(
+				return new NetteAdapter(new Nette\Database\Connection(
 					"$options[driver]:host=$options[host];dbname=$options[database]",
 					$options['username'],
 					$options['password']
