@@ -1,0 +1,7 @@
+migrations:
+	dir: migrations
+	driver: mysql
+	dbal: Nextras\Migrations\Bridges\Dibi\DibiAdapter(...)
+
+services:
+	- DibiConnection(%dibiConfig%)
