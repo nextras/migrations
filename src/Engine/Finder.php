@@ -105,9 +105,14 @@ class Finder
 	 * @param  File $file
 	 * @return string
 	 */
-	protected function getChecksum($file)
+	protected function getChecksum(File $file)
 	{
-		return md5_file($file->path);
+		$content = @file_get_contents($file->path);
+		if ($content === FALSE) {
+			throw new IOException("Unable to read '$file->path'.");
+		}
+
+		return md5(str_replace(["\r\n", "\r"], "\n", $content));
 	}
 
 
