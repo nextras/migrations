@@ -10,53 +10,11 @@
 namespace Nextras\Migrations\Controllers;
 
 use Nextras\Migrations\Engine;
-use Nextras\Migrations\Entities\Group;
-use Nextras\Migrations\IDriver;
-use Nextras\Migrations\IExtensionHandler;
 use Nextras\Migrations\Printers;
-use Tester\Runner\Runner;
 
 
-class ConsoleController
+class ConsoleController extends BaseController
 {
-	/** @var Engine\Runner */
-	private $runner;
-
-	/** @var string */
-	private $mode;
-
-	/** @var array (name => Group) */
-	private $groups;
-
-
-	public function __construct(IDriver $driver)
-	{
-		$printer = new Printers\Console;
-		$this->runner = new Engine\Runner($driver, $printer);
-		$this->mode = Engine\Runner::MODE_CONTINUE;
-	}
-
-
-	public function addGroup($name, $dir, array $dependencies = array())
-	{
-		$group = new Group;
-		$group->name = $name;
-		$group->directory = $dir;
-		$group->dependencies = $dependencies;
-		$group->enabled = FALSE;
-
-		$this->groups[$name] = $group;
-		return $this;
-	}
-
-
-	public function addExtension($extension, IExtensionHandler $handler)
-	{
-		$this->runner->addExtensionHandler($extension, $handler);
-		return $this;
-	}
-
-
 	public function run()
 	{
 		$this->processArguments();
@@ -95,7 +53,6 @@ class ConsoleController
 					fprintf(STDERR, "Warning: Unknown option '%s'\n", $argument);
 					continue;
 				}
-
 			} else {
 				if (isset($this->groups[$argument])) {
 					$this->groups[$argument]->enabled = TRUE;
@@ -131,11 +88,8 @@ class ConsoleController
 	}
 
 
-	private function registerGroups()
+	protected function createPrinter()
 	{
-		foreach ($this->groups as $group) {
-			$this->runner->addGroup($group);
-		}
+		return new Printers\Console();
 	}
-
 }
