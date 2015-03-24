@@ -1,62 +1,59 @@
 Nextras\Migrations
 ##################
 
-* **Supported databases:**
-	* MySQL
-	* PostgreSQL
-* **Supported DBALs:**
-	* "dibi":https://github.com/dg/dibi
-	* "Doctrine DBAL":https://github.com/doctrine/dbal
-	* "Nette Database":https://github.com/nette/database
-	* "Nextras DBAL":https://github.com/nextras/dbal
+*Based on "Clevis\Migration":https://github.com/clevis/migration by Petr Procházka and further improved.*
+
+**Supported databases:**
+* MySQL
+* PostgreSQL
+
+**Supported DBALs:**
+* "dibi":https://github.com/dg/dibi
+* "Doctrine DBAL":https://github.com/doctrine/dbal
+* "Nette Database":https://github.com/nette/database
+* "Nextras DBAL":https://github.com/nextras/dbal
 
 
-Using as Symfony commands
+Using as Symfony Commands
 =========================
 
+Configuration with "Nette DI":https://github.com/nette/di and "Kdyby/Console":https://github.com/kdyby/console
+--------------------------------------------------------------------------------------------------------------
 
-Installation with "Kdyby/Console":https://github.com/kdyby/console and "Nette DI":https://github.com/nette/di
----------------------------------------------------------------------------------------------------------------
+Register and configure `MigrationsExtension` in `config.neon`:
 
-* Install package with Composer
-	/---
-	composer require nextras/migrations
-	\---
+/--neon
+extensions:
+	migrations: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
 
-* Register and configure "Nette DI":https://github.com/nette/di extension in `config.neon`:
-	/--neon
-	extensions:
-		migrations: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
-
-	migrations:
-		dir: %appDir%/../migrations # migrations base directory
-		driver: mysql               # mysql or pgsql
-		dbal: dibi                  # dibi, doctrine, nette or nextras
-	\--
+migrations:
+	dir: %appDir%/../migrations # migrations base directory
+	driver: mysql               # mysql or pgsql
+	dbal: dibi                  # dibi, doctrine, nette or nextras
+\--
 
 
-Basic usage
--------------------------------
+Basic Usage
+-----------
 
 * Create new migrations with `migrations:create` command.
 * Run new migrations with `migrations:continue` command.
 * Drop database and run all migrations with `migrations:restart` command.
 
 
-Low-level
-==========
+Low-level Usage
+===============
 
-* Install package with Composer
-	/--
-	composer require nextras/migrations
-	\--
-
-* Create new PHP file (e.g. migrations.php) with the following content:
+Create new PHP file (e.g. `./migrations/run.php`) with the following content:
 
 /--php
 use Nextras\Migrations\Bridges;
-use Nextras\Migrations\Drivers;
 use Nextras\Migrations\Controllers;
+use Nextras\Migrations\Drivers;
+use Nextras\Migrations\Extensions;
+
+require __DIR__ . '/../vendor/autoload.php';
+
 
 $conn = new DibiConnection(...);
 // or   new Doctrine\Dbal\Connection(...);
@@ -79,6 +76,41 @@ $baseDir = __DIR__;
 $controller->addGroup('structures', "$baseDir/structures");
 $controller->addGroup('basic-data', "$baseDir/basic-data", ['structures']);
 $controller->addGroup('dummy-data', "$baseDir/dummy-data", ['basic-data']);
+$controller->addExtension('sql', new Extensions\SqlHandler($driver));
 
 $controller->run();
+\--
+
+
+Organizing Migrations
+=====================
+
+The following structure is recommended and used by Symfony commands by default:
+
+/--
+migrations
+├── basic-data   # for both testing and production
+│   ├── 2015-03-16-170342-languages.sql  # YYYY-MM-DD-HHMMSS-label.extension
+│   └── ...
+├── dummy-data   # for testing on localhost
+│   ├── 2015-03-17-104235-users.sql
+│   └── ...
+├── structures   # create, alter tables...
+│   ├── 2015-03-17-155419-users.sql
+│   └── ...
+└── run.php      # start script if you don't use Symfony commands
+\--
+
+Optionally you can use **deep directory structure** which is suitable if you have a lot of migrations:
+
+/--
+migrations/
+├── basic-data/
+│   └── 2015/
+│       ├── 03/
+│       │   ├── 2015-03-16-170342-languages.sql
+│       │   └── ...
+│       └── 04/
+│           └── ...
+└── ...
 \--
