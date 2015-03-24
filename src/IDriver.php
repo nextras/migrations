@@ -99,7 +99,7 @@ interface IDriver
 
 
 	/**
-	 * Returns all migrations stored in migration table.
+	 * Returns all migrations stored in migration table sorted by time.
 	 * @return Migration[]
 	 */
 	function getAllMigrations();

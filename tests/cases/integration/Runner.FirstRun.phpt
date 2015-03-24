@@ -31,7 +31,26 @@ class FirstRunTest extends IntegrationTestCase
 			'OK',
 		], $this->printer->lines);
 
-		Assert::count(5, $this->driver->getAllMigrations());
+		$migrations = $this->driver->getAllMigrations();
+		Assert::count(5, $migrations);
+
+		Assert::same('001.sql', $migrations[0]->filename);
+		Assert::type('string', $migrations[0]->checksum);
+		Assert::same(TRUE, $migrations[0]->completed);
+		Assert::type('DateTime', $migrations[0]->executedAt);
+		Assert::same('structures', $migrations[0]->group);
+
+		Assert::same('002.sql', $migrations[1]->filename);
+		Assert::type('string', $migrations[1]->checksum);
+		Assert::same(TRUE, $migrations[1]->completed);
+		Assert::type('DateTime', $migrations[1]->executedAt);
+		Assert::same('structures', $migrations[1]->group);
+
+		Assert::same('003.sql', $migrations[2]->filename);
+		Assert::type('string', $migrations[2]->checksum);
+		Assert::same(TRUE, $migrations[2]->completed);
+		Assert::type('DateTime', $migrations[2]->executedAt);
+		Assert::same('basic-data', $migrations[2]->group);
 	}
 
 
@@ -48,7 +67,26 @@ class FirstRunTest extends IntegrationTestCase
 			'OK',
 		], $this->printer->lines);
 
-		Assert::count(5, $this->driver->getAllMigrations());
+		$migrations = $this->driver->getAllMigrations();
+		Assert::count(5, $migrations);
+
+		Assert::same('001.sql', $migrations[0]->filename);
+		Assert::type('string', $migrations[0]->checksum);
+		Assert::same(TRUE, $migrations[0]->completed);
+		Assert::type('DateTime', $migrations[0]->executedAt);
+		Assert::same('structures', $migrations[0]->group);
+
+		Assert::same('002.sql', $migrations[1]->filename);
+		Assert::type('string', $migrations[1]->checksum);
+		Assert::same(TRUE, $migrations[1]->completed);
+		Assert::type('DateTime', $migrations[1]->executedAt);
+		Assert::same('structures', $migrations[1]->group);
+
+		Assert::same('003.sql', $migrations[2]->filename);
+		Assert::type('string', $migrations[2]->checksum);
+		Assert::same(TRUE, $migrations[2]->completed);
+		Assert::type('DateTime', $migrations[2]->executedAt);
+		Assert::same('basic-data', $migrations[2]->group);
 	}
 
 

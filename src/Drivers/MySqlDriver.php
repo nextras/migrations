@@ -125,7 +125,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	public function getAllMigrations()
 	{
 		$migrations = array();
-		$result = $this->dbal->query("SELECT * FROM {$this->tableName}");
+		$result = $this->dbal->query("SELECT * FROM {$this->tableName} ORDER BY `executed`");
 		foreach ($result as $row) {
 			$migration = new Migration;
 			$migration->id = $row['id'];
