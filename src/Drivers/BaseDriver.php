@@ -85,7 +85,7 @@ abstract class BaseDriver implements IDriver
 					$q = substr($query, 0, $match[0][1]);
 
 					$queries++;
-					$this->dbal->query($q);
+					$this->dbal->exec($q);
 
 					$query = substr($query, $offset);
 					$offset = 0;

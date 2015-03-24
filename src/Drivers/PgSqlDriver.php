@@ -54,33 +54,33 @@ class PgSqlDriver extends BaseDriver implements IDriver
 
 	public function emptyDatabase()
 	{
-		$this->dbal->query("DROP SCHEMA IF EXISTS {$this->schema} CASCADE");
-		$this->dbal->query("CREATE SCHEMA {$this->schema}");
+		$this->dbal->exec("DROP SCHEMA IF EXISTS {$this->schema} CASCADE");
+		$this->dbal->exec("CREATE SCHEMA {$this->schema}");
 	}
 
 
 	public function beginTransaction()
 	{
-		$this->dbal->query('START TRANSACTION');
+		$this->dbal->exec('START TRANSACTION');
 	}
 
 
 	public function commitTransaction()
 	{
-		$this->dbal->query('COMMIT');
+		$this->dbal->exec('COMMIT');
 	}
 
 
 	public function rollbackTransaction()
 	{
-		$this->dbal->query('ROLLBACK');
+		$this->dbal->exec('ROLLBACK');
 	}
 
 
 	public function lock()
 	{
 		try {
-			$this->dbal->query("CREATE TABLE {$this->schema}.{$this->lockTableName} (\"foo\" INT)");
+			$this->dbal->exec("CREATE TABLE {$this->schema}.{$this->lockTableName} (\"foo\" INT)");
 		} catch (\Exception $e) {
 			throw new LockException('Unable to acquire a lock.', NULL, $e);
 		}
@@ -90,7 +90,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function unlock()
 	{
 		try {
-			$this->dbal->query("DROP TABLE IF EXISTS {$this->schema}.{$this->lockTableName}");
+			$this->dbal->exec("DROP TABLE IF EXISTS {$this->schema}.{$this->lockTableName}");
 		} catch (\Exception $e) {
 			throw new LockException('Unable to release a lock.', NULL, $e);
 		}
@@ -99,19 +99,19 @@ class PgSqlDriver extends BaseDriver implements IDriver
 
 	public function createTable()
 	{
-		$this->dbal->query($this->getInitTableSource());
+		$this->dbal->exec($this->getInitTableSource());
 	}
 
 
 	public function dropTable()
 	{
-		$this->dbal->query("DROP TABLE {$this->schema}.{$this->tableName}");
+		$this->dbal->exec("DROP TABLE {$this->schema}.{$this->tableName}");
 	}
 
 
 	public function insertMigration(Migration $migration)
 	{
-		$this->dbal->query("
+		$this->dbal->exec("
 			INSERT INTO {$this->schema}.{$this->tableName}" . '
 			("group", "file", "checksum", "executed", "ready") VALUES (' .
 				$this->dbal->escapeString($migration->group) . "," .
@@ -128,7 +128,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 
 	public function markMigrationAsReady(Migration $migration)
 	{
-		$this->dbal->query("
+		$this->dbal->exec("
 			UPDATE {$this->schema}.{$this->tableName}" . '
 			SET "ready" = TRUE
 			WHERE "id" = ' . $this->dbal->escapeInt($migration->id)

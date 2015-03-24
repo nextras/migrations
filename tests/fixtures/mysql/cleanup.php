@@ -1,5 +1,5 @@
 <?php
 
 return function() {
-	$this->dbal->query('DROP DATABASE IF EXISTS ' . $this->dbal->escapeIdentifier($this->dbName));
+	$this->dbal->exec('DROP DATABASE IF EXISTS ' . $this->dbal->escapeIdentifier($this->dbName));
 };

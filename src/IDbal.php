@@ -19,9 +19,16 @@ interface IDbal
 {
 	/**
 	 * @param  string $sql
-	 * @return array|NULL list of rows represented by assoc. arrays
+	 * @return array list of rows represented by assoc. arrays
 	 */
 	function query($sql);
+
+
+	/**
+	 * @param  string $sql
+	 * @return int number of affected rows
+	 */
+	function exec($sql);
 
 
 	/**

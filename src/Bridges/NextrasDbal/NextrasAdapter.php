@@ -31,13 +31,17 @@ class NextrasAdapter implements IDbal
 
 	public function query($sql)
 	{
-		$result = $this->connection->query('%raw', $sql);
-		if ($result !== NULL) {
-			return array_map(
-				function (Row $row) { return $row->toArray(); },
-				iterator_to_array($result)
-			);
-		}
+		return array_map(
+			function (Row $row) { return $row->toArray(); },
+			iterator_to_array($this->connection->query('%raw', $sql))
+		);
+	}
+
+
+	public function exec($sql)
+	{
+		$this->connection->query('%raw', $sql);
+		return $this->connection->getAffectedRows();
 	}
 
 

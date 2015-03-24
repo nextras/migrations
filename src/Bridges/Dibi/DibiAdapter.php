@@ -31,10 +31,14 @@ class DibiAdapter implements IDbal
 	public function query($sql)
 	{
 		$result = $this->dibi->nativeQuery($sql);
-		if ($result instanceof DibiResult) {
-			$result->setRowFactory(function (array $row) { return $row; });
-			return $result->fetchAll();
-		}
+		$result->setRowFactory(function (array $row) { return $row; });
+		return $result->fetchAll();
+	}
+
+
+	public function exec($sql)
+	{
+		return $this->dibi->nativeQuery($sql);
 	}
 
 

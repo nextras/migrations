@@ -2,6 +2,6 @@
 
 return function () {
 	$dbName = $this->dbal->escapeIdentifier($this->dbName);
-	$this->dbal->query('CREATE DATABASE ' . $dbName);
-	$this->dbal->query('USE ' . $dbName);
+	$this->dbal->exec('CREATE DATABASE ' . $dbName);
+	$this->dbal->exec('USE ' . $dbName);
 };

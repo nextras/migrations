@@ -30,13 +30,16 @@ class NetteAdapter implements IDbal
 
 	public function query($sql)
 	{
-		$result = $this->ndb->query($sql);
-		if ($result->getColumnCount() > 0) {
-			return array_map(
-				function (IRow $row) { return (array) $row; },
-				$result->fetchAll()
-			);
-		}
+		return array_map(
+			function (IRow $row) { return (array) $row; },
+			$this->ndb->query($sql)->fetchAll()
+		);
+	}
+
+
+	public function exec($sql)
+	{
+		return $this->ndb->query($sql)->getRowCount();
 	}
 
 

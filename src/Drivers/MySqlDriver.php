@@ -24,10 +24,10 @@ class MySqlDriver extends BaseDriver implements IDriver
 {
 	public function setupConnection()
 	{
-		$this->dbal->query('SET NAMES "utf8"');
-		$this->dbal->query('SET foreign_key_checks = 0');
-		$this->dbal->query('SET time_zone = "SYSTEM"');
-		$this->dbal->query('SET sql_mode = "TRADITIONAL"');
+		$this->dbal->exec('SET NAMES "utf8"');
+		$this->dbal->exec('SET foreign_key_checks = 0');
+		$this->dbal->exec('SET time_zone = "SYSTEM"');
+		$this->dbal->exec('SET sql_mode = "TRADITIONAL"');
 	}
 
 
@@ -39,27 +39,27 @@ class MySqlDriver extends BaseDriver implements IDriver
 		$rows = $this->dbal->query('SHOW VARIABLES LIKE "collation_database"');
 		$collate = ($rows ? 'COLLATE=' . $this->dbal->escapeString($rows[0]['Value']) : '');
 
-		$this->dbal->query("DROP DATABASE $dbName");
-		$this->dbal->query("CREATE DATABASE $dbName $collate");
-		$this->dbal->query("USE $dbName");
+		$this->dbal->exec("DROP DATABASE $dbName");
+		$this->dbal->exec("CREATE DATABASE $dbName $collate");
+		$this->dbal->exec("USE $dbName");
 	}
 
 
 	public function beginTransaction()
 	{
-		$this->dbal->query('START TRANSACTION');
+		$this->dbal->exec('START TRANSACTION');
 	}
 
 
 	public function commitTransaction()
 	{
-		$this->dbal->query('COMMIT');
+		$this->dbal->exec('COMMIT');
 	}
 
 
 	public function rollbackTransaction()
 	{
-		$this->dbal->query('ROLLBACK');
+		$this->dbal->exec('ROLLBACK');
 	}
 
 
@@ -85,19 +85,19 @@ class MySqlDriver extends BaseDriver implements IDriver
 
 	public function createTable()
 	{
-		$this->dbal->query($this->getInitTableSource());
+		$this->dbal->exec($this->getInitTableSource());
 	}
 
 
 	public function dropTable()
 	{
-		$this->dbal->query("DROP TABLE {$this->tableName}");
+		$this->dbal->exec("DROP TABLE {$this->tableName}");
 	}
 
 
 	public function insertMigration(Migration $migration)
 	{
-		$this->dbal->query("
+		$this->dbal->exec("
 			INSERT INTO {$this->tableName}
 			(`group`, `file`, `checksum`, `executed`, `ready`) VALUES (" .
 				$this->dbal->escapeString($migration->group) . "," .
@@ -114,7 +114,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 
 	public function markMigrationAsReady(Migration $migration)
 	{
-		$this->dbal->query("
+		$this->dbal->exec("
 			UPDATE {$this->tableName}
 			SET `ready` = 1
 			WHERE `id` = " . $this->dbal->escapeInt($migration->id)
