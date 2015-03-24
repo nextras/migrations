@@ -1,26 +1,15 @@
 Nextras\Migrations
 ##################
 
-*Based on "Clevis\Migration":https://github.com/clevis/migration by Petr Procházka and further improved.*
+- **Supported databases:** PostgreSQL, MySQL
+- **Supported DBALs:** "Nextras DBAL":https://github.com/nextras/dbal, "Nette Database":https://github.com/nette/database, "Doctrine DBAL":https://github.com/doctrine/dbal and "dibi":https://github.com/dg/dibi
 
-**Supported databases:**
-* MySQL
-* PostgreSQL
+-------------------------
 
-**Supported DBALs:**
-* "dibi":https://github.com/dg/dibi
-* "Doctrine DBAL":https://github.com/doctrine/dbal
-* "Nette Database":https://github.com/nette/database
-* "Nextras DBAL":https://github.com/nextras/dbal
+Using as Symfony Console Commands
+=================================
 
-
-Using as Symfony Commands
-=========================
-
-Configuration with "Nette DI":https://github.com/nette/di and "Kdyby/Console":https://github.com/kdyby/console
---------------------------------------------------------------------------------------------------------------
-
-Register and configure `MigrationsExtension` in `config.neon`:
+Migrations come with predefined Symfony Console Commands. For integration to "Nette DI":https://github.com/nette/di use "Kdyby/Console":https://github.com/kdyby/console. Just register and configure `MigrationsExtension` in your `config.neon`:
 
 /--neon
 extensions:
@@ -28,18 +17,17 @@ extensions:
 
 migrations:
 	dir: %appDir%/../migrations # migrations base directory
-	driver: mysql               # mysql or pgsql
-	dbal: dibi                  # dibi, doctrine, nette or nextras
+	driver: pgsql               # pgsql or mysql
+	dbal: nextras               # nextras, nette, doctrine or dibi
 \--
 
-
-Basic Usage
------------
+There are available three basic commannds:
 
 * Create new migrations with `migrations:create` command.
 * Run new migrations with `migrations:continue` command.
 * Drop database and run all migrations with `migrations:reset` command.
 
+---------------
 
 Low-level Usage
 ===============
@@ -55,19 +43,19 @@ use Nextras\Migrations\Extensions;
 require __DIR__ . '/../vendor/autoload.php';
 
 
-$conn = new DibiConnection(...);
-// or   new Doctrine\Dbal\Connection(...);
+$conn = new Nextras\Dbal\Connection(...);
 // or   new Nette\Database\Connection(...);
-// or   new Nextras\Dbal\Connection(...);
+// or   new Doctrine\Dbal\Connection(...);
+// or   new DibiConnection(...);
 
 
-$dbal = new Bridges\Dibi\DibiAdapter($conn);
-// or   new Bridges\DoctrineDbal\DoctrineAdapter($conn);
+$dbal = new Bridges\NextrasDbal\NextrasAdapter($conn);
 // or   new Bridges\NetteDatabase\NetteAdapter($conn);
-// or   new Bridges\NextrasDbal\NextrasAdapter($conn);
+// or   new Bridges\DoctrineDbal\DoctrineAdapter($conn);
+// or   new Bridges\Dibi\DibiAdapter($conn);
 
-$driver = new Drivers\MySqlDriver($dbal);
-// or     new Drivers\PgSqlDriver($dbal);
+$driver = new Drivers\PgSqlDriver($dbal);
+// or     new Drivers\MySqlDriver($dbal);
 
 $controller = new Controllers\HttpController($driver);
 // or         new Controllers\ConsoleController($driver);
@@ -81,24 +69,26 @@ $controller->addExtension('sql', new Extensions\SqlHandler($driver));
 $controller->run();
 \--
 
+---------------------
 
 Organizing Migrations
 =====================
 
-The following structure is recommended and used by Symfony commands by default:
+The following structure is recommended and used by Symfony Console Commands by default:
 
 /--
 migrations
-├── basic-data   # for both testing and production
+├── basic-data                           # for both development and production
 │   ├── 2015-03-16-170342-languages.sql  # YYYY-MM-DD-HHMMSS-label.extension
 │   └── ...
-├── dummy-data   # for testing on localhost
+├── dummy-data                           # for development on localhost
 │   ├── 2015-03-17-104235-users.sql
 │   └── ...
-├── structures   # create, alter tables...
+├── structures                           # create, alter tables...
 │   ├── 2015-03-17-155419-users.sql
 │   └── ...
-└── run.php      # start script if you don't use Symfony commands
+└── run.php                              # start script if you don't
+                                         # use Symfony Console Commands
 \--
 
 Optionally you can use **deep directory structure** which is suitable if you have a lot of migrations:
@@ -115,6 +105,7 @@ migrations/
 └── ...
 \--
 
+------------------
 
 Extension Handlers
 ==================
