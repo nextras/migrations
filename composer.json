@@ -8,6 +8,7 @@
 	},
 	"require-dev": {
 		"dibi/dibi": "~2.3",
+		"doctrine/dbal": "~2.5",
 		"nette/database": "~2.2",
 		"nette/di": "~2.3",
 		"nette/tester": "~1.3",

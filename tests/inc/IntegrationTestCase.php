@@ -3,9 +3,11 @@
 namespace NextrasTests\Migrations;
 
 use DibiConnection;
+use Doctrine;
 use Nette;
 use Nextras;
 use Nextras\Migrations\Bridges\Dibi\DibiAdapter;
+use Nextras\Migrations\Bridges\DoctrineDbal\DoctrineAdapter;
 use Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter;
 use Nextras\Migrations\Bridges\NextrasDbal\NextrasAdapter;
 use Nextras\Migrations\Engine\Runner;
@@ -126,6 +128,19 @@ abstract class IntegrationTestCase extends TestCase
 					'pgsql' => 'postgre',
 				];
 				return new DibiAdapter(new DibiConnection([
+					'host' => $options['host'],
+					'username' => $options['username'],
+					'password' => $options['password'],
+					'database' => $options['database'],
+					'driver' => $drivers[$options['driver']],
+				]));
+
+			case 'doctrine':
+				$drivers = [
+					'mysql' => 'mysqli',
+					'pgsql' => 'pdo_pgsql',
+				];
+				new DoctrineAdapter(Doctrine\DBAL\DriverManager::getConnection([
 					'host' => $options['host'],
 					'username' => $options['username'],
 					'password' => $options['password'],
