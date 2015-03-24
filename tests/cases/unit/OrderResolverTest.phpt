@@ -163,27 +163,6 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testNewMigrationInTheMiddleOfExistingOnes()
-	{
-		$resolver = new OrderResolver;
-
-		$groupA = $this->createGroup('structures');
-		$migrationA = $this->createMigration($groupA->name, '1s');
-		$migrationC = $this->createMigration($groupA->name, '3s');
-		$fileA = $this->createFile('1s', $groupA);
-		$fileB = $this->createFile('2s', $groupA);
-		$fileC = $this->createFile('3s', $groupA);
-
-		// 1s 2s* 3s
-		Assert::same([$fileB], $resolver->resolve(
-			[$migrationC, $migrationA],
-			[$groupA],
-			[$fileA, $fileB, $fileC],
-			Runner::MODE_CONTINUE
-		));
-	}
-
-
 	public function testRunWithDisabledGroups()
 	{
 		$groupA = $this->createGroup('structures');
@@ -260,6 +239,29 @@ class OrderResolverTest extends Tester\TestCase
 				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" did not succeed. Please fix this manually or reset the migrations.');
+	}
+
+
+	public function testErrorNewMigrationInTheMiddleOfExistingOnes()
+	{
+		$resolver = new OrderResolver;
+
+		$groupA = $this->createGroup('structures');
+		$migrationA = $this->createMigration($groupA->name, '1s');
+		$migrationC = $this->createMigration($groupA->name, '3s');
+		$fileA = $this->createFile('1s', $groupA);
+		$fileB = $this->createFile('2s', $groupA);
+		$fileC = $this->createFile('3s', $groupA);
+
+		// 1s 2s* 3s
+		Assert::exception(function () use ($resolver, $groupA, $migrationA, $migrationC, $fileA, $fileB, $fileC) {
+			$resolver->resolve(
+				[$migrationC, $migrationA],
+				[$groupA],
+				[$fileA, $fileB, $fileC],
+				Runner::MODE_CONTINUE
+			);
+		}, 'Nextras\Migrations\LogicException', 'New migration "structures/2s" must follow after the latest executed migration "structures/3s".');
 	}
 
 
