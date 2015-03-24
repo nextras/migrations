@@ -1,0 +1,84 @@
+Nextras\Migrations
+##################
+
+* **Supported databases:**
+	* MySQL
+	* PostgreSQL
+* **Supported DBALs:**
+	* "dibi":https://github.com/dg/dibi
+	* "Doctrine DBAL":https://github.com/doctrine/dbal
+	* "Nette Database":https://github.com/nette/database
+	* "Nextras DBAL":https://github.com/nextras/dbal
+
+
+Using as Symfony commands
+=========================
+
+
+Installation with "Kdyby/Console":https://github.com/kdyby/console and "Nette DI":https://github.com/nette/di
+---------------------------------------------------------------------------------------------------------------
+
+* Install package with Composer
+	/---
+	composer require nextras/migrations
+	\---
+
+* Register and configure "Nette DI":https://github.com/nette/di extension in `config.neon`:
+	/--neon
+	extensions:
+		migrations: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
+
+	migrations:
+		dir: %appDir%/../migrations # migrations base directory
+		driver: mysql               # mysql or pgsql
+		dbal: dibi                  # dibi, doctrine, nette or nextras
+	\--
+
+
+Basic usage
+-------------------------------
+
+* Create new migrations with `migrations:create` command.
+* Run new migrations with `migrations:continue` command.
+* Drop database and run all migrations with `migrations:restart` command.
+
+
+Low-level
+==========
+
+* Install package with Composer
+	/--
+	composer require nextras/migrations
+	\--
+
+* Create new PHP file (e.g. migrations.php) with the following content:
+
+/--php
+use Nextras\Migrations\Bridges;
+use Nextras\Migrations\Drivers;
+use Nextras\Migrations\Controllers;
+
+$conn = new DibiConnection(...);
+// or   new Doctrine\Dbal\Connection(...);
+// or   new Nette\Database\Connection(...);
+// or   new Nextras\Dbal\Connection(...);
+
+
+$dbal = new Bridges\Dibi\DibiAdapter($conn);
+// or   new Bridges\DoctrineDbal\DoctrineAdapter($conn);
+// or   new Bridges\NetteDatabase\NetteAdapter($conn);
+// or   new Bridges\NextrasDbal\NextrasAdapter($conn);
+
+$driver = new Drivers\MySqlDriver($dbal);
+// or     new Drivers\PgSqlDriver($dbal);
+
+$controller = new Controllers\HttpController($driver);
+// or         new Controllers\ConsoleController($driver);
+
+$baseDir = __DIR__;
+$controller->addGroup('structures', "$baseDir/structures");
+$controller->addGroup('basic-data', "$baseDir/basic-data", ['structures']);
+$controller->addGroup('dummy-data', "$baseDir/dummy-data", ['basic-data']);
+
+$controller->run();
+\--
