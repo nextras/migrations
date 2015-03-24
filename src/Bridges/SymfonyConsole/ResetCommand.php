@@ -28,8 +28,8 @@ class ResetCommand extends BaseCommand
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$withDummy = !$input->getOption('production');
-		$this->runMigrations(Runner::MODE_RESET, $withDummy);
+		$config = $input->getOption('production') ? $this->prodConfig : $this->devConfig;
+		$this->runMigrations(Runner::MODE_RESET, $config);
 	}
 
 }
