@@ -114,3 +114,28 @@ migrations/
 │           └── ...
 └── ...
 \--
+
+
+Extension Handlers
+==================
+
+SqlHandler
+----------
+Most commonly used handler. Executes all SQL queries contained in a file.
+
+/--php
+// installation in migrations/run.php
+$controller->addExtension('sql', new Extensions\SqlHandler($driver));
+\--
+
+PhpHandler
+----------
+Used for complex migrations which can not be written in SQL.
+
+/--php
+// installation in migrations/run.php
+$controller->addExtension('php', new Extensions\PhpHandler([
+	// list of parameters passed to PHP script, e.g.
+	'dibi' => $conn,
+]));
+\--
