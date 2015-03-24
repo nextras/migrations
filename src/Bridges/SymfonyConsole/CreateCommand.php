@@ -33,8 +33,8 @@ class CreateCommand extends BaseCommand
 	{
 		$dir = $this->getDirectory($input->getArgument('type'));
 		$name = $this->getFileName($input->getArgument('label'));
-		$path = "$dir/$name";
-		touch($path);
+		@mkdir($dir, 0777, TRUE); // directory may already exist
+		touch("$dir/$name");
 	}
 
 
