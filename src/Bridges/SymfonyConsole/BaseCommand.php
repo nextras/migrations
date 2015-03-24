@@ -13,6 +13,7 @@ use Nextras\Migrations\Engine\Runner;
 use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\Extensions;
 use Nextras\Migrations\IDriver;
+use Nextras\Migrations\IPrinter;
 use Nextras\Migrations\Printers\Console;
 use Symfony\Component\Console\Command\Command;
 
@@ -50,7 +51,7 @@ abstract class BaseCommand extends Command
 	 */
 	protected function runMigrations($mode, $withDummy)
 	{
-		$printer = new Console();
+		$printer = $this->getPrinter();
 		$runner = new Runner($this->driver, $printer);
 
 		foreach ($this->getGroups($withDummy) as $group) {
@@ -102,6 +103,15 @@ abstract class BaseCommand extends Command
 			'sql' => new Extensions\SqlHandler($this->driver),
 			'php' => new Extensions\PhpHandler($this->phpParams),
 		];
+	}
+
+
+	/**
+	 * @return IPrinter
+	 */
+	protected function getPrinter()
+	{
+		return new Console();
 	}
 
 }
