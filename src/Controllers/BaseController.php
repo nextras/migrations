@@ -37,6 +37,9 @@ abstract class BaseController
 	}
 
 
+	abstract public function run();
+
+
 	public function addGroup($name, $dir, array $dependencies = array())
 	{
 		$group = new Group;
