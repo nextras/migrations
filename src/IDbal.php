@@ -61,7 +61,7 @@ interface IDbal
 
 	/**
 	 * @param  string $value
-	 * @reutrn string
+	 * @return string
 	 */
 	function escapeIdentifier($value);
 

@@ -38,7 +38,7 @@ Basic Usage
 
 * Create new migrations with `migrations:create` command.
 * Run new migrations with `migrations:continue` command.
-* Drop database and run all migrations with `migrations:restart` command.
+* Drop database and run all migrations with `migrations:reset` command.
 
 
 Low-level Usage

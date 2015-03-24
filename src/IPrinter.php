@@ -45,7 +45,7 @@ interface IPrinter
 
 
 	/**
-	 * An error has occured during execution of a migration.
+	 * An error has occurred during execution of a migration.
 	 * @param  Exception
 	 */
 	function printError(Exception $e);

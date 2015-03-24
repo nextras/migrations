@@ -66,10 +66,10 @@ abstract class BaseCommand extends Command
 
 
 	/**
-	 * @param  bool $withDummmy
+	 * @param  bool $withDummy
 	 * @return Group[]
 	 */
-	protected function getGroups($withDummmy)
+	protected function getGroups($withDummy)
 	{
 		$structures = new Group();
 		$structures->enabled = TRUE;
@@ -84,7 +84,7 @@ abstract class BaseCommand extends Command
 		$basicData->dependencies = ['structures'];
 
 		$dummyData = new Group();
-		$dummyData->enabled = $withDummmy;
+		$dummyData->enabled = $withDummy;
 		$dummyData->name = 'dummy-data';
 		$dummyData->directory = $this->dir . '/dummy-data';
 		$dummyData->dependencies = ['structures', 'basic-data'];

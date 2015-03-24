@@ -55,7 +55,7 @@ interface IDriver
 
 
 	/**
-	 * Rollback transation.
+	 * Rollback transaction.
 	 */
 	function rollbackTransaction();
 

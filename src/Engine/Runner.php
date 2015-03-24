@@ -65,7 +65,7 @@ class Runner
 
 	/**
 	 * @param  string
-	 * @param  IExtension
+	 * @param  IExtensionHandler
 	 * @return self
 	 */
 	public function addExtensionHandler($extension, IExtensionHandler $handler)
@@ -143,8 +143,6 @@ class Runner
 	protected function execute(File $file)
 	{
 		$this->driver->beginTransaction();
-		// Note: MySQL implicitly commits after some operations, such as CREATE or ALTER TABLE, see http://dev.mysql.com/doc/refman/5.6/en/implicit-commit.html
-		// proto se radeji kontroluje jestli bylo dokonceno
 
 		$migration = new Migration;
 		$migration->group = $file->group->name;

@@ -12,7 +12,6 @@ namespace Nextras\Migrations\Bridges\Dibi;
 use DateTime;
 use dibi;
 use DibiConnection;
-use DibiResult;
 use Nextras\Migrations\IDbal;
 
 

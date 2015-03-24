@@ -10,7 +10,6 @@
 namespace Nextras\Migrations\Controllers;
 
 use Nextras\Migrations\Engine;
-use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\Printers;
 
 
