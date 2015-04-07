@@ -19,10 +19,10 @@ use Nextras\Migrations\LogicException;
 class OrderResolver
 {
 	/**
-	 * @param  Migration[]
-	 * @param  Group[]
-	 * @param  File[]
-	 * @param  string
+	 * @param  Migration[] $migrations
+	 * @param  Group[]     $groups
+	 * @param  File[]      $files
+	 * @param  string      $mode
 	 * @return File[]
 	 * @throws Exception
 	 */
@@ -98,7 +98,7 @@ class OrderResolver
 
 
 	/**
-	 * @param  File[]
+	 * @param  File[] $files
 	 * @return File[] sorted
 	 */
 	protected function sortFiles(array $files)
@@ -154,7 +154,7 @@ class OrderResolver
 
 
 	/**
-	 * @param  Group[]
+	 * @param  Group[] $groups
 	 * @return void
 	 * @throws Exception
 	 */

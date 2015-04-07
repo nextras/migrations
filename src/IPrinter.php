@@ -25,15 +25,15 @@ interface IPrinter
 
 	/**
 	 * List of migrations which should be executed has been completed.
-	 * @param  File[]
+	 * @param  File[] $toExecute
 	 */
 	function printToExecute(array $toExecute);
 
 
 	/**
 	 * A migration has been successfully executed.
-	 * @param  File
-	 * @param  int  number of executed queries
+	 * @param  File $file
+	 * @param  int  $count number of executed queries
 	 */
 	function printExecute(File $file, $count);
 
@@ -46,14 +46,14 @@ interface IPrinter
 
 	/**
 	 * An error has occurred during execution of a migration.
-	 * @param  Exception
+	 * @param  Exception $e
 	 */
 	function printError(Exception $e);
 
 
 	/**
 	 * Prints init source code.
-	 * @param  string
+	 * @param  string $code
 	 */
 	function printSource($code);
 

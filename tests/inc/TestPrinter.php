@@ -14,11 +14,6 @@ class TestPrinter extends Console
 	public $out = '';
 
 
-	/**
-	 * Prints text to a console, optionally in a specific color.
-	 * @param  string
-	 * @param  string|NULL self::COLOR_*
-	 */
 	protected function output($s, $color = NULL)
 	{
 		$this->lines[] = $s;

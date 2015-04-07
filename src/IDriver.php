@@ -86,14 +86,14 @@ interface IDriver
 
 	/**
 	 * Inserts migration info into migration table.
-	 * @param  Migration
+	 * @param  Migration $migration
 	 */
 	function insertMigration(Migration $migration);
 
 
 	/**
 	 * Updated migration as executed.
-	 * @param  Migration
+	 * @param  Migration $migration
 	 */
 	function markMigrationAsReady(Migration $migration);
 
@@ -114,7 +114,7 @@ interface IDriver
 
 	/**
 	 * Returns source code for migration table data initialization.
-	 * @param  File[]
+	 * @param  File[] $files
 	 * @return string
 	 */
 	function getInitMigrationsSource(array $files);

@@ -76,8 +76,8 @@ class HtmlDump implements IPrinter
 
 
 	/**
-	 * @param  string HTML string
-	 * @param  string
+	 * @param  string $s     HTML string
+	 * @param  string $class
 	 * @return void
 	 */
 	protected function output($s, $class = 'info')

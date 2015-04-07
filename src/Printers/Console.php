@@ -79,8 +79,8 @@ class Console implements IPrinter
 
 	/**
 	 * Prints text to a console, optionally in a specific color.
-	 * @param  string
-	 * @param  string|NULL self::COLOR_*
+	 * @param  string      $s
+	 * @param  string|NULL $color self::COLOR_*
 	 */
 	protected function output($s, $color = NULL)
 	{

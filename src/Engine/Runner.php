@@ -64,8 +64,8 @@ class Runner
 
 
 	/**
-	 * @param  string
-	 * @param  IExtensionHandler
+	 * @param  string            $extension
+	 * @param  IExtensionHandler $handler
 	 * @return self
 	 */
 	public function addExtensionHandler($extension, IExtensionHandler $handler)
@@ -80,7 +80,8 @@ class Runner
 
 
 	/**
-	 * @param string self::MODE_CONTINUE|self::MODE_RESET|self::MODE_INIT
+	 * @param  string $mode self::MODE_CONTINUE|self::MODE_RESET|self::MODE_INIT
+	 * @return void
 	 */
 	public function run($mode = self::MODE_CONTINUE)
 	{
@@ -124,7 +125,7 @@ class Runner
 
 
 	/**
-	 * @param string
+	 * @param  string $name
 	 * @return IExtensionHandler
 	 */
 	public function getExtension($name)
@@ -137,7 +138,7 @@ class Runner
 
 
 	/**
-	 * @param  File
+	 * @param  File $file
 	 * @return int  number of executed queries
 	 */
 	protected function execute(File $file)

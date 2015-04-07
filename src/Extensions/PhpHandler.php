@@ -23,7 +23,7 @@ class PhpHandler implements IExtensionHandler
 	private $params = [];
 
 	/**
-	 * @param array  $params name => value
+	 * @param array $params name => value
 	 */
 	public function __construct(array $params = [])
 	{

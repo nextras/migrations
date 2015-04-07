@@ -66,8 +66,8 @@ class Finder
 
 	/**
 	 * Returns file extension.
-	 * @param  File
-	 * @param  string[]
+	 * @param  File     $file
+	 * @param  string[] $extensions
 	 * @return string
 	 * @throws Exception
 	 */
