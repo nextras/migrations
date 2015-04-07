@@ -18,32 +18,32 @@ use Nextras\Migrations\IDbal;
 class DibiAdapter implements IDbal
 {
 	/** @var DibiConnection */
-	private $dibi;
+	private $conn;
 
 
 	public function __construct(DibiConnection $dibi)
 	{
-		$this->dibi = $dibi;
+		$this->conn = $dibi;
 	}
 
 
 	public function query($sql)
 	{
-		$result = $this->dibi->nativeQuery($sql);
-		$result->setRowFactory(function (array $row) { return $row; });
+		$result = $this->conn->nativeQuery($sql);
+		$result->setRowClass(NULL);
 		return $result->fetchAll();
 	}
 
 
 	public function exec($sql)
 	{
-		return $this->dibi->nativeQuery($sql);
+		return $this->conn->nativeQuery($sql);
 	}
 
 
 	public function escapeString($value)
 	{
-		return $this->dibi->getDriver()->escape($value, dibi::TEXT);
+		return $this->conn->getDriver()->escape($value, dibi::TEXT);
 	}
 
 
@@ -55,19 +55,19 @@ class DibiAdapter implements IDbal
 
 	public function escapeBool($value)
 	{
-		return $this->dibi->getDriver()->escape($value, dibi::BOOL);
+		return $this->conn->getDriver()->escape($value, dibi::BOOL);
 	}
 
 
 	public function escapeDateTime(DateTime $value)
 	{
-		return $this->dibi->getDriver()->escape($value, dibi::DATETIME);
+		return $this->conn->getDriver()->escape($value, dibi::DATETIME);
 	}
 
 
 	public function escapeIdentifier($value)
 	{
-		return $this->dibi->getDriver()->escape($value, dibi::IDENTIFIER);
+		return $this->conn->getDriver()->escape($value, dibi::IDENTIFIER);
 	}
 
 }

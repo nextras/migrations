@@ -10,66 +10,65 @@
 namespace Nextras\Migrations\Bridges\NetteDatabase;
 
 use DateTime;
-use Nette\Database\Connection;
-use Nette\Database\IRow;
+use Nette;
 use Nextras\Migrations\IDbal;
 use PDO;
 
 
 class NetteAdapter implements IDbal
 {
-	/** @var Connection */
-	private $ndb;
+	/** @var Nette\Database\Connection */
+	private $conn;
 
 
-	public function __construct(Connection $ndb)
+	public function __construct(Nette\Database\Connection $ndb)
 	{
-		$this->ndb = $ndb;
+		$this->conn = $ndb;
 	}
 
 
 	public function query($sql)
 	{
 		return array_map(
-			function (IRow $row) { return (array) $row; },
-			$this->ndb->query($sql)->fetchAll()
+			function ($row) { return (array) $row; },
+			$this->conn->fetchAll($sql)
 		);
 	}
 
 
 	public function exec($sql)
 	{
-		return $this->ndb->query($sql)->getRowCount();
+		return $this->conn->query($sql)->getRowCount();
 	}
 
 
 	public function escapeString($value)
 	{
-		return $this->ndb->quote($value, PDO::PARAM_STR);
+		return $this->conn->quote($value, PDO::PARAM_STR);
 	}
 
 
 	public function escapeInt($value)
 	{
-		return $this->ndb->quote($value, PDO::PARAM_INT);
+		return $this->conn->quote($value, PDO::PARAM_INT);
 	}
 
 
 	public function escapeBool($value)
 	{
-		return $this->ndb->getSupplementalDriver()->formatBool($value);
+		return $this->conn->getSupplementalDriver()->formatBool($value);
 	}
 
 
 	public function escapeDateTime(DateTime $value)
 	{
-		return $this->ndb->getSupplementalDriver()->formatDateTime($value);
+		return $this->conn->getSupplementalDriver()->formatDateTime($value);
 	}
 
 
 	public function escapeIdentifier($value)
 	{
-		return $this->ndb->getSupplementalDriver()->delimite($value);
+		return $this->conn->getSupplementalDriver()->delimite($value);
 	}
 
 }

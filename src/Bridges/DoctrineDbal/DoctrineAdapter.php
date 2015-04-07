@@ -28,7 +28,7 @@ class DoctrineAdapter implements IDbal
 
 	public function query($sql)
 	{
-		return $this->conn->query($sql)->fetchAll();
+		return $this->conn->fetchAll($sql);
 	}
 
 

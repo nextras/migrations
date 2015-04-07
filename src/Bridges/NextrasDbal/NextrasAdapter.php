@@ -19,13 +19,13 @@ use Nextras\Migrations\IDbal;
 class NextrasAdapter implements IDbal
 {
 	/** @var Connection */
-	private $connection;
+	private $conn;
 
 
 	public function __construct(Connection $connection)
 	{
-		$this->connection = $connection;
-		$this->connection->connect();
+		$this->conn = $connection;
+		$this->conn->connect();
 	}
 
 
@@ -33,21 +33,21 @@ class NextrasAdapter implements IDbal
 	{
 		return array_map(
 			function (Row $row) { return $row->toArray(); },
-			iterator_to_array($this->connection->query('%raw', $sql))
+			iterator_to_array($this->conn->query('%raw', $sql))
 		);
 	}
 
 
 	public function exec($sql)
 	{
-		$this->connection->query('%raw', $sql);
-		return $this->connection->getAffectedRows();
+		$this->conn->query('%raw', $sql);
+		return $this->conn->getAffectedRows();
 	}
 
 
 	public function escapeString($value)
 	{
-		return $this->connection->getDriver()->convertToSql($value, IDriver::TYPE_STRING);
+		return $this->conn->getDriver()->convertToSql($value, IDriver::TYPE_STRING);
 	}
 
 
@@ -59,19 +59,19 @@ class NextrasAdapter implements IDbal
 
 	public function escapeBool($value)
 	{
-		return $this->connection->getDriver()->convertToSql($value, IDriver::TYPE_BOOL);
+		return $this->conn->getDriver()->convertToSql($value, IDriver::TYPE_BOOL);
 	}
 
 
 	public function escapeDateTime(DateTime $value)
 	{
-		return $this->connection->getDriver()->convertToSql($value, IDriver::TYPE_DATETIME);
+		return $this->conn->getDriver()->convertToSql($value, IDriver::TYPE_DATETIME);
 	}
 
 
 	public function escapeIdentifier($value)
 	{
-		return $this->connection->getDriver()->convertToSql($value, IDriver::TYPE_IDENTIFIER);
+		return $this->conn->getDriver()->convertToSql($value, IDriver::TYPE_IDENTIFIER);
 	}
 
 }
