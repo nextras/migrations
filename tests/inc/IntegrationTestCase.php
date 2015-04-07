@@ -140,9 +140,9 @@ abstract class IntegrationTestCase extends TestCase
 					'mysql' => 'mysqli',
 					'pgsql' => 'pdo_pgsql',
 				];
-				new DoctrineAdapter(Doctrine\DBAL\DriverManager::getConnection([
+				return new DoctrineAdapter(Doctrine\DBAL\DriverManager::getConnection([
 					'host' => $options['host'],
-					'username' => $options['username'],
+					'user' => $options['username'],
 					'password' => $options['password'],
 					'database' => $options['database'],
 					'driver' => $drivers[$options['driver']],

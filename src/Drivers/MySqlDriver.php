@@ -66,7 +66,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	public function lock()
 	{
 		$lock = $this->dbal->escapeString(self::LOCK_NAME);
-		$result = $this->dbal->query("SELECT GET_LOCK($lock, 3) AS `result`")[0]['result'];
+		$result = (int) $this->dbal->query("SELECT GET_LOCK($lock, 3) AS `result`")[0]['result'];
 		if ($result !== 1) {
 			throw new LockException('Unable to acquire a lock.');
 		}
@@ -76,7 +76,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	public function unlock()
 	{
 		$lock = $this->dbal->escapeString(self::LOCK_NAME);
-		$result = $this->dbal->query("SELECT RELEASE_LOCK($lock) AS `result`")[0]['result'];
+		$result = (int) $this->dbal->query("SELECT RELEASE_LOCK($lock) AS `result`")[0]['result'];
 		if ($result !== 1) {
 			throw new LockException('Unable to release a lock.');
 		}
@@ -108,7 +108,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 			")
 		");
 
-		$migration->id = $this->dbal->query('SELECT LAST_INSERT_ID() AS `id`')[0]['id'];
+		$migration->id = (int) $this->dbal->query('SELECT LAST_INSERT_ID() AS `id`')[0]['id'];
 	}
 
 
@@ -128,11 +128,11 @@ class MySqlDriver extends BaseDriver implements IDriver
 		$result = $this->dbal->query("SELECT * FROM {$this->tableName} ORDER BY `executed`");
 		foreach ($result as $row) {
 			$migration = new Migration;
-			$migration->id = $row['id'];
+			$migration->id = (int) $row['id'];
 			$migration->group = $row['group'];
 			$migration->filename = $row['file'];
 			$migration->checksum = $row['checksum'];
-			$migration->executedAt = $row['executed'];
+			$migration->executedAt = (is_string($row['executed']) ? new DateTime($row['executed']) : $row['executed']);
 			$migration->completed = (bool) $row['ready'];
 
 			$migrations[] = $migration;

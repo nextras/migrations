@@ -94,7 +94,18 @@ class FirstRunTest extends IntegrationTestCase
 	{
 		$options = Tester\Environment::loadData();
 		$this->runner->run(Runner::MODE_INIT);
-		Assert::matchFile(__DIR__ . "/Runner.FirstRun.init.$options[driver].txt", $this->printer->out);
+
+		$files = [
+			__DIR__ . "/Runner.FirstRun.init.$options[driver].$options[dbal].txt",
+			__DIR__ . "/Runner.FirstRun.init.$options[driver].txt",
+		];
+
+		foreach ($files as $file) {
+			if (is_file($file)) {
+				Assert::matchFile($file, $this->printer->out);
+				break;
+			}
+		}
 	}
 
 }

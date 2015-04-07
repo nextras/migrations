@@ -122,7 +122,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 			")
 		");
 
-		$migration->id = $this->dbal->query('SELECT CURRVAL('. $this->primarySequence . ') AS id')[0]['id'];
+		$migration->id = (int) $this->dbal->query('SELECT CURRVAL('. $this->primarySequence . ') AS id')[0]['id'];
 	}
 
 
@@ -142,11 +142,11 @@ class PgSqlDriver extends BaseDriver implements IDriver
 		$result = $this->dbal->query("SELECT * FROM {$this->schema}.{$this->tableName} ORDER BY \"executed\"");
 		foreach ($result as $row) {
 			$migration = new Migration;
-			$migration->id = $row['id'];
+			$migration->id = (int) $row['id'];
 			$migration->group = $row['group'];
 			$migration->filename = $row['file'];
 			$migration->checksum = $row['checksum'];
-			$migration->executedAt = $row['executed'];
+			$migration->executedAt = (is_string($row['executed']) ? new DateTime($row['executed']) : $row['executed']);
 			$migration->completed = (bool) $row['ready'];
 
 			$migrations[] = $migration;
