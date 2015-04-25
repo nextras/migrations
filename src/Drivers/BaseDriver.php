@@ -9,6 +9,9 @@
 
 namespace Nextras\Migrations\Drivers;
 
+use MySQLDump;
+use mysqli;
+use Nextras\Migrations\Bridges\Dibi\DibiAdapter;
 use Nextras\Migrations\IDbal;
 use Nextras\Migrations\IDriver;
 use Nextras\Migrations\IOException;
@@ -102,6 +105,25 @@ abstract class BaseDriver implements IDriver
 		}
 
 		return $queries;
+	}
+
+
+	/**
+	 * Saves database dump to a file.
+	 * @param  string $path
+	 * @return void
+	 */
+	public function saveFile($path)
+	{
+		if ($this->dbal instanceof DibiAdapter) {
+			$conn = $this->dbal->getConnection();
+			$resource = $conn->getDriver()->getResource();
+			if ($resource instanceof mysqli && class_exists('MySQLDump')) {
+				$dumper = new MySQLDump($resource);
+				$dumper->tables['*'] = $dumper::ALL & ~$dumper::DROP;
+				$dumper->save($path);
+			}
+		}
 	}
 
 }

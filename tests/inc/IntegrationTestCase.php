@@ -59,7 +59,7 @@ abstract class IntegrationTestCase extends TestCase
 
 		$this->driver = $this->createDriver($options['driver'], $this->dbal);
 		$this->printer = $this->createPrinter();
-		$this->runner = new Runner($this->driver, $this->printer);
+		$this->runner = new Runner($this->driver, $this->printer, TEMP_DIR);
 
 		foreach ($this->getGroups($this->fixtureDir) as $group) {
 			$this->runner->addGroup($group);

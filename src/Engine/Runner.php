@@ -46,13 +46,17 @@ class Runner
 	/** @var OrderResolver */
 	private $orderResolver;
 
+	/** @var string */
+	private $tempDir;
 
-	public function __construct(IDriver $driver, IPrinter $printer)
+
+	public function __construct(IDriver $driver, IPrinter $printer, $tempDir = NULL)
 	{
 		$this->driver = $driver;
 		$this->printer = $printer;
 		$this->finder = new Finder;
 		$this->orderResolver = new OrderResolver;
+		$this->tempDir = $tempDir;
 	}
 
 
@@ -109,11 +113,7 @@ class Runner
 			$toExecute = $this->orderResolver->resolve($migrations, $this->groups, $files, $mode);
 			$this->printer->printToExecute($toExecute);
 
-			foreach ($toExecute as $file) {
-				$time = microtime(TRUE);
-				$queriesCount = $this->execute($file);
-				$this->printer->printExecute($file, $queriesCount, microtime(TRUE) - $time);
-			}
+			$this->execute($toExecute, $this->tempDir && count($migrations) === 0);
 
 			$this->driver->unlock();
 			$this->printer->printDone();
@@ -139,32 +139,105 @@ class Runner
 
 
 	/**
-	 * @param  File $file
-	 * @return int  number of executed queries
+	 * @param  File[] $files
+	 * @param  bool   $useSnapshots
+	 * @return void
 	 */
-	protected function execute(File $file)
+	protected function execute($files, $useSnapshots)
 	{
-		$this->driver->beginTransaction();
+		$createSnapshot = FALSE;
+		$startIndex = 0;
 
+		if ($useSnapshots) {
+			if (!is_dir($this->tempDir)) {
+				mkdir($this->tempDir);
+			}
+
+			$keys = [];
+			$prevKey = '';
+			foreach ($files as $i => $file) {
+				$keys[$i] = $prevKey = md5($file->checksum . $prevKey);
+			}
+
+			foreach (array_reverse($keys, TRUE) as $i => $key) {
+				$path = sprintf('%s/%03d-%s.sql', $this->tempDir, $i + 1, $key);
+				if (is_file($path)) {
+					$this->executeFile($this->createSnapshotFile($path));
+					$startIndex = $i + 1;
+					break;
+				}
+			}
+		}
+
+		for ($i = $startIndex; $i < count($files); $i++) {
+			$this->executeFile($files[$i], $this->createMigration($files[$i]));
+			$createSnapshot = $useSnapshots;
+		}
+
+		if ($createSnapshot) {
+			$path = sprintf('%s/%03d-%s.sql', $this->tempDir, count($files), $prevKey);
+			$this->driver->saveFile($path);
+		}
+	}
+
+
+	/**
+	 * @param  File           $file
+	 * @param  Migration|NULL $migration
+	 * @return void
+	 */
+	protected function executeFile(File $file, Migration $migration = NULL)
+	{
+		try {
+			$this->driver->beginTransaction();
+
+			if ($migration) $this->driver->insertMigration($migration);
+			$time = -microtime(TRUE);
+			$queriesCount = $this->getExtension($file->extension)->execute($file);
+			$time += microtime(TRUE);
+			$this->printer->printExecute($file, $queriesCount, $time);
+			if ($migration) $this->driver->markMigrationAsReady($migration);
+
+			$this->driver->commitTransaction();
+
+		} catch (\Exception $e) {
+			$this->driver->rollbackTransaction();
+			throw new ExecutionException(sprintf('Executing migration "%s" has failed.', $file->path), NULL, $e);
+		}
+	}
+
+
+	/**
+	 * @param  string $path
+	 * @return File
+	 */
+	protected function createSnapshotFile($path)
+	{
+		$file = new File();
+		$file->extension = 'sql';
+		$file->name = basename($path);
+		$file->path = $path;
+		$file->group = new Group();
+		$file->group->name = 'snapshots';
+		$file->group->enabled = TRUE;
+		$file->group->directory = $this->tempDir;
+		$file->group->dependencies = [];
+		return $file;
+	}
+
+
+	/**
+	 * @param  File $file
+	 * @return Migration
+	 */
+	protected function createMigration(File $file)
+	{
 		$migration = new Migration;
 		$migration->group = $file->group->name;
 		$migration->filename = $file->name;
 		$migration->checksum = $file->checksum;
 		$migration->executedAt = new DateTime('now');
-
-		$this->driver->insertMigration($migration);
-
-		try {
-			$queriesCount = $this->getExtension($file->extension)->execute($file);
-		} catch (\Exception $e) {
-			$this->driver->rollbackTransaction();
-			throw new ExecutionException(sprintf('Executing migration "%s" has failed.', $file->path), NULL, $e);
-		}
-
-		$this->driver->markMigrationAsReady($migration);
-		$this->driver->commitTransaction();
-
-		return $queriesCount;
+		return $migration;
 	}
 
 }
