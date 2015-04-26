@@ -27,8 +27,11 @@ abstract class BaseDriver implements IDriver
 	/** @var IDbal */
 	protected $dbal;
 
-	/** @var string */
+	/** @var string with escaping */
 	protected $tableName;
+
+	/** @var string without escaping */
+	protected $rawTableName;
 
 
 	/**
@@ -39,6 +42,7 @@ abstract class BaseDriver implements IDriver
 	{
 		$this->dbal = $dbal;
 		$this->tableName = $dbal->escapeIdentifier($tableName);
+		$this->rawTableName = $tableName;
 	}
 
 
@@ -121,6 +125,7 @@ abstract class BaseDriver implements IDriver
 			if ($resource instanceof mysqli && class_exists('MySQLDump')) {
 				$dumper = new MySQLDump($resource);
 				$dumper->tables['*'] = $dumper::ALL & ~$dumper::DROP;
+				$dumper->tables[$this->rawTableName] = $dumper::ALL;
 				$dumper->save($path);
 			}
 		}
