@@ -23,6 +23,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'driver' => NULL,
 		'dbal' => NULL,
 		'handlers' => [],
+		'tempDir' => NULL,
 	];
 
 	/** @var array */
@@ -53,6 +54,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config, 'dir', 'string');
 		Validators::assertField($config, 'phpParams', 'array');
 		Validators::assertField($config, 'handlers', 'array');
+		Validators::assertField($config, 'tempDir', 'string|null');
 
 		$dbal = $this->getDbal($config['dbal']);
 		$driver = $this->getDriver($config['driver'], $dbal);
@@ -71,9 +73,8 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		}
 
 
-		$params = [$driver, $config['dir'], $handlers];
+		$params = [$driver, $config['dir'], $handlers, $config['tempDir']];
 		$builder->addExcludedClasses(['Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand']);
-
 		$builder->addDefinition($this->prefix('continueCommand'))
 			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand')
 			->setArguments($params)

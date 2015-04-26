@@ -11,7 +11,6 @@ namespace Nextras\Migrations\Bridges\SymfonyConsole;
 
 use Nextras\Migrations\Engine\Runner;
 use Nextras\Migrations\Entities\Group;
-use Nextras\Migrations\Extensions;
 use Nextras\Migrations\IDriver;
 use Nextras\Migrations\IPrinter;
 use Nextras\Migrations\Printers\Console;
@@ -29,18 +28,23 @@ abstract class BaseCommand extends Command
 	/** @var array */
 	private $extensionHandlers;
 
+	/** @var string|NULL */
+	private $tempDir;
+
 
 	/**
 	 * @param  IDriver $driver
 	 * @param  string  $dir
 	 * @param  array   $extensionHandlers
+	 * @param  string  $tempDir
 	 */
-	public function __construct(IDriver $driver, $dir, $extensionHandlers = [])
+	public function __construct(IDriver $driver, $dir, $extensionHandlers = [], $tempDir = NULL)
 	{
 		parent::__construct();
 		$this->driver = $driver;
 		$this->dir = $dir;
 		$this->extensionHandlers = $extensionHandlers;
+		$this->tempDir = $tempDir;
 	}
 
 
@@ -52,7 +56,7 @@ abstract class BaseCommand extends Command
 	protected function runMigrations($mode, $withDummy)
 	{
 		$printer = $this->getPrinter();
-		$runner = new Runner($this->driver, $printer);
+		$runner = new Runner($this->driver, $printer, $this->tempDir);
 
 		foreach ($this->getGroups($withDummy) as $group) {
 			$runner->addGroup($group);
