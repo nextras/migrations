@@ -125,7 +125,7 @@ abstract class BaseDriver implements IDriver
 			if ($resource instanceof mysqli && class_exists('MySQLDump')) {
 				$dumper = new MySQLDump($resource);
 				$dumper->tables['*'] = $dumper::ALL & ~$dumper::DROP;
-				$dumper->tables[$this->rawTableName] = $dumper::ALL;
+				$dumper->tables[$this->rawTableName] = $dumper::DATA;
 				$dumper->save($path);
 			}
 		}
