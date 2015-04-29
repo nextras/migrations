@@ -115,7 +115,7 @@ abstract class BaseDriver implements IDriver
 	/**
 	 * Saves database dump to a file.
 	 * @param  string $path
-	 * @return void
+	 * @return bool
 	 */
 	public function saveFile($path)
 	{
@@ -127,8 +127,10 @@ abstract class BaseDriver implements IDriver
 				$dumper->tables['*'] = $dumper::ALL & ~$dumper::DROP;
 				$dumper->tables[$this->rawTableName] = $dumper::DATA;
 				$dumper->save($path);
+				return TRUE;
 			}
 		}
+		return FALSE;
 	}
 
 }

@@ -175,7 +175,13 @@ class Runner
 
 		if ($createSnapshot) {
 			$path = sprintf('%s/%03d-%s.sql', $this->tempDir, count($files), $prevKey);
-			$this->driver->saveFile($path);
+			$lock = fopen("$this->tempDir/lock", 'c+');
+			if ($lock && flock($lock, LOCK_EX)) {
+				if (!is_file($path) && $this->driver->saveFile("$path.tmp")) {
+					rename("$path.tmp", $path);
+				}
+				flock($lock, LOCK_UN);
+			}
 		}
 	}
 

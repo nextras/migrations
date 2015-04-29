@@ -46,7 +46,7 @@ interface IDriver
 	/**
 	 * Saves database dump to a file.
 	 * @param  string $path
-	 * @return void
+	 * @return bool
 	 */
 	function saveFile($path);
 
