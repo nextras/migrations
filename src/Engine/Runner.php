@@ -17,6 +17,7 @@ use Nextras\Migrations\Exception;
 use Nextras\Migrations\ExecutionException;
 use Nextras\Migrations\IDriver;
 use Nextras\Migrations\IExtensionHandler;
+use Nextras\Migrations\IOException;
 use Nextras\Migrations\IPrinter;
 use Nextras\Migrations\LogicException;
 
@@ -144,45 +145,74 @@ class Runner
 	 */
 	protected function execute($files, $useSnapshots)
 	{
-		$createSnapshot = FALSE;
-		$startIndex = 0;
+		if (!$files) {
+			return;
+		}
 
 		if ($useSnapshots) {
 			if (!is_dir($this->tempDir)) {
-				mkdir($this->tempDir);
+				@mkdir($this->tempDir); // @ - directory may already exist
 			}
 
-			$keys = [];
-			$prevKey = '';
-			foreach ($files as $i => $file) {
-				$keys[$i] = $prevKey = md5($file->checksum . $prevKey);
+			$keys = $this->getSnapshotKeys($files);
+			if ($this->tryExecuteSnapshot(key($keys), current($keys), $path)) {
+				return;
 			}
 
-			foreach (array_reverse($keys, TRUE) as $i => $key) {
-				$path = sprintf('%s/%03d-%s.sql', $this->tempDir, $i + 1, $key);
-				if (is_file($path)) {
-					$this->executeFile($this->createSnapshotFile($path));
-					$startIndex = $i + 1;
+			$lock = fopen("$path.lock", 'c+');
+			if (!$lock || !flock($lock, LOCK_EX)) {
+				throw new IOException();
+			}
+
+			foreach ($keys as $index => $key) {
+				if ($this->tryExecuteSnapshot($index, $key)) {
+					$files = array_slice($files, $index + 1);
 					break;
 				}
 			}
 		}
 
-		for ($i = $startIndex; $i < count($files); $i++) {
-			$this->executeFile($files[$i], $this->createMigration($files[$i]));
-			$createSnapshot = $useSnapshots;
+		foreach ($files as $file) {
+			$this->executeFile($file, $this->createMigration($file));
 		}
 
-		if ($createSnapshot) {
-			$path = sprintf('%s/%03d-%s.sql', $this->tempDir, count($files), $prevKey);
-			$lock = fopen("$this->tempDir/lock", 'c+');
-			if ($lock && flock($lock, LOCK_EX)) {
-				if (!is_file($path) && $this->driver->saveFile("$path.tmp")) {
-					rename("$path.tmp", $path);
-				}
-				flock($lock, LOCK_UN);
+		if ($useSnapshots) {
+			if ($files && $this->driver->saveFile("$path.tmp")) {
+				rename("$path.tmp", $path);
 			}
+			flock($lock, LOCK_UN);
 		}
+	}
+
+
+	/**
+	 * @param  File[] $files
+	 * @return array
+	 */
+	protected function getSnapshotKeys(array $files)
+	{
+		$keys = [];
+		for ($i = 0; $i < count($files); $i++) {
+			$keys[$i] = md5($files[$i]->checksum . ($i ? $keys[$i - 1] : ''));
+		}
+		return array_reverse($keys, TRUE);
+	}
+
+
+	/**
+	 * @param  int    $index corresponds to index in $files
+	 * @param  string $key   snapshot key
+	 * @param  string $path  output path
+	 * @return bool
+	 */
+	protected function tryExecuteSnapshot($index, $key, & $path = NULL)
+	{
+		$path = sprintf('%s/%03d-%s.sql', $this->tempDir, $index + 1, $key);
+		if (is_file($path)) {
+			$this->executeFile($this->createSnapshotFile($path));
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 
