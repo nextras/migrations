@@ -69,6 +69,11 @@ $controller->addExtension('sql', new Extensions\SqlHandler($driver));
 $controller->run();
 \--
 
+
+Open the script in your browser (`HttpController`) or in a terminal (`ConsoleController`).
+
+[* http-controller.png *]
+
 ---------------------
 
 Organizing Migrations
