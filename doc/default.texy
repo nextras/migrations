@@ -21,7 +21,7 @@ migrations:
 	dbal: nextras               # nextras, nette, doctrine or dibi
 \--
 
-There are available three basic commannds:
+Three basic commands are available:
 
 * Create new migrations with `migrations:create` command.
 * Run new migrations with `migrations:continue` command.
