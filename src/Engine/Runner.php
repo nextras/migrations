@@ -25,6 +25,7 @@ class Runner
 {
 	/** @const modes */
 	const MODE_CONTINUE = 'continue';
+	const MODE_CONTINUE_FULL_ROLLBACK = 'continue-full-rollback';
 	const MODE_RESET = 'reset';
 	const MODE_INIT = 'init';
 
@@ -80,7 +81,7 @@ class Runner
 
 
 	/**
-	 * @param  string $mode self::MODE_CONTINUE|self::MODE_RESET|self::MODE_INIT
+	 * @param  string $mode self::MODE_CONTINUE|self::MODE_CONTINUE_FULL_ROLLBACK|self::MODE_RESET|self::MODE_INIT
 	 * @return void
 	 */
 	public function run($mode = self::MODE_CONTINUE)
@@ -103,15 +104,30 @@ class Runner
 				$this->printer->printReset();
 			}
 
-			$this->driver->createTable();
-			$migrations = $this->driver->getAllMigrations();
-			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
-			$toExecute = $this->orderResolver->resolve($migrations, $this->groups, $files, $mode);
-			$this->printer->printToExecute($toExecute);
+			$this->driver->beginTransaction();
+			try {
+				$this->driver->createTable();
+				$migrations = $this->driver->getAllMigrations();
+				$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
+				$toExecute = $this->orderResolver->resolve($migrations, $this->groups, $files, $mode);
+				$this->printer->printToExecute($toExecute);
 
-			foreach ($toExecute as $file) {
-				$queriesCount = $this->execute($file);
-				$this->printer->printExecute($file, $queriesCount);
+				foreach ($toExecute as $file) {
+					$queriesCount = $this->execute($file);
+					$this->printer->printExecute($file, $queriesCount);
+				}
+				$this->driver->commitTransaction();
+
+			} catch (\Exception $e) {
+				if ($mode === self::MODE_CONTINUE_FULL_ROLLBACK) {
+					// rollback all migrations executed in this run
+					$this->driver->rollbackTransaction();
+
+				} else if ($mode === self::MODE_CONTINUE) {
+					// commit migrations not including the failing one
+					$this->driver->commitTransaction();
+				}
+				throw $e;
 			}
 
 			$this->driver->unlock();
