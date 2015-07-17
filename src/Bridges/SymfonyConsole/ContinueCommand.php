@@ -25,13 +25,16 @@ class ContinueCommand extends BaseCommand
 		$this->setDescription('Updates database schema by running all new migrations');
 		$this->setHelp("If table 'migrations' does not exist in current database, it is created automatically.");
 		$this->addOption('production', NULL, InputOption::VALUE_NONE, 'Will not import dummy data');
+		$this->addOption('full-rollback', 'r', InputOption::VALUE_NONE, 'Upon failing, rollback all migrations, not only the failed on. <comment>Only works reliably with PostgreSQL.</comment>');
 	}
 
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		$mode = $input->getOption('full-rollback') ? Runner::MODE_CONTINUE_FULL_ROLLBACK : Runner::MODE_CONTINUE;
+
 		$withDummy = !$input->getOption('production');
-		$this->runMigrations(Runner::MODE_CONTINUE, $withDummy);
+		$this->runMigrations($mode, $withDummy);
 	}
 
 }
