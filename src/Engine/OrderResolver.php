@@ -32,7 +32,7 @@ class OrderResolver
 		$this->validateGroups($groups);
 
 		if ($mode === Runner::MODE_RESET) {
-			return $this->sortFiles($files);
+			return $this->sortFiles($files, $groups);
 		} elseif ($mode !== Runner::MODE_CONTINUE) {
 			throw new LogicException('Unsupported mode.');
 		}
@@ -82,7 +82,7 @@ class OrderResolver
 		}
 
 		$files = $this->getFlatFiles($files);
-		$files = $this->sortFiles($files);
+		$files = $this->sortFiles($files, $groups);
 		if ($files && $lastMigration) {
 			$firstFile = reset($files);
 			if (strcmp($firstFile->name, $lastMigration->filename) < 0) {
@@ -99,15 +99,61 @@ class OrderResolver
 
 	/**
 	 * @param  File[] $files
+	 * @param  array  $groups (name => Group)
 	 * @return File[] sorted
 	 */
-	protected function sortFiles(array $files)
+	protected function sortFiles(array $files, array $groups)
 	{
-		usort($files, function (File $a, File $b) {
-			return strcmp($a->name, $b->name);
+		usort($files, function (File $a, File $b) use ($groups) {
+			$cmp = strcmp($a->name, $b->name);
+			if ($cmp === 0 && $a !== $b) {
+				$cmpA = $this->isGroupDependentOn($groups, $a->group, $b->group);
+				$cmpB = $this->isGroupDependentOn($groups, $b->group, $a->group);
+				if ($cmpA xor $cmpB) {
+					$cmp = ($cmpA ? -1 : 1);
+
+				} else {
+					throw new LogicException(sprintf(
+						'Unable to determine order for migrations "%s/%s" and "%s/%s".',
+						$a->group->name, $a->name, $b->group->name, $b->name
+					));
+				}
+			}
+
+			return $cmp;
 		});
 
 		return $files;
+	}
+
+
+	/**
+	 * Returns TRUE if groupA depends on groupB.
+	 *
+	 * @param  array  $groups (name => Group)
+	 * @param  Group $groupA
+	 * @param  Group $groupB
+	 * @return bool
+	 */
+	protected function isGroupDependentOn(array $groups, Group $groupA, Group $groupB)
+	{
+		$visited = [];
+		$queue = $groupB->dependencies;
+		while ($node = array_shift($queue)) {
+			if (isset($visited[$node])) {
+				continue;
+			}
+
+			if ($groupA->name === $node) {
+				return TRUE;
+			}
+
+			$visited[$node] = TRUE;
+			foreach ($groups[$node]->dependencies as $dep) {
+				$queue[] = $dep;
+			}
+		}
+		return FALSE;
 	}
 
 

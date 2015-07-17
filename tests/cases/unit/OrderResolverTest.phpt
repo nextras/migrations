@@ -180,6 +180,25 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
+	public function testTopologicalOrder()
+	{
+		$resolver = new OrderResolver();
+
+		$groupA = $this->createGroup('structures');
+		$groupB = $this->createGroup('data', TRUE, ['structures']);
+
+		$fileA = $this->createFile('foo', $groupA);
+		$fileB = $this->createFile('foo', $groupB);
+
+		Assert::same([$fileA, $fileB], $resolver->resolve(
+			[],
+			[$groupA, $groupB],
+			[$fileA, $fileB],
+			Runner::MODE_CONTINUE
+		));
+	}
+
+
 	public function testErrorRemovedFile()
 	{
 		$resolver = new OrderResolver;
@@ -314,6 +333,48 @@ class OrderResolverTest extends Tester\TestCase
 				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'Group "data" depends on disabled group "structures". Please enable group "structures" to continue.');
+	}
+
+
+	public function testErrorAmbiguousLogicalName()
+	{
+		$resolver = new OrderResolver();
+
+		$groupA = $this->createGroup('structures');
+		$groupB = $this->createGroup('data');
+
+		$fileA = $this->createFile('foo', $groupA);
+		$fileB = $this->createFile('foo', $groupB);
+
+		Assert::exception(function () use ($resolver, $groupA, $groupB, $fileA, $fileB) {
+			$resolver->resolve(
+				[],
+				[$groupA, $groupB],
+				[$fileA, $fileB],
+				Runner::MODE_CONTINUE
+			);
+		}, 'Nextras\Migrations\LogicException', 'Unable to determine order for migrations "data/foo" and "structures/foo".');
+	}
+
+
+	public function testErrorAmbiguousLogicalNameCyclic()
+	{
+		$resolver = new OrderResolver();
+
+		$groupA = $this->createGroup('structures', TRUE, ['data']);
+		$groupB = $this->createGroup('data', TRUE, ['structures']);
+
+		$fileA = $this->createFile('foo', $groupA);
+		$fileB = $this->createFile('foo', $groupB);
+
+		Assert::exception(function () use ($resolver, $groupA, $groupB, $fileA, $fileB) {
+			$resolver->resolve(
+				[],
+				[$groupA, $groupB],
+				[$fileA, $fileB],
+				Runner::MODE_CONTINUE
+			);
+		}, 'Nextras\Migrations\LogicException', 'Unable to determine order for migrations "data/foo" and "structures/foo".');
 	}
 
 
