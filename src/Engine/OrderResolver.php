@@ -113,9 +113,14 @@ class OrderResolver
 					$cmp = ($cmpA ? -1 : 1);
 
 				} else {
+					$names = [
+						"{$a->group->name}/{$a->name}",
+						"{$b->group->name}/{$b->name}",
+					];
+					sort($names);
 					throw new LogicException(sprintf(
-						'Unable to determine order for migrations "%s/%s" and "%s/%s".',
-						$a->group->name, $a->name, $b->group->name, $b->name
+						'Unable to determine order for migrations "%s" and "%s".',
+						$names[0], $names[1]
 					));
 				}
 			}
