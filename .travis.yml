@@ -14,7 +14,7 @@ matrix:
         - php: 7.0
 
 before_script:
-    - cp ./tests/php-unix.sample.ini ./tests/php.ini
+    - touch ./tests/php.ini
     - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then cat ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini >> ./tests/php.ini; fi
     - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then NTESTER_FLAGS="--coverage ./coverage.xml --coverage-src ./src"; else TESTER_FLAGS=""; fi
 
