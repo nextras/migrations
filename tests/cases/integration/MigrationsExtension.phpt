@@ -49,6 +49,7 @@ class MigrationsExtensionTest extends TestCase
 			['configC'],
 			['configD'],
 			['configE'],
+			['configF'],
 		];
 	}
 }

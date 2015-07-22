@@ -50,11 +50,12 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config, 'dir', 'string');
 		Validators::assertField($config, 'phpParams', 'array');
 
-		$driver = $this->getDriver($config['driver'], $config['dbal']);
-		$driver = $builder->addDefinition($this->prefix('driver'))
-			->setFactory($driver);
-
+		$dbal = $this->getDbal($config['dbal']);
+		$driver = $this->getDriver($config['driver'], $dbal);
 		$params = [$driver, $config['dir'], $config['phpParams']];
+
+		$builder->addExcludedClasses(['Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand']);
+
 		$builder->addDefinition($this->prefix('continueCommand'))
 			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand')
 			->setArguments($params)
@@ -74,15 +75,16 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 	private function getDriver($driver, $dbal)
 	{
-		if ($driver === NULL) {
+		$factory = $this->getDriverFactory($driver, $dbal);
+
+		if ($factory) {
+			return $this->getContainerBuilder()
+				->addDefinition($this->prefix('driver'))
+				->setClass('Nextras\Migrations\IDriver')
+				->setFactory($factory);
+
+		} elseif ($driver === NULL) {
 			return '@Nextras\Migrations\IDriver';
-
-		} elseif ($driver instanceof Nette\DI\Statement) {
-			return Nette\DI\Compiler::filterArguments([$driver])[0];
-
-		} elseif (is_string($driver) && isset($this->drivers[$driver])) {
-			$dbal = $this->getDbal($dbal);
-			return new Nette\DI\Statement($this->drivers[$driver], [$dbal]);
 
 		} else {
 			throw new Nextras\Migrations\LogicException('Invalid driver value.');
@@ -90,19 +92,49 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
+	private function getDriverFactory($driver, $dbal)
+	{
+		if ($driver instanceof Nette\DI\Statement) {
+			return Nette\DI\Compiler::filterArguments([$driver])[0];
+
+		} elseif (is_string($driver) && isset($this->drivers[$driver])) {
+			return new Nette\DI\Statement($this->drivers[$driver], [$dbal]);
+
+		} else {
+			return NULL;
+		}
+	}
+
+
 	private function getDbal($dbal)
 	{
-		if ($dbal === NULL) {
+		$factory = $this->getDbalFactory($dbal);
+
+		if ($factory) {
+			return $this->getContainerBuilder()
+				->addDefinition($this->prefix('dbal'))
+				->setClass('Nextras\Migrations\IDbal')
+				->setFactory($factory);
+
+		} elseif ($dbal === NULL) {
 			return '@Nextras\Migrations\IDbal';
-
-		} elseif ($dbal instanceof Nette\DI\Statement) {
-			return Nette\DI\Compiler::filterArguments([$dbal])[0];
-
-		} elseif (is_string($dbal) && isset($this->dbals[$dbal])) {
-			return new Nette\DI\Statement($this->dbals[$dbal]);
 
 		} else {
 			throw new Nextras\Migrations\LogicException('Invalid dbal value');
+		}
+	}
+
+
+	private function getDbalFactory($dbal)
+	{
+		if ($dbal instanceof Nette\DI\Statement) {
+			return Nette\DI\Compiler::filterArguments([$dbal])[0];
+
+		} elseif (is_string($dbal) && isset($this->dbals[$dbal])) {
+			return $this->dbals[$dbal];
+
+		} else {
+			return NULL;
 		}
 	}
 
