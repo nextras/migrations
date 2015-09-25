@@ -22,6 +22,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'phpParams' => [],
 		'driver' => NULL,
 		'dbal' => NULL,
+		'handlers' => [],
 	];
 
 	/** @var array */
@@ -49,11 +50,26 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		$config = $this->validateConfig($this->defaults);
 		Validators::assertField($config, 'dir', 'string');
 		Validators::assertField($config, 'phpParams', 'array');
+		Validators::assertField($config, 'handlers', 'array');
 
 		$dbal = $this->getDbal($config['dbal']);
 		$driver = $this->getDriver($config['driver'], $dbal);
-		$params = [$driver, $config['dir'], $config['phpParams']];
 
+
+		$handlers = [];
+		$handlers['sql'] = $builder->addDefinition($this->prefix('sqlHandler'))
+			->setClass('Nextras\Migrations\Extensions\SqlHandler')
+			->setArguments([$driver]);
+		$handlers['php'] = $builder->addDefinition($this->prefix('phpHandler'))
+			->setClass('Nextras\Migrations\Extensions\PhpHandler')
+			->setArguments($config['phpParams']);
+
+		foreach ($config['handlers'] as $extension => $handler) {
+			$handlers[$extension] = $handler;
+		}
+
+
+		$params = [$driver, $config['dir'], $handlers];
 		$builder->addExcludedClasses(['Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand']);
 
 		$builder->addDefinition($this->prefix('continueCommand'))

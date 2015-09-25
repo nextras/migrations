@@ -27,20 +27,20 @@ abstract class BaseCommand extends Command
 	private $dir;
 
 	/** @var array */
-	private $phpParams;
+	private $extensionHandlers;
 
 
 	/**
 	 * @param  IDriver $driver
 	 * @param  string  $dir
-	 * @param  array   $phpParams (name => value)
+	 * @param  array   $extensionHandlers
 	 */
-	public function __construct(IDriver $driver, $dir, $phpParams = [])
+	public function __construct(IDriver $driver, $dir, $extensionHandlers = [])
 	{
 		parent::__construct();
 		$this->driver = $driver;
 		$this->dir = $dir;
-		$this->phpParams = $phpParams;
+		$this->extensionHandlers = $extensionHandlers;
 	}
 
 
@@ -99,10 +99,7 @@ abstract class BaseCommand extends Command
 	 */
 	protected function getExtensionHandlers()
 	{
-		return [
-			'sql' => new Extensions\SqlHandler($this->driver),
-			'php' => new Extensions\PhpHandler($this->phpParams),
-		];
+		return $this->extensionHandlers;
 	}
 
 
