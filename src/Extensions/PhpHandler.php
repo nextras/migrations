@@ -11,6 +11,7 @@ namespace Nextras\Migrations\Extensions;
 
 use Nextras\Migrations\Entities\File;
 use Nextras\Migrations\IExtensionHandler;
+use Nextras\Migrations\IOException;
 
 
 /**
@@ -54,10 +55,14 @@ class PhpHandler implements IExtensionHandler
 	}
 
 
-	public function execute(File $sql)
+	public function execute(File $file)
 	{
 		extract($this->params, EXTR_SKIP);
-		return include $sql->path;
+		$count = @include $file->path;
+		if ($count === FALSE) {
+			throw new IOException("Cannot include file '{$file->path}'.");
+		}
+		return $count;
 	}
 
 }
