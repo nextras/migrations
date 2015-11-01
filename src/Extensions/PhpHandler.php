@@ -56,7 +56,7 @@ class PhpHandler implements IExtensionHandler
 
 	public function execute(File $sql)
 	{
-		extract($this->params);
+		extract($this->params, EXTR_SKIP);
 		return include $sql->path;
 	}
 
