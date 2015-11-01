@@ -21,7 +21,9 @@
 	"suggest": {
 		"dibi/dibi": "to use DibiAdapter",
 		"nette/database": "to use NetteAdapter",
-		"nextras/dbal": "to use NextrasAdapter"
+		"nextras/dbal": "to use NextrasAdapter",
+		"doctrine/dbal": "to use DoctrineAdapter",
+		"symfony/console": "to use Symfony commands"
 	},
 	"extra": {
 		"branch-alias": {
