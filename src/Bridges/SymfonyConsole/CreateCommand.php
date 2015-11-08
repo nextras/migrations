@@ -24,6 +24,7 @@ class CreateCommand extends BaseCommand
 	{
 		$this->setName('migrations:create');
 		$this->setDescription('Creates new migration file with proper name (e.g. 2015-03-14-130836-label.sql)');
+		$this->setHelp('Prints path of the created file to standard output.');
 		$this->addArgument('type', InputArgument::REQUIRED, 's(tructures), b(asic-data) or d(ummy-data');
 		$this->addArgument('label', InputArgument::REQUIRED, 'short description');
 	}
@@ -34,7 +35,9 @@ class CreateCommand extends BaseCommand
 		$dir = $this->getDirectory($input->getArgument('type'));
 		$name = $this->getFileName($input->getArgument('label'));
 		@mkdir($dir, 0777, TRUE); // directory may already exist
-		touch("$dir/$name");
+		$file = "$dir/$name";
+		touch($file);
+		$output->writeln($file);
 	}
 
 
