@@ -34,8 +34,18 @@ class CreateCommand extends BaseCommand
 	{
 		$dir = $this->getDirectory($input->getArgument('type'));
 		$name = $this->getFileName($input->getArgument('label'));
-		@mkdir($dir, 0777, TRUE); // directory may already exist
-		$file = "$dir/$name";
+
+		if ($this->hasNumericSubdirectory($dir, $foundYear)) {
+			if ($this->hasNumericSubdirectory($foundYear, $foundMonth)) {
+				$file = $dir . date('/Y/m/') . $name;
+			} else {
+				$file = $dir . date('/Y/') . $name;
+			}
+		} else {
+			$file = "$dir/$name";
+		}
+
+		@mkdir(dirname($file), 0777, TRUE); // directory may already exist
 		touch($file);
 		$output->writeln($file);
 	}
@@ -64,6 +74,24 @@ class CreateCommand extends BaseCommand
 	private function getFileName($label)
 	{
 		return date('Y-m-d-His-') . Strings::webalize($label, '.') . '.sql';
+	}
+
+
+	/**
+	 * @param  string $dir
+	 * @param  string|NULL $found
+	 * @return bool
+	 */
+	private function hasNumericSubdirectory($dir, & $found)
+	{
+		$items = @scandir($dir); // directory may not exist
+		foreach ($items as $item) {
+			if ($item !== '.' && $item !== '..' && is_dir($dir . '/' . $item)) {
+				$found = $dir . '/' . $item;
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
 }
