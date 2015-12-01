@@ -110,8 +110,9 @@ class Runner
 			$this->printer->printToExecute($toExecute);
 
 			foreach ($toExecute as $file) {
+				$time = microtime(TRUE);
 				$queriesCount = $this->execute($file);
-				$this->printer->printExecute($file, $queriesCount);
+				$this->printer->printExecute($file, $queriesCount, microtime(TRUE) - $time);
 			}
 
 			$this->driver->unlock();

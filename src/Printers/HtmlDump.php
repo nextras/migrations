@@ -45,13 +45,13 @@ class HtmlDump implements IPrinter
 	}
 
 
-	public function printExecute(File $file, $count)
+	public function printExecute(File $file, $count, $time)
 	{
 		$format = '%0' . strlen($this->count) . 'd';
 		$name = htmlspecialchars($file->group->name . '/' . $file->name);
 		$this->output(sprintf(
-			$format . '/' . $format . ': <strong>%s</strong> (%d %s)',
-			++$this->index, $this->count, $name, $count, ($count === 1 ? 'query' : 'queries')
+			$format . '/' . $format . ': <strong>%s</strong> (%d %s, %0.3f ms)',
+			++$this->index, $this->count, $name, $count, ($count === 1 ? 'query' : 'queries'), $time
 		));
 	}
 

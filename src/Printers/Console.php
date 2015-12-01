@@ -52,11 +52,11 @@ class Console implements IPrinter
 	}
 
 
-	public function printExecute(File $file, $count)
+	public function printExecute(File $file, $count, $time)
 	{
-		$this->output($file->group->name . '/' . $file->name . '; ' . $count . ' queries');
-
+		$this->output($file->group->name . '/' . $file->name . '; ' . $count . ' queries; ' . sprintf('%0.3f', $time) . ' ms');
 	}
+
 
 	public function printDone()
 	{

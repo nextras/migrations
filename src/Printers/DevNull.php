@@ -31,7 +31,7 @@ class DevNull implements IPrinter
 	}
 
 
-	public function printExecute(File $file, $count)
+	public function printExecute(File $file, $count, $time)
 	{
 	}
 
