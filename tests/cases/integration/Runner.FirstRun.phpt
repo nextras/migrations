@@ -21,13 +21,14 @@ class FirstRunTest extends IntegrationTestCase
 	{
 		$this->runner->run(Runner::MODE_RESET);
 		Assert::same([
+			'Nextras Migrations',
 			'RESET',
 			'5 migrations need to be executed.',
-			'structures/001.sql; 1 queries',
-			'structures/002.sql; 1 queries',
-			'basic-data/003.sql; 2 queries',
-			'dummy-data/004.sql; 1 queries',
-			'structures/005.sql; 1 queries',
+			'- structures/001.sql; 1 queries; XX ms',
+			'- structures/002.sql; 1 queries; XX ms',
+			'- basic-data/003.sql; 2 queries; XX ms',
+			'- dummy-data/004.sql; 1 queries; XX ms',
+			'- structures/005.sql; 1 queries; XX ms',
 			'OK',
 		], $this->printer->lines);
 
@@ -58,12 +59,14 @@ class FirstRunTest extends IntegrationTestCase
 	{
 		$this->runner->run(Runner::MODE_CONTINUE);
 		Assert::same([
+			'Nextras Migrations',
+			'CONTINUE',
 			'5 migrations need to be executed.',
-			'structures/001.sql; 1 queries',
-			'structures/002.sql; 1 queries',
-			'basic-data/003.sql; 2 queries',
-			'dummy-data/004.sql; 1 queries',
-			'structures/005.sql; 1 queries',
+			'- structures/001.sql; 1 queries; XX ms',
+			'- structures/002.sql; 1 queries; XX ms',
+			'- basic-data/003.sql; 2 queries; XX ms',
+			'- dummy-data/004.sql; 1 queries; XX ms',
+			'- structures/005.sql; 1 queries; XX ms',
 			'OK',
 		], $this->printer->lines);
 

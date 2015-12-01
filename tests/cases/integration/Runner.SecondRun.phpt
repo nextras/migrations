@@ -24,13 +24,14 @@ class SecondRunTest extends IntegrationTestCase
 
 		$this->runner->run(Runner::MODE_RESET);
 		Assert::same([
+			'Nextras Migrations',
 			'RESET',
 			'5 migrations need to be executed.',
-			'structures/001.sql; 1 queries',
-			'structures/002.sql; 1 queries',
-			'basic-data/003.sql; 2 queries',
-			'dummy-data/004.sql; 1 queries',
-			'structures/005.sql; 1 queries',
+			'- structures/001.sql; 1 queries; XX ms',
+			'- structures/002.sql; 1 queries; XX ms',
+			'- basic-data/003.sql; 2 queries; XX ms',
+			'- dummy-data/004.sql; 1 queries; XX ms',
+			'- structures/005.sql; 1 queries; XX ms',
 			'OK',
 		], $this->printer->lines);
 
@@ -45,9 +46,11 @@ class SecondRunTest extends IntegrationTestCase
 
 		$this->runner->run(Runner::MODE_CONTINUE);
 		Assert::same([
+			'Nextras Migrations',
+			'CONTINUE',
 			'2 migrations need to be executed.',
-			'dummy-data/004.sql; 1 queries',
-			'structures/005.sql; 1 queries',
+			'- dummy-data/004.sql; 1 queries; XX ms',
+			'- structures/005.sql; 1 queries; XX ms',
 			'OK',
 		], $this->printer->lines);
 
@@ -65,6 +68,8 @@ class SecondRunTest extends IntegrationTestCase
 		}, 'Nextras\Migrations\LogicException');
 
 		Assert::same([
+			'Nextras Migrations',
+			'CONTINUE',
 			'ERROR: Previously executed migration "basic-data/003.sql" did not succeed. Please fix this manually or reset the migrations.',
 		], $this->printer->lines);
 

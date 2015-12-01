@@ -28,7 +28,7 @@ class Console implements IPrinter
 	const COLOR_INFO = '1;36';
 
 	/** @var bool */
-	private $useColors;
+	protected $useColors;
 
 
 	public function __construct()

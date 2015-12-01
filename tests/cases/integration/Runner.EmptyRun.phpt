@@ -21,6 +21,7 @@ class EmptyRunTest extends IntegrationTestCase
 	{
 		$this->runner->run(Runner::MODE_RESET);
 		Assert::same([
+			'Nextras Migrations',
 			'RESET',
 			'No migration needs to be executed.',
 			'OK',
