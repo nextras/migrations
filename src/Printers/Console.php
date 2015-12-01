@@ -9,6 +9,7 @@
 
 namespace Nextras\Migrations\Printers;
 
+use Nextras\Migrations\Engine\Runner;
 use Nextras\Migrations\Entities\File;
 use Nextras\Migrations\Exception;
 use Nextras\Migrations\IPrinter;
@@ -35,9 +36,14 @@ class Console implements IPrinter
 	}
 
 
-	public function printReset()
+	public function printIntro($mode)
 	{
-		$this->output('RESET', self::COLOR_NOTICE);
+		$this->output('Nextras Migrations');
+		if ($mode === Runner::MODE_RESET) {
+			$this->output('RESET', self::COLOR_NOTICE);
+		} else {
+			$this->output('CONTINUE', self::COLOR_NOTICE);
+		}
 	}
 
 

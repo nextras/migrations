@@ -98,9 +98,9 @@ class Runner
 			$this->driver->setupConnection();
 			$this->driver->lock();
 
+			$this->printer->printIntro($mode);
 			if ($mode === self::MODE_RESET) {
 				$this->driver->emptyDatabase();
-				$this->printer->printReset();
 			}
 
 			$this->driver->createTable();

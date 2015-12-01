@@ -18,9 +18,12 @@ use Nextras\Migrations\Entities\File;
 interface IPrinter
 {
 	/**
-	 * Database has been wiped. Occurs only in reset mode.
+	 * Print general info about mode.
+	 * - reset = Database has been wiped.
+	 * - continue = Running new migrations.
+	 * @param  string $mode
 	 */
-	function printReset();
+	function printIntro($mode);
 
 
 	/**
