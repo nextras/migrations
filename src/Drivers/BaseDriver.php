@@ -54,7 +54,7 @@ abstract class BaseDriver implements IDriver
 	public function loadFile($path)
 	{
 		$query = @file_get_contents($path);
-		if (!$query) {
+		if ($query === FALSE) {
 			throw new IOException("Cannot open file '$path'.");
 		}
 
