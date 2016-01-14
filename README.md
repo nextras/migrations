@@ -7,7 +7,7 @@ Nextras\Migrations
 [![Code coverage](https://img.shields.io/coveralls/nextras/migrations.svg?style=flat)](https://coveralls.io/r/nextras/migrations)
 [![HHVM Status](http://img.shields.io/hhvm/nextras/migrations.svg?style=flat)](http://hhvm.h4cc.de/package/nextras/migrations)
 
-For more information read **[documentation](http://nextras.cz/migrations/docs)**.
+For more information read **[documentation](https://nextras.org/migrations/docs)**.
 
 **Supported databases:**
 * PostgreSQL
