@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS "%a%"."m" (
 	CONSTRAINT "type_file" UNIQUE ("group", "file")
 ) WITH (OIDS=FALSE);
 
-INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES ('structures', '001.sql', '%h%', '%a%'::timestamptz, TRUE);
-INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES ('structures', '002.sql', '%h%', '%a%'::timestamptz, TRUE);
-INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES ('basic-data', '003.sql', '%h%', '%a%'::timestamptz, TRUE);
-INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES ('dummy-data', '004.sql', '%h%', '%a%'::timestamptz, TRUE);
-INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES ('structures', '005.sql', '%h%', '%a%'::timestamptz, TRUE);
+INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES (%a%structures', %a%001.sql', %a%%h%', '%a%, TRUE);
+INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES (%a%structures', %a%002.sql', %a%%h%', '%a%, TRUE);
+INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES (%a%basic-data', %a%003.sql', %a%%h%', '%a%, TRUE);
+INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES (%a%dummy-data', %a%004.sql', %a%%h%', '%a%, TRUE);
+INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES (%a%structures', %a%005.sql', %a%%h%', '%a%, TRUE);
