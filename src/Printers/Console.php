@@ -40,11 +40,7 @@ class Console implements IPrinter
 	public function printIntro($mode)
 	{
 		$this->output('Nextras Migrations');
-		if ($mode === Runner::MODE_RESET) {
-			$this->output('RESET', self::COLOR_INTRO);
-		} else {
-			$this->output('CONTINUE', self::COLOR_INTRO);
-		}
+		$this->output(strtoupper($mode), self::COLOR_INTRO);
 	}
 
 
