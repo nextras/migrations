@@ -33,11 +33,15 @@ class SqlHandler implements IExtensionHandler
 	}
 
 
-	public function execute(File $sql)
+	/**
+	 * @param  File $file
+	 * @return int number of queries
+	 */
+	public function execute(File $file)
 	{
-		$count = $this->driver->loadFile($sql->path);
+		$count = $this->driver->loadFile($file->path);
 		if ($count === 0) {
-			throw new LogicException("{$sql->path} is empty");
+			throw new LogicException("{$file->path} is empty");
 		}
 		return $count;
 	}

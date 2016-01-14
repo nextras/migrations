@@ -12,7 +12,6 @@ namespace Nextras\Migrations\Engine;
 use Nextras\Migrations\Entities\File;
 use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\Entities\Migration;
-use Nextras\Migrations\Exception;
 use Nextras\Migrations\LogicException;
 
 
@@ -24,7 +23,7 @@ class OrderResolver
 	 * @param  File[]      $files
 	 * @param  string      $mode
 	 * @return File[]
-	 * @throws Exception
+	 * @throws LogicException
 	 */
 	public function resolve(array $migrations, array $groups, array $files, $mode)
 	{
@@ -207,7 +206,7 @@ class OrderResolver
 	/**
 	 * @param  Group[] $groups
 	 * @return void
-	 * @throws Exception
+	 * @throws LogicException
 	 */
 	private function validateGroups(array $groups)
 	{

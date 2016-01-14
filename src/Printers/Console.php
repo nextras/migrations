@@ -9,7 +9,6 @@
 
 namespace Nextras\Migrations\Printers;
 
-use Nextras\Migrations\Engine\Runner;
 use Nextras\Migrations\Entities\File;
 use Nextras\Migrations\Exception;
 use Nextras\Migrations\IPrinter;

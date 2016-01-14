@@ -21,16 +21,15 @@ use Nextras\Migrations\IOException;
 class PhpHandler implements IExtensionHandler
 {
 	/** @var array name => value */
-	private $params = [];
+	private $params;
+
 
 	/**
 	 * @param array $params name => value
 	 */
 	public function __construct(array $params = [])
 	{
-		foreach ($params as $name => $value) {
-			$this->addParameter($name, $value);
-		}
+		$this->params = $params;
 	}
 
 
@@ -55,6 +54,10 @@ class PhpHandler implements IExtensionHandler
 	}
 
 
+	/**
+	 * @param  File $file
+	 * @return int number of queries
+	 */
 	public function execute(File $file)
 	{
 		extract($this->params, EXTR_SKIP);

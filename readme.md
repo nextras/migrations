@@ -23,6 +23,6 @@ For more information read **[documentation](https://nextras.org/migrations/docs)
 License
 -------
 
-*Based on [Clevis\Migration](https://github.com/clevis/migration) by Petr Procházka and further improved.*
+*Based on [Clevis\Migration](https://github.com/Clevis/Migration) by Petr Procházka and further improved.*
 
 New BSD License. See full [license](license.md).

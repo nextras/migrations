@@ -1,9 +1,9 @@
 New BSD License
 ---------------
 
-Copyright (c) 2013 Nextras contributors
+Copyright (c) 2013 Nextras contributors (https://nextras.org)
 
-Copyright (c) 2013 Clevis s.r.o. (http://clevis.cz)
+Copyright (c) 2013 Clevis s.r.o. (http://www.clevis.cz/)
 
 All rights reserved.
 

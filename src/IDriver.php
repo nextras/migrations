@@ -21,6 +21,7 @@ interface IDriver
 	/** @const shared lock identifier */
 	const LOCK_NAME = 'Nextras.Migrations';
 
+
 	/**
 	 * Setups the connection, such as encoding, default schema, etc.
 	 */

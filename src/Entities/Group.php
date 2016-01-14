@@ -10,6 +10,9 @@
 namespace Nextras\Migrations\Entities;
 
 
+/**
+ * Group of migrations. Forms DAG with other groups.
+ */
 class Group
 {
 	/** @var string */
