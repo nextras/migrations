@@ -236,7 +236,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileB, $fileA],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" has been changed.');
+		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" has been changed. File checksum is "1s.md5.Y", but executed migration had checksum "1s.md5.X".');
 	}
 
 
