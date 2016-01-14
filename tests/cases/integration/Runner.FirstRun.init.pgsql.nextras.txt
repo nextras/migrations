@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS "%a%"."m" (
+	"id" serial4 NOT NULL,
+	"group" varchar(100) NOT NULL,
+	"file" varchar(100) NOT NULL,
+	"checksum" char(32) NOT NULL,
+	"executed" timestamp NOT NULL,
+	"ready" boolean NOT NULL DEFAULT FALSE,
+	PRIMARY KEY ("id"),
+	CONSTRAINT "type_file" UNIQUE ("group", "file")
+) WITH (OIDS=FALSE);
+
+INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES (%a%structures', %a%001.sql', %a%%h%', '%a%, TRUE);
+INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES (%a%structures', %a%002.sql', %a%%h%', '%a%, TRUE);
+INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES (%a%basic-data', %a%003.sql', %a%%h%', '%a%, TRUE);
+INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES (%a%dummy-data', %a%004.sql', %a%%h%', '%a%, TRUE);
+INSERT INTO "%a%"."m" ("group", "file", "checksum", "executed", "ready") VALUES (%a%structures', %a%005.sql', %a%%h%', '%a%, TRUE);
