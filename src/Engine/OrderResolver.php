@@ -62,8 +62,8 @@ class OrderResolver
 					$file = $files[$groupName][$filename];
 					if ($migration->checksum !== $file->checksum) {
 						throw new LogicException(sprintf(
-							'Previously executed migration "%s/%s" has been changed.',
-							$groupName, $filename
+							'Previously executed migration "%s/%s" has been changed. File checksum is "%s", but executed migration had checksum "%s".',
+							$groupName, $filename, $file->checksum, $migration->checksum
 						));
 					}
 					unset($files[$groupName][$filename]);
