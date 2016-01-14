@@ -1,4 +1,4 @@
-Nextras\Migrations
+Nextras Migrations
 ==================
 
 [![Build Status](https://travis-ci.org/nextras/migrations.svg?branch=master)](https://travis-ci.org/nextras/migrations)
