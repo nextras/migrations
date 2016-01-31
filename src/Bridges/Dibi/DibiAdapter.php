@@ -11,17 +11,17 @@ namespace Nextras\Migrations\Bridges\Dibi;
 
 use DateTime;
 use dibi;
-use DibiConnection;
+use Dibi\Connection;
 use Nextras\Migrations\IDbal;
 
 
 class DibiAdapter implements IDbal
 {
-	/** @var DibiConnection */
+	/** @var Connection */
 	private $conn;
 
 
-	public function __construct(DibiConnection $dibi)
+	public function __construct(Connection $dibi)
 	{
 		$this->conn = $dibi;
 	}
@@ -43,7 +43,7 @@ class DibiAdapter implements IDbal
 
 	public function escapeString($value)
 	{
-		return $this->conn->getDriver()->escape($value, dibi::TEXT);
+		return $this->conn->getDriver()->escapeText($value);
 	}
 
 
@@ -55,19 +55,19 @@ class DibiAdapter implements IDbal
 
 	public function escapeBool($value)
 	{
-		return $this->conn->getDriver()->escape($value, dibi::BOOL);
+		return $this->conn->getDriver()->escapeBool($value);
 	}
 
 
 	public function escapeDateTime(DateTime $value)
 	{
-		return $this->conn->getDriver()->escape($value, dibi::DATETIME);
+		return $this->conn->getDriver()->escapeDateTime($value);
 	}
 
 
 	public function escapeIdentifier($value)
 	{
-		return $this->conn->getDriver()->escape($value, dibi::IDENTIFIER);
+		return $this->conn->getDriver()->escapeIdentifier($value);
 	}
 
 }

@@ -3,5 +3,5 @@ migrations:
 	driver: mysql
 
 services:
-	- DibiConnection(%dibiConfig%)
+	- Dibi\Connection(%dibiConfig%)
 	- Nextras\Migrations\Bridges\Dibi\DibiAdapter(...)
