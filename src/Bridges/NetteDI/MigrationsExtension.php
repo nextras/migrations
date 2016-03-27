@@ -23,6 +23,13 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'driver' => NULL,
 		'dbal' => NULL,
 		'handlers' => [],
+		'configuration' => 'Nextras\Migrations\Configurations\DefaultConfiguration',
+		'withDummyData' => FALSE,
+		'commands' => [
+			'continue' => 'Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand',
+			'create' => 'Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand',
+			'reset' => 'Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand',
+		],
 	];
 
 	/** @var array */
@@ -68,24 +75,21 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			$handlers[$extension] = $handler;
 		}
 
+		$configuration = $builder->addDefinition($this->prefix('configuration'))
+			->setClass($config['configuration'])
+			->setArguments([$config['dir'], $handlers, $config['withDummyData']]);
 
-		$params = [$driver, $config['dir'], $handlers];
+
+		$params = [$driver, $configuration];
 		$builder->addExcludedClasses(['Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand']);
 
-		$builder->addDefinition($this->prefix('continueCommand'))
-			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand')
-			->setArguments($params)
-			->addTag('kdyby.console.command');
-
-		$builder->addDefinition($this->prefix('createCommand'))
-			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand')
-			->setArguments($params)
-			->addTag('kdyby.console.command');
-
-		$builder->addDefinition($this->prefix('resetCommand'))
-			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand')
-			->setArguments($params)
-			->addTag('kdyby.console.command');
+		foreach (array_filter($config['commands']) as $name => $commandClass) {
+			// filter NULLed command classes to enable disabling default command completely
+			$builder->addDefinition($this->prefix("{$name}Command"))
+				->setClass($commandClass)
+				->setArguments($params)
+				->addTag('kdyby.console.command');
+		}
 	}
 
 

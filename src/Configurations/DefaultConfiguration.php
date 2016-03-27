@@ -10,12 +10,8 @@
 namespace Nextras\Migrations\Configurations;
 
 use Nextras\Migrations\Entities\Group;
-use Nextras\Migrations\Extensions\PhpHandler;
-use Nextras\Migrations\Extensions\SqlHandler;
 use Nextras\Migrations\IConfiguration;
-use Nextras\Migrations\IDriver;
-use Nextras\Migrations\IPrinter;
-use Nextras\Migrations\Printers\Console;
+use Nextras\Migrations\IExtensionHandler;
 
 
 /**
@@ -23,31 +19,26 @@ use Nextras\Migrations\Printers\Console;
  */
 class DefaultConfiguration implements IConfiguration
 {
-	/** @var IDriver */
-	protected $driver;
-
 	/** @var string */
 	protected $dir;
 
-	/** @var array */
-	protected $phpParams;
-
 	/** @var bool */
-	protected $withDummy;
+	protected $withDummyData;
+
+	/** @var IExtensionHandler[] */
+	protected $handlers;
 
 
 	/**
-	 * @param  IDriver $driver
-	 * @param  string  $dir
-	 * @param  array   $phpParams (name => value)
-	 * @param  bool    $withDummy
+	 * @param  string              $dir
+	 * @param  IExtensionHandler[] $handlers       (extension => IExtensionHandler)
+	 * @param  bool                $withDummyData
 	 */
-	public function __construct(IDriver $driver, $dir, $phpParams = [], $withDummy = TRUE)
+	public function __construct($dir, array $handlers, $withDummyData = TRUE)
 	{
-		$this->driver = $driver;
 		$this->dir = $dir;
-		$this->phpParams = $phpParams;
-		$this->withDummy = $withDummy;
+		$this->handlers = $handlers;
+		$this->withDummyData = $withDummyData;
 	}
 
 
@@ -69,7 +60,7 @@ class DefaultConfiguration implements IConfiguration
 		$basicData->dependencies = ['structures'];
 
 		$dummyData = new Group();
-		$dummyData->enabled = $this->withDummy;
+		$dummyData->enabled = $this->withDummyData;
 		$dummyData->name = 'dummy-data';
 		$dummyData->directory = $this->dir . '/dummy-data';
 		$dummyData->dependencies = ['structures', 'basic-data'];
@@ -79,14 +70,11 @@ class DefaultConfiguration implements IConfiguration
 
 
 	/**
-	 * @return array (extension => IExtensionHandler)
+	 * @return IExtensionHandler[] (extension => IExtensionHandler)
 	 */
 	public function getExtensionHandlers()
 	{
-		return [
-			'sql' => new SqlHandler($this->driver),
-			'php' => new PhpHandler($this->phpParams),
-		];
+		return $this->handlers;
 	}
 
 }

@@ -9,6 +9,8 @@
 
 namespace Nextras\Migrations;
 
+use Nextras\Migrations\Entities\Group;
+
 
 /**
  * @author Jan Tvrdík
@@ -18,12 +20,12 @@ interface IConfiguration
 	/**
 	 * @return Group[]
 	 */
-	function getGroups();
+	public function getGroups();
 
 
 	/**
 	 * @return array (extension => IExtensionHandler)
 	 */
-	function getExtensionHandlers();
+	public function getExtensionHandlers();
 
 }

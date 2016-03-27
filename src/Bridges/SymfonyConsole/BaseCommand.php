@@ -10,11 +10,9 @@
 namespace Nextras\Migrations\Bridges\SymfonyConsole;
 
 use Nextras\Migrations\Engine\Runner;
-use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\Extensions;
 use Nextras\Migrations\IConfiguration;
 use Nextras\Migrations\IDriver;
-use Nextras\Migrations\IPrinter;
 use Nextras\Migrations\Printers\Console;
 use Symfony\Component\Console\Command\Command;
 
@@ -23,27 +21,20 @@ abstract class BaseCommand extends Command
 {
 	/** @var IDriver */
 	protected $driver;
-	/** @var IConfiguration */
-	protected $devConfig;
 
 	/** @var IConfiguration */
-	protected $prodConfig;
-
-	/** @var array */
-	private $extensionHandlers;
+	protected $config;
 
 
 	/**
 	 * @param  IDriver        $driver
-	 * @param  IConfiguration $devConfig
-	 * @param  IConfiguration $prodConfig
+	 * @param  IConfiguration $config
 	 */
-	public function __construct(IDriver $driver, IConfiguration $devConfig, IConfiguration $prodConfig)
+	public function __construct(IDriver $driver, IConfiguration $config)
 	{
 		parent::__construct();
 		$this->driver = $driver;
-		$this->devConfig = $devConfig;
-		$this->prodConfig = $prodConfig;
+		$this->config = $config;
 	}
 
 
@@ -54,7 +45,7 @@ abstract class BaseCommand extends Command
 	 */
 	protected function runMigrations($mode, $config)
 	{
-		$printer = $this->getPrinter();
+		$printer = new Console();
 		$runner = new Runner($this->driver, $printer);
 		$runner->run($mode, $config);
 	}
