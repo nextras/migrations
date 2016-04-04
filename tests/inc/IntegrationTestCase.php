@@ -7,7 +7,6 @@ use DibiConnection;
 use Doctrine;
 use Nette;
 use Nextras;
-use Nextras\Migrations\Bridges\Dibi\Dibi3Adapter;
 use Nextras\Migrations\Bridges\Dibi\DibiAdapter;
 use Nextras\Migrations\Bridges\DoctrineDbal\DoctrineAdapter;
 use Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter;
@@ -143,7 +142,7 @@ abstract class IntegrationTestCase extends TestCase
 					'mysql' => 'mysqli',
 					'pgsql' => 'postgre',
 				];
-				return new Dibi3Adapter(new Dibi\Connection([
+				return new DibiAdapter(new Dibi\Connection([
 					'host' => $options['host'],
 					'username' => $options['username'],
 					'password' => $options['password'],
