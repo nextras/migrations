@@ -29,6 +29,11 @@ class Dibi3Adapter extends DibiAdapter implements IDbal
 		return $this->conn->getDriver()->escapeText($value);
 	}
 	
+	public function escapeBool($value)
+	{
+		return $this->conn->getDriver()->escapeBool($value);
+	}
+	
 	public function escapeDateTime(DateTime $value)
 	{
 		return $this->conn->getDriver()->escapeDateTime($value);
