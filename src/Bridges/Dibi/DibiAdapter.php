@@ -18,7 +18,7 @@ use Nextras\Migrations\IDbal;
 class DibiAdapter implements IDbal
 {
 	/** @var DibiConnection */
-	protected $conn;
+	private $conn;
 
 
 	public function __construct(DibiConnection $dibi)
