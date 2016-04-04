@@ -28,6 +28,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	/** @var array */
 	protected $dbals = [
 		'dibi' => 'Nextras\Migrations\Bridges\Dibi\DibiAdapter',
+		'dibi3' => 'Nextras\Migrations\Bridges\Dibi\Dibi3Adapter',
 		'doctrine' => 'Nextras\Migrations\Bridges\DoctrineDbal\DoctrineAdapter',
 		'nette' => 'Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter',
 		'nextras' => 'Nextras\Migrations\Bridges\NextrasDbal\NextrasAdapter',
