@@ -10,64 +10,69 @@
 namespace Nextras\Migrations\Bridges\Dibi;
 
 use DateTime;
-use dibi;
-use DibiConnection;
+use LogicException;
 use Nextras\Migrations\IDbal;
 
 
 class DibiAdapter implements IDbal
 {
-	/** @var DibiConnection */
-	private $conn;
+	/** @var IDbal */
+	private $innerAdapter;
 
 
-	public function __construct(DibiConnection $dibi)
+	public function __construct($conn)
 	{
-		$this->conn = $dibi;
+		if (get_class($conn) === 'Dibi\Connection') {
+			$this->innerAdapter = new Dibi3Adapter($conn);
+
+		} elseif (get_class($conn) === 'DibiConnection') {
+			$this->innerAdapter = new Dibi2Adapter($conn);
+
+		} else {
+			throw new LogicException('Invalid argument, expected instance of Dibi\Connection or DibiConnection.');
+		}
 	}
 
 
 	public function query($sql)
 	{
-		$result = $this->conn->nativeQuery($sql);
-		$result->setRowClass(NULL);
-		return $result->fetchAll();
+		return $this->innerAdapter->query($sql);
 	}
 
 
 	public function exec($sql)
 	{
-		return $this->conn->nativeQuery($sql);
+		return $this->innerAdapter->exec($sql);
 	}
 
 
 	public function escapeString($value)
 	{
-		return $this->conn->getDriver()->escape($value, dibi::TEXT);
+		return $this->innerAdapter->escapeString($value);
 	}
 
 
 	public function escapeInt($value)
 	{
-		return (int) $value;
+		return $this->innerAdapter->escapeInt($value);
 	}
 
 
 	public function escapeBool($value)
 	{
-		return $this->conn->getDriver()->escape($value, dibi::BOOL);
+		return $this->innerAdapter->escapeBool($value);
 	}
 
 
 	public function escapeDateTime(DateTime $value)
 	{
-		return $this->conn->getDriver()->escape($value, dibi::DATETIME);
+		return $this->innerAdapter->escapeDateTime($value);
 	}
 
 
 	public function escapeIdentifier($value)
 	{
-		return $this->conn->getDriver()->escape($value, dibi::IDENTIFIER);
+		return $this->innerAdapter->escapeIdentifier($value);
 	}
 
 }

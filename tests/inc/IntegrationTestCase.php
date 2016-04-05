@@ -2,6 +2,7 @@
 
 namespace NextrasTests\Migrations;
 
+use Dibi;
 use DibiConnection;
 use Doctrine;
 use Nette;
@@ -122,7 +123,7 @@ abstract class IntegrationTestCase extends TestCase
 	protected function createDbal($options)
 	{
 		switch ($options['dbal']) {
-			case 'dibi':
+			case 'dibi2':
 				$drivers = [
 					'mysql' => 'mysqli',
 					'pgsql' => 'postgre',
@@ -134,6 +135,21 @@ abstract class IntegrationTestCase extends TestCase
 					'database' => $options['database'],
 					'driver' => $drivers[$options['driver']],
 				]));
+
+
+			case 'dibi3':
+				$drivers = [
+					'mysql' => 'mysqli',
+					'pgsql' => 'postgre',
+				];
+				return new DibiAdapter(new Dibi\Connection([
+					'host' => $options['host'],
+					'username' => $options['username'],
+					'password' => $options['password'],
+					'database' => $options['database'],
+					'driver' => $drivers[$options['driver']],
+				]));
+
 
 			case 'doctrine':
 				$drivers = [

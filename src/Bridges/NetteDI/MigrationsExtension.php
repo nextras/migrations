@@ -28,6 +28,8 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	/** @var array */
 	protected $dbals = [
 		'dibi' => 'Nextras\Migrations\Bridges\Dibi\DibiAdapter',
+		'dibi2' => 'Nextras\Migrations\Bridges\Dibi\Dibi2Adapter',
+		'dibi3' => 'Nextras\Migrations\Bridges\Dibi\Dibi3Adapter',
 		'doctrine' => 'Nextras\Migrations\Bridges\DoctrineDbal\DoctrineAdapter',
 		'nette' => 'Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter',
 		'nextras' => 'Nextras\Migrations\Bridges\NextrasDbal\NextrasAdapter',
@@ -86,6 +88,25 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand')
 			->setArguments($params)
 			->addTag('kdyby.console.command');
+	}
+
+
+	public function beforeCompile()
+	{
+		$builder = $this->getContainerBuilder();
+		foreach ($builder->findByType('Nextras\Migrations\IDbal') as $def) {
+			$factory = $def->getFactory();
+			if ($factory->getEntity() !== 'Nextras\Migrations\Bridges\Dibi\DibiAdapter') {
+				continue;
+			}
+
+			$conn = $builder->getByType('Dibi\Connection') ?: $builder->getByType('DibiConnection');
+			if (!$conn) {
+				continue;
+			}
+
+			$factory->arguments = ["@$conn"];
+		}
 	}
 
 
