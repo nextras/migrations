@@ -16,7 +16,7 @@ use Nextras\Migrations\IDbal;
 
 class DibiAdapter implements IDbal
 {
-	/** @var IDbal */
+	/** @var Dibi3Adapter|Dibi2Adapter */
 	private $innerAdapter;
 
 
@@ -36,7 +36,7 @@ class DibiAdapter implements IDbal
 
 	public function getConnection()
 	{
-		return $this->conn;
+		return $this->innerAdapter->getConnection();
 	}
 
 
