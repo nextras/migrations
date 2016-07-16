@@ -15,7 +15,7 @@
 		"nette/utils": "~2.3",
 		"nextras/dbal": "~2.0",
 		"mockery/mockery": "~0.9",
-		"symfony/console": "~2.6",
+		"symfony/console": "~2.6 | ~3.0",
 		"ext-openssl": "*"
 	},
 	"suggest": {
