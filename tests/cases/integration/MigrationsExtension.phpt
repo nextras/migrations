@@ -26,11 +26,14 @@ class MigrationsExtensionTest extends TestCase
 
 		$loader = new Nette\DI\ContainerLoader(TEMP_DIR);
 		$key = __FILE__ . ':' . __LINE__ . ':' . $config;
-		$className = $loader->load($key, function (Nette\DI\Compiler $compiler) use ($config, $dibiConfig) {
-			$compiler->addExtension('migrations', new MigrationsExtension());
-			$compiler->addConfig(['parameters' => ['dibiConfig' => $dibiConfig]]);
-			$compiler->loadConfig(__DIR__ . "/MigrationsExtension.$config.neon");
-		});
+		$className = $loader->load(
+			function (Nette\DI\Compiler $compiler) use ($config, $dibiConfig) {
+				$compiler->addExtension('migrations', new MigrationsExtension());
+				$compiler->addConfig(['parameters' => ['dibiConfig' => $dibiConfig]]);
+				$compiler->loadConfig(__DIR__ . "/MigrationsExtension.$config.neon");
+			},
+			$key
+		);
 
 		/** @var Nette\DI\Container $dic */
 		$dic = new $className;
