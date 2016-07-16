@@ -37,7 +37,7 @@ interface IPrinter
 	 * A migration has been successfully executed.
 	 * @param  File $file
 	 * @param  int $count number of executed queries
-	 * @param  float $time elapsed time in miliseconds
+	 * @param  float $time elapsed time in milliseconds
 	 */
 	function printExecute(File $file, $count, $time);
 
