@@ -13,7 +13,7 @@
 		"nette/di": "~2.3",
 		"nette/tester": "~1.4",
 		"nette/utils": "~2.3",
-		"nextras/dbal": "@dev",
+		"nextras/dbal": "~2.0",
 		"mockery/mockery": "~0.9",
 		"symfony/console": "~2.6",
 		"ext-openssl": "*"
