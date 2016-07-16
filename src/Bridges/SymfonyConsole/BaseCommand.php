@@ -11,7 +11,6 @@ namespace Nextras\Migrations\Bridges\SymfonyConsole;
 
 use Nextras\Migrations\Engine\Runner;
 use Nextras\Migrations\Entities\Group;
-use Nextras\Migrations\Extensions;
 use Nextras\Migrations\IDriver;
 use Nextras\Migrations\IPrinter;
 use Nextras\Migrations\Printers\Console;

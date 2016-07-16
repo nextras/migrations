@@ -9,9 +9,7 @@
 
 namespace Nextras\Migrations\Bridges\SymfonyConsole;
 
-use Nette;
 use Nextras\Migrations\Engine\Runner;
-use Nextras\Migrations\Extensions;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
