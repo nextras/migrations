@@ -10,9 +10,8 @@
 namespace Nextras\Migrations\Bridges\SymfonyConsole;
 
 use Nextras\Migrations\Engine\Runner;
-use Nextras\Migrations\Entities\Group;
+use Nextras\Migrations\IConfiguration;
 use Nextras\Migrations\IDriver;
-use Nextras\Migrations\IPrinter;
 use Nextras\Migrations\Printers\Console;
 use Symfony\Component\Console\Command\Command;
 
@@ -20,94 +19,34 @@ use Symfony\Component\Console\Command\Command;
 abstract class BaseCommand extends Command
 {
 	/** @var IDriver */
-	private $driver;
+	protected $driver;
 
-	/** @var string */
-	private $dir;
-
-	/** @var array */
-	private $extensionHandlers;
+	/** @var IConfiguration */
+	protected $config;
 
 
 	/**
-	 * @param  IDriver $driver
-	 * @param  string  $dir
-	 * @param  array   $extensionHandlers
+	 * @param  IDriver        $driver
+	 * @param  IConfiguration $config
 	 */
-	public function __construct(IDriver $driver, $dir, $extensionHandlers = [])
+	public function __construct(IDriver $driver, IConfiguration $config)
 	{
 		parent::__construct();
 		$this->driver = $driver;
-		$this->dir = $dir;
-		$this->extensionHandlers = $extensionHandlers;
+		$this->config = $config;
 	}
 
 
 	/**
-	 * @param  string $mode Runner::MODE_*
-	 * @param  bool   $withDummy include dummy data?
+	 * @param  string         $mode Runner::MODE_*
+	 * @param  IConfiguration $config
 	 * @return void
 	 */
-	protected function runMigrations($mode, $withDummy)
+	protected function runMigrations($mode, $config)
 	{
-		$printer = $this->getPrinter();
+		$printer = new Console();
 		$runner = new Runner($this->driver, $printer);
-
-		foreach ($this->getGroups($withDummy) as $group) {
-			$runner->addGroup($group);
-		}
-
-		foreach ($this->getExtensionHandlers() as $ext => $handler) {
-			$runner->addExtensionHandler($ext, $handler);
-		}
-
-		$runner->run($mode);
-	}
-
-
-	/**
-	 * @param  bool $withDummy
-	 * @return Group[]
-	 */
-	protected function getGroups($withDummy)
-	{
-		$structures = new Group();
-		$structures->enabled = TRUE;
-		$structures->name = 'structures';
-		$structures->directory = $this->dir . '/structures';
-		$structures->dependencies = [];
-
-		$basicData = new Group();
-		$basicData->enabled = TRUE;
-		$basicData->name = 'basic-data';
-		$basicData->directory = $this->dir . '/basic-data';
-		$basicData->dependencies = ['structures'];
-
-		$dummyData = new Group();
-		$dummyData->enabled = $withDummy;
-		$dummyData->name = 'dummy-data';
-		$dummyData->directory = $this->dir . '/dummy-data';
-		$dummyData->dependencies = ['structures', 'basic-data'];
-
-		return [$structures, $basicData, $dummyData];
-	}
-
-
-	/**
-	 * @return array (extension => IExtensionHandler)
-	 */
-	protected function getExtensionHandlers()
-	{
-		return $this->extensionHandlers;
-	}
-
-
-	/**
-	 * @return IPrinter
-	 */
-	protected function getPrinter()
-	{
-		return new Console();
+		$runner->run($mode, $config);
 	}
 
 }

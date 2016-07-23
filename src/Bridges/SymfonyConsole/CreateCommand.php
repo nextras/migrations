@@ -55,7 +55,7 @@ class CreateCommand extends BaseCommand
 	 */
 	private function getDirectory($type)
 	{
-		foreach ($this->getGroups(TRUE) as $group) {
+		foreach ($this->config->getGroups() as $group) {
 			if (Strings::startsWith($group->name, $type)) {
 				return $group->directory;
 			}
