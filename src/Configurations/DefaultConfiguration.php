@@ -11,6 +11,7 @@ namespace Nextras\Migrations\Configurations;
 
 use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\IConfiguration;
+use Nextras\Migrations\IDiffGenerator;
 use Nextras\Migrations\IExtensionHandler;
 
 
@@ -27,6 +28,12 @@ class DefaultConfiguration implements IConfiguration
 
 	/** @var IExtensionHandler[] */
 	protected $handlers;
+
+	/** @var IDiffGenerator|NULL */
+	protected $structureDiffGenerator;
+
+	/** @var IDiffGenerator|NULL */
+	protected $dummyDataDiffGenerator;
 
 
 	/**
@@ -52,6 +59,7 @@ class DefaultConfiguration implements IConfiguration
 		$structures->name = 'structures';
 		$structures->directory = $this->dir . '/structures';
 		$structures->dependencies = [];
+		$structures->generator = $this->structureDiffGenerator;
 
 		$basicData = new Group();
 		$basicData->enabled = TRUE;
@@ -64,6 +72,7 @@ class DefaultConfiguration implements IConfiguration
 		$dummyData->name = 'dummy-data';
 		$dummyData->directory = $this->dir . '/dummy-data';
 		$dummyData->dependencies = ['structures', 'basic-data'];
+		$dummyData->generator = $this->dummyDataDiffGenerator;
 
 		return [$structures, $basicData, $dummyData];
 	}
@@ -75,6 +84,24 @@ class DefaultConfiguration implements IConfiguration
 	public function getExtensionHandlers()
 	{
 		return $this->handlers;
+	}
+
+
+	/**
+	 * @param IDiffGenerator|NULL $generator
+	 */
+	public function setStructureDiffGenerator(IDiffGenerator $generator = NULL)
+	{
+		$this->structureDiffGenerator = $generator;
+	}
+
+
+	/**
+	 * @param IDiffGenerator|NULL $generator
+	 */
+	public function setDummyDataDiffGenerator(IDiffGenerator $generator = NULL)
+	{
+		$this->dummyDataDiffGenerator = $generator;
 	}
 
 }
