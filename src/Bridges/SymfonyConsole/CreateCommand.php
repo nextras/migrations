@@ -19,6 +19,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateCommand extends BaseCommand
 {
+	/**
+	 * @return void
+	 */
 	protected function configure()
 	{
 		$this->setName('migrations:create');
@@ -29,36 +32,55 @@ class CreateCommand extends BaseCommand
 	}
 
 
+	/**
+	 * @param  InputInterface  $input
+	 * @param  OutputInterface $output
+	 * @return int
+	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$dir = $this->getDirectory($input->getArgument('type'));
-		$name = $this->getFileName($input->getArgument('label'));
-
-		if ($this->hasNumericSubdirectory($dir, $foundYear)) {
-			if ($this->hasNumericSubdirectory($foundYear, $foundMonth)) {
-				$file = $dir . date('/Y/m/') . $name;
-			} else {
-				$file = $dir . date('/Y/') . $name;
-			}
-		} else {
-			$file = "$dir/$name";
-		}
-
+		$file = $this->getPath($input->getArgument('type'), $input->getArgument('label'));
 		@mkdir(dirname($file), 0777, TRUE); // directory may already exist
 		touch($file);
 		$output->writeln($file);
+
+		return 0;
+	}
+
+
+	/**
+	 * @param  Group  $group
+	 * @param  string $label
+	 * @return string
+	 */
+	protected function getPath(Group $group, $label)
+	{
+		$dir = $group->directory;
+		$name = $this->getFileName($label);
+
+		if ($this->hasNumericSubdirectory($dir, $foundYear)) {
+			if ($this->hasNumericSubdirectory($foundYear, $foundMonth)) {
+				return $dir . date('/Y/m/') . $name;
+
+			} else {
+				return $dir . date('/Y/') . $name;
+			}
+
+		} else {
+			return "$dir/$name";
+		}
 	}
 
 
 	/**
 	 * @param  string $type
-	 * @return string
+	 * @return Group
 	 */
-	private function getDirectory($type)
+	protected function getGroup($type)
 	{
 		foreach ($this->config->getGroups() as $group) {
 			if (Strings::startsWith($group->name, $type)) {
-				return $group->directory;
+				return $group;
 			}
 		}
 
@@ -70,7 +92,7 @@ class CreateCommand extends BaseCommand
 	 * @param  string $label
 	 * @return string
 	 */
-	private function getFileName($label)
+	protected function getFileName($label)
 	{
 		return date('Y-m-d-His-') . Strings::webalize($label, '.') . '.sql';
 	}
@@ -81,7 +103,7 @@ class CreateCommand extends BaseCommand
 	 * @param  string|NULL $found
 	 * @return bool
 	 */
-	private function hasNumericSubdirectory($dir, & $found)
+	protected function hasNumericSubdirectory($dir, & $found)
 	{
 		$items = @scandir($dir); // directory may not exist
 		foreach ($items as $item) {
@@ -90,6 +112,7 @@ class CreateCommand extends BaseCommand
 				return TRUE;
 			}
 		}
+
 		return FALSE;
 	}
 
@@ -97,7 +120,7 @@ class CreateCommand extends BaseCommand
 	/**
 	 * @return string
 	 */
-	private function getTypeArgDescription()
+	protected function getTypeArgDescription()
 	{
 		$options = [];
 		$groups = $this->config->getGroups();
