@@ -22,6 +22,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'phpParams' => [],
 		'driver' => NULL,
 		'dbal' => NULL,
+		'diffGenerator' => TRUE, // false|doctrine
 		'handlers' => [],
 		'configuration' => 'Nextras\Migrations\Configurations\DefaultConfiguration',
 		'withDummyData' => FALSE,
@@ -30,6 +31,8 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			'create' => 'Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand',
 			'reset' => 'Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand',
 		],
+		'contentSource' => NULL, // CreateCommand::CONTENT_SOURCE_*
+		'ignoredQueriesFile' => NULL,
 	];
 
 	/** @var array */
@@ -48,7 +51,6 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'pgsql' => 'Nextras\Migrations\Drivers\PgSqlDriver',
 	];
 
-
 	/**
 	 * Processes configuration data. Intended to be overridden by descendant.
 	 * @return void
@@ -60,6 +62,8 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config, 'dir', 'string');
 		Validators::assertField($config, 'phpParams', 'array');
 		Validators::assertField($config, 'handlers', 'array');
+		Validators::assertField($config, 'contentSource', 'string|null');
+		Validators::assertField($config, 'ignoredQueriesFile', 'string|null');
 
 		$dbal = $this->getDbal($config['dbal']);
 		$driver = $this->getDriver($config['driver'], $dbal);
@@ -90,12 +94,25 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 				->setArguments([$driver, $configuration])
 				->addTag('kdyby.console.command');
 		}
+
+		if ($config['diffGenerator'] !== FALSE) {
+			$builder->addDefinition($this->prefix('structureDiffGenerator'))
+				->setClass('Nextras\Migrations\IDiffGenerator')
+				->setDynamic(); // hack to suppress "Class Nextras\Migrations\IDiffGenerator (...) not found"
+
+			if ($config['diffGenerator'] === 'doctrine') {
+				$this->configureDoctrineStructureDiffGenerator();
+			}
+		}
 	}
 
 
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
+		$config = $this->validateConfig($this->defaults);
+
+		// dbal
 		foreach ($builder->findByType('Nextras\Migrations\IDbal') as $def) {
 			$factory = $def->getFactory();
 			if ($factory->getEntity() !== 'Nextras\Migrations\Bridges\Dibi\DibiAdapter') {
@@ -108,6 +125,11 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			}
 
 			$factory->arguments = ["@$conn"];
+		}
+
+		// diff generators
+		if ($config['diffGenerator'] === TRUE && $builder->findByType('Doctrine\ORM\EntityManager')) {
+			$this->configureDoctrineStructureDiffGenerator();
 		}
 	}
 
@@ -175,6 +197,24 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		} else {
 			return NULL;
 		}
+	}
+
+
+	private function configureDoctrineStructureDiffGenerator()
+	{
+		$builder = $this->getContainerBuilder();
+		$config = $this->validateConfig($this->defaults);
+
+		$structureDiffGenerator = $builder->getDefinition($this->prefix('structureDiffGenerator'))
+			->setDynamic(FALSE)
+			->setFactory('Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator')
+			->setArguments([
+				'@Doctrine\ORM\EntityManager',
+				$config['ignoredQueriesFile']
+			]);
+
+		$configuration = $builder->getDefinition($this->prefix('configuration'));
+		$configuration->addSetup('setStructureDiffGenerator', [$structureDiffGenerator]);
 	}
 
 }

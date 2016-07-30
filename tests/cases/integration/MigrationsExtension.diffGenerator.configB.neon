@@ -1,0 +1,9 @@
+migrations:
+	dir: migrations
+	dbal: doctrine
+	driver: mysql
+
+services:
+	- Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration([%doctrineDir%])
+	- Doctrine\DBAL\DriverManager::getConnection(%doctrineConfig%, @Doctrine\ORM\Configuration)
+	- Doctrine\ORM\EntityManager::create(@Doctrine\DBAL\Connection, @Doctrine\ORM\Configuration)
