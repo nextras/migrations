@@ -31,9 +31,9 @@ abstract class BaseCommand extends Command
 	 */
 	public function __construct(IDriver $driver, IConfiguration $config)
 	{
-		parent::__construct();
 		$this->driver = $driver;
 		$this->config = $config;
+		parent::__construct();
 	}
 
 
