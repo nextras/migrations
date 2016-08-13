@@ -38,6 +38,7 @@ class OrderResolver
 
 		$migrations = $this->getAssocMigrations($migrations);
 		$files = $this->getAssocFiles($files);
+		$lastMigrations = [];
 
 		foreach ($migrations as $groupName => $mg) {
 			if (!isset($groups[$groupName])) {
@@ -72,45 +73,30 @@ class OrderResolver
 						$groupName, $filename
 					));
 				}
+
+				if (!isset($lastMigrations[$groupName]) || strcmp($filename, $lastMigrations[$groupName]) > 0) {
+					$lastMigrations[$groupName] = $filename;
+				}
 			}
 		}
 
 		$files = $this->getFlatFiles($files);
 		$files = $this->sortFiles($files, $groups);
-		
-		// Check that the timestamps of all migrations to be executed come after the timestamp of the last
-		// finished migration in their group (or groups it depends on)
-		$checkedGroups = [];
-		
-		foreach ($files as $file) {
-			$group = $file->group;
-			
-			// If the first migration to be executed in a group comes after the last finished migration,
-			// all those that follow are also fine and don't need to be checked
-			if (in_array($group, $checkedGroups, TRUE)) {
+
+		foreach ($groups as $group) {
+			if (!isset($lastMigrations[$group->name])) {
 				continue;
 			}
-			
-			$checkedGroups[] = $group;
-			
-			foreach ($migrations as $groupName => $migrationList) {
-				if ($group->name !== $groupName && !in_array($groupName, $group->dependencies, TRUE)) {
+
+			foreach ($this->getFirstFiles($files) as $file) {
+				if (strcmp($file->name, $lastMigrations[$group->name]) >= 0) {
 					continue;
 				}
-				
-				/** @var Migration $lastMigration */
-				$lastMigration = NULL;
-				
-				foreach ($migrationList as $migrationFile => $migration) {
-					if ($lastMigration === NULL || strcmp($migration->filename, $lastMigration->filename) > 0) {
-						$lastMigration = $migration;
-					}
-				}
-				
-				if (strcmp($file->name, $lastMigration->filename) < 0) {
+
+				if ($this->isGroupDependentOn($groups, $file->group, $group) || $this->isGroupDependentOn($groups, $group, $file->group)) {
 					throw new LogicException(sprintf(
 						'New migration "%s/%s" must follow after the latest executed migration "%s/%s".',
-						$file->group->name, $file->name, $lastMigration->group, $lastMigration->filename
+						$file->group->name, $file->name, $group->name, $lastMigrations[$group->name]
 					));
 				}
 			}
@@ -167,6 +153,7 @@ class OrderResolver
 	{
 		$visited = [];
 		$queue = $groupB->dependencies;
+		$queue[] = $groupB->name;
 		while ($node = array_shift($queue)) {
 			if (isset($visited[$node])) {
 				continue;
@@ -224,6 +211,22 @@ class OrderResolver
 			}
 		}
 		return $flat;
+	}
+
+
+	/**
+	 * @param  File[] $files
+	 * @return File[] first file for each group
+	 */
+	protected function getFirstFiles(array $files)
+	{
+		$firstFiles = [];
+		foreach ($files as $file) {
+			if (!isset($firstFiles[$file->group->name])) {
+				$firstFiles[$file->group->name] = $file;
+			}
+		}
+		return $firstFiles;
 	}
 
 

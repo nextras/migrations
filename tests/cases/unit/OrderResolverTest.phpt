@@ -197,31 +197,54 @@ class OrderResolverTest extends Tester\TestCase
 			Runner::MODE_CONTINUE
 		));
 	}
-	
-	
-	public function testIndependentGroupsMigrationOrder()
+
+
+	public function testIndependentGroupsOrder1()
 	{
 		$resolver = new OrderResolver();
-		
+
 		$groupA = $this->createGroup('a');
 		$groupB = $this->createGroup('b');
-		
-		$migrationA = $this->createMigration($groupA->name, '1');
-		$migrationB = $this->createMigration($groupB->name, '5');
-		
-		$fileA = $this->createFile('1', $groupA);
-		$fileB = $this->createFile('5', $groupB);
-		
-		$newFile = $this->createFile('2', $groupA);
-		
-		Assert::same([$newFile], $resolver->resolve(
-			[$migrationA, $migrationB],
+
+		$migrationB = $this->createMigration($groupB->name, '2b');
+
+		$fileA = $this->createFile('1a', $groupA);
+		$fileB = $this->createFile('2b', $groupB);
+
+		// 1a* 2b
+		Assert::same([$fileA], $resolver->resolve(
+			[$migrationB],
 			[$groupA, $groupB],
-			[$newFile, $fileA, $fileB],
+			[$fileA, $fileB],
 			Runner::MODE_CONTINUE
 		));
 	}
-	
+
+
+	public function testIndependentGroupsOrder2()
+	{
+		$resolver = new OrderResolver();
+
+		$groupA = $this->createGroup('a');
+		$groupB = $this->createGroup('b', TRUE, ['a']);
+		$groupC = $this->createGroup('c', TRUE, ['a']);
+
+		$migrationA = $this->createMigration($groupA->name, '1a');
+		$migrationC = $this->createMigration($groupC->name, '3c');
+
+		$fileA = $this->createFile('1a', $groupA);
+		$fileB = $this->createFile('2b', $groupB);
+		$fileC = $this->createFile('3c', $groupC);
+
+		// 1a 2b* 3c
+		Assert::same([$fileB], $resolver->resolve(
+			[$migrationA, $migrationC],
+			[$groupA, $groupB, $groupC],
+			[$fileA, $fileB, $fileC],
+			Runner::MODE_CONTINUE
+		));
+	}
+
 
 	public function testErrorRemovedFile()
 	{
@@ -305,6 +328,59 @@ class OrderResolverTest extends Tester\TestCase
 				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'New migration "structures/2s" must follow after the latest executed migration "structures/3s".');
+	}
+
+
+	public function testErrorNewMigrationInTheMiddleOfExistingOnes2()
+	{
+		$resolver = new OrderResolver();
+
+		$groupA = $this->createGroup('a');
+		$groupB = $this->createGroup('b', TRUE, ['a']);
+		$groupC = $this->createGroup('c', TRUE, ['b']);
+
+		$migrationA = $this->createMigration($groupA->name, '1a');
+		$migrationC = $this->createMigration($groupC->name, '3c');
+
+		$fileA = $this->createFile('1a', $groupA);
+		$fileB = $this->createFile('2b', $groupB);
+		$fileC = $this->createFile('3c', $groupC);
+
+		// 1a 2b* 3c
+		Assert::exception(function () use ($resolver, $groupA, $groupB, $groupC, $migrationA, $migrationC, $fileA, $fileB, $fileC) {
+			$resolver->resolve(
+				[$migrationA, $migrationC],
+				[$groupA, $groupB, $groupC],
+				[$fileA, $fileB, $fileC],
+				Runner::MODE_CONTINUE
+			);
+		}, 'Nextras\Migrations\LogicException', 'New migration "b/2b" must follow after the latest executed migration "c/3c".');
+	}
+
+
+	public function testErrorNewMigrationInTheMiddleOfExistingOnes3()
+	{
+		$resolver = new OrderResolver();
+
+		$groupA = $this->createGroup('a');
+		$groupB = $this->createGroup('b', TRUE, ['a']);
+
+		$migrationA = $this->createMigration($groupB->name, '1b');
+		$migrationC = $this->createMigration($groupA->name, '3a');
+
+		$fileA = $this->createFile('1b', $groupB);
+		$fileB = $this->createFile('2b', $groupB);
+		$fileC = $this->createFile('3a', $groupA);
+
+		// 1b 2b* 3a
+		Assert::exception(function () use ($resolver, $groupA, $groupB, $migrationA, $migrationC, $fileA, $fileB, $fileC) {
+			$resolver->resolve(
+				[$migrationA, $migrationC],
+				[$groupA, $groupB],
+				[$fileA, $fileB, $fileC],
+				Runner::MODE_CONTINUE
+			);
+		}, 'Nextras\Migrations\LogicException', 'New migration "b/2b" must follow after the latest executed migration "a/3a".');
 	}
 
 
@@ -399,32 +475,6 @@ class OrderResolverTest extends Tester\TestCase
 				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'Unable to determine order for migrations "data/foo" and "structures/foo".');
-	}
-	
-	
-	public function testErrorDependentGroupsMigrationOrder ()
-	{
-		$resolver = new OrderResolver();
-		
-		$groupA = $this->createGroup('a', TRUE, ['b']);
-		$groupB = $this->createGroup('b');
-		
-		$migrationA = $this->createMigration($groupA->name, '1');
-		$migrationB = $this->createMigration($groupB->name, '5');
-		
-		$fileA = $this->createFile('1', $groupA);
-		$fileB = $this->createFile('5', $groupB);
-		
-		$newFile = $this->createFile('2', $groupA);
-		
-		Assert::exception(function () use ($resolver, $migrationA, $migrationB, $groupA, $groupB, $newFile, $fileA, $fileB) {
-			$resolver->resolve(
-				[$migrationA, $migrationB],
-				[$groupA, $groupB],
-				[$newFile, $fileA, $fileB],
-				Runner::MODE_CONTINUE
-			);
-		}, 'Nextras\Migrations\LogicException', 'New migration "a/2" must follow after the latest executed migration "b/5".');
 	}
 
 
