@@ -38,7 +38,6 @@ class OrderResolver
 
 		$migrations = $this->getAssocMigrations($migrations);
 		$files = $this->getAssocFiles($files);
-		$lastMigration = NULL;
 
 		foreach ($migrations as $groupName => $mg) {
 			if (!isset($groups[$groupName])) {
@@ -73,22 +72,47 @@ class OrderResolver
 						$groupName, $filename
 					));
 				}
-
-				if ($lastMigration === NULL || strcmp($migration->filename, $lastMigration->filename) > 0) {
-					$lastMigration = $migration;
-				}
 			}
 		}
 
 		$files = $this->getFlatFiles($files);
 		$files = $this->sortFiles($files, $groups);
-		if ($files && $lastMigration) {
-			$firstFile = reset($files);
-			if (strcmp($firstFile->name, $lastMigration->filename) < 0) {
-				throw new LogicException(sprintf(
-					'New migration "%s/%s" must follow after the latest executed migration "%s/%s".',
-					$firstFile->group->name, $firstFile->name, $lastMigration->group, $lastMigration->filename
-				));
+		
+		// Check that the timestamps of all migrations to be executed come after the timestamp of the last
+		// finished migration in their group (or groups it depends on)
+		$checkedGroups = [];
+		
+		foreach ($files as $file) {
+			$group = $file->group;
+			
+			// If the first migration to be executed in a group comes after the last finished migration,
+			// all those that follow are also fine and don't need to be checked
+			if (in_array($group, $checkedGroups, TRUE)) {
+				continue;
+			}
+			
+			$checkedGroups[] = $group;
+			
+			foreach ($migrations as $groupName => $migrationList) {
+				if ($group->name !== $groupName && !in_array($groupName, $group->dependencies, TRUE)) {
+					continue;
+				}
+				
+				/** @var Migration $lastMigration */
+				$lastMigration = NULL;
+				
+				foreach ($migrationList as $migrationFile => $migration) {
+					if ($lastMigration === NULL || strcmp($migration->filename, $lastMigration->filename) > 0) {
+						$lastMigration = $migration;
+					}
+				}
+				
+				if (strcmp($file->name, $lastMigration->filename) < 0) {
+					throw new LogicException(sprintf(
+						'New migration "%s/%s" must follow after the latest executed migration "%s/%s".',
+						$file->group->name, $file->name, $lastMigration->group, $lastMigration->filename
+					));
+				}
 			}
 		}
 

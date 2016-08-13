@@ -197,7 +197,31 @@ class OrderResolverTest extends Tester\TestCase
 			Runner::MODE_CONTINUE
 		));
 	}
-
+	
+	
+	public function testIndependentGroupsMigrationOrder()
+	{
+		$resolver = new OrderResolver();
+		
+		$groupA = $this->createGroup('a');
+		$groupB = $this->createGroup('b');
+		
+		$migrationA = $this->createMigration($groupA->name, '1');
+		$migrationB = $this->createMigration($groupB->name, '5');
+		
+		$fileA = $this->createFile('1', $groupA);
+		$fileB = $this->createFile('5', $groupB);
+		
+		$newFile = $this->createFile('2', $groupA);
+		
+		Assert::same([$newFile], $resolver->resolve(
+			[$migrationA, $migrationB],
+			[$groupA, $groupB],
+			[$newFile, $fileA, $fileB],
+			Runner::MODE_CONTINUE
+		));
+	}
+	
 
 	public function testErrorRemovedFile()
 	{
@@ -375,6 +399,32 @@ class OrderResolverTest extends Tester\TestCase
 				Runner::MODE_CONTINUE
 			);
 		}, 'Nextras\Migrations\LogicException', 'Unable to determine order for migrations "data/foo" and "structures/foo".');
+	}
+	
+	
+	public function testErrorDependentGroupsMigrationOrder ()
+	{
+		$resolver = new OrderResolver();
+		
+		$groupA = $this->createGroup('a', TRUE, ['b']);
+		$groupB = $this->createGroup('b');
+		
+		$migrationA = $this->createMigration($groupA->name, '1');
+		$migrationB = $this->createMigration($groupB->name, '5');
+		
+		$fileA = $this->createFile('1', $groupA);
+		$fileB = $this->createFile('5', $groupB);
+		
+		$newFile = $this->createFile('2', $groupA);
+		
+		Assert::exception(function () use ($resolver, $migrationA, $migrationB, $groupA, $groupB, $newFile, $fileA, $fileB) {
+			$resolver->resolve(
+				[$migrationA, $migrationB],
+				[$groupA, $groupB],
+				[$newFile, $fileA, $fileB],
+				Runner::MODE_CONTINUE
+			);
+		}, 'Nextras\Migrations\LogicException', 'New migration "a/2" must follow after the latest executed migration "b/5".');
 	}
 
 
