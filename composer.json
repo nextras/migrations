@@ -10,6 +10,8 @@
 		"dibi/dibi": "~3.0",
 		"dibi/dibi-legacy-2.x": "~2.3",
 		"doctrine/dbal": "~2.5",
+		"doctrine/orm": "~2.5",
+		"doctrine/cache": "~1.5",
 		"nette/database": "~2.2",
 		"nette/di": "~2.3.12 | ~2.4",
 		"nette/tester": "~1.4",
@@ -24,6 +26,7 @@
 		"nette/database": "to use NetteAdapter",
 		"nextras/dbal": "to use NextrasAdapter",
 		"doctrine/dbal": "to use DoctrineAdapter",
+		"doctrine/orm": "to generate migrations with Doctrine SchemaTool",
 		"symfony/console": "to use Symfony commands"
 	},
 	"extra": {

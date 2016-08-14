@@ -11,53 +11,104 @@ namespace Nextras\Migrations\Bridges\SymfonyConsole;
 
 use Nette\Utils\Strings;
 use Nextras;
+use Nextras\Migrations\Entities\Group;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
 class CreateCommand extends BaseCommand
 {
+	/** content source options */
+	const CONTENT_SOURCE_DIFF = 'diff';
+	const CONTENT_SOURCE_STDIN = 'stdin';
+	const CONTENT_SOURCE_EMPTY = 'empty';
+
+	/** @var string */
+	protected $defaultContentSource = self::CONTENT_SOURCE_DIFF;
+
+
+	/**
+	 * @param  string $defaultContentSource
+	 * @return void
+	 */
+	public function setDefaultContentSource($defaultContentSource)
+	{
+		$this->defaultContentSource = $defaultContentSource;
+	}
+
+
+	/**
+	 * @return void
+	 */
 	protected function configure()
 	{
 		$this->setName('migrations:create');
 		$this->setDescription('Creates new migration file with proper name (e.g. 2015-03-14-130836-label.sql)');
 		$this->setHelp('Prints path of the created file to standard output.');
-		$this->addArgument('type', InputArgument::REQUIRED, 's(tructures), b(asic-data) or d(ummy-data');
+
+		$this->addArgument('type', InputArgument::REQUIRED, $this->getTypeArgDescription());
 		$this->addArgument('label', InputArgument::REQUIRED, 'short description');
+
+		$this->addOption('empty', NULL, InputOption::VALUE_NONE, 'create empty file');
+		$this->addOption('diff', NULL, InputOption::VALUE_NONE, 'use schema diff as file content');
+		$this->addOption('stdin', NULL, InputOption::VALUE_NONE, 'use stdin as file content');
 	}
 
 
+	/**
+	 * @param  InputInterface  $input
+	 * @param  OutputInterface $output
+	 * @return int
+	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$dir = $this->getDirectory($input->getArgument('type'));
-		$name = $this->getFileName($input->getArgument('label'));
+		$group = $this->getGroup($input->getArgument('type'));
+		$path = $this->getPath($group, $input->getArgument('label'));
+		$content = $this->getFileContent($group, $this->getFileContentSource($input));
+
+		$this->createFile($path, $content, $output);
+		$output->writeln($path);
+
+		return 0;
+	}
+
+
+	/**
+	 * @param  Group  $group
+	 * @param  string $label
+	 * @return string
+	 */
+	protected function getPath(Group $group, $label)
+	{
+		$dir = $group->directory;
+		$extension = $group->generator ? $group->generator->getExtension() : 'sql';
+		$name = $this->getFileName($label, $extension);
 
 		if ($this->hasNumericSubdirectory($dir, $foundYear)) {
 			if ($this->hasNumericSubdirectory($foundYear, $foundMonth)) {
-				$file = $dir . date('/Y/m/') . $name;
-			} else {
-				$file = $dir . date('/Y/') . $name;
-			}
-		} else {
-			$file = "$dir/$name";
-		}
+				return $dir . date('/Y/m/') . $name;
 
-		@mkdir(dirname($file), 0777, TRUE); // directory may already exist
-		touch($file);
-		$output->writeln($file);
+			} else {
+				return $dir . date('/Y/') . $name;
+			}
+
+		} else {
+			return "$dir/$name";
+		}
 	}
 
 
 	/**
 	 * @param  string $type
-	 * @return string
+	 * @return Group
 	 */
-	private function getDirectory($type)
+	protected function getGroup($type)
 	{
 		foreach ($this->config->getGroups() as $group) {
 			if (Strings::startsWith($group->name, $type)) {
-				return $group->directory;
+				return $group;
 			}
 		}
 
@@ -67,11 +118,12 @@ class CreateCommand extends BaseCommand
 
 	/**
 	 * @param  string $label
+	 * @param  string $extension
 	 * @return string
 	 */
-	private function getFileName($label)
+	protected function getFileName($label, $extension)
 	{
-		return date('Y-m-d-His-') . Strings::webalize($label, '.') . '.sql';
+		return date('Y-m-d-His-') . Strings::webalize($label, '.') . '.' . $extension;
 	}
 
 
@@ -80,7 +132,7 @@ class CreateCommand extends BaseCommand
 	 * @param  string|NULL $found
 	 * @return bool
 	 */
-	private function hasNumericSubdirectory($dir, & $found)
+	protected function hasNumericSubdirectory($dir, & $found)
 	{
 		$items = @scandir($dir); // directory may not exist
 		foreach ($items as $item) {
@@ -89,7 +141,92 @@ class CreateCommand extends BaseCommand
 				return TRUE;
 			}
 		}
+
 		return FALSE;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	protected function getTypeArgDescription()
+	{
+		$options = [];
+		$groups = $this->config->getGroups();
+		usort($groups, function (Group $a, Group $b) {
+			return strcmp($a->name, $b->name);
+		});
+
+		foreach ($groups as $i => $group) {
+			for ($j = 1; $j < strlen($group->name); $j++) {
+				if (!isset($groups[$i + 1]) || strncmp($group->name, $groups[$i + 1]->name, $j) !== 0) {
+					$options[] = substr($group->name, 0, $j) . '(' . substr($group->name, $j) . ')';
+					break;
+				}
+			}
+		}
+
+		return implode(' or ', array_filter([
+			implode(', ', array_slice($options, 0, -1)),
+			array_slice($options, -1)[0],
+		]));
+	}
+
+
+	/**
+	 * @param  InputInterface $input
+	 * @return string
+	 */
+	protected function getFileContentSource(InputInterface $input)
+	{
+		if ($input->hasOption('diff')) {
+			return self::CONTENT_SOURCE_DIFF;
+
+		} elseif ($input->hasOption('stdin')) {
+			return self::CONTENT_SOURCE_STDIN;
+
+		} elseif ($input->hasOption('empty')) {
+			return self::CONTENT_SOURCE_EMPTY;
+
+		} else {
+			return $this->defaultContentSource;
+		}
+	}
+
+
+	/**
+	 * @param  Group  $group
+	 * @param  string $source
+	 * @return string
+	 */
+	protected function getFileContent(Group $group, $source)
+	{
+		if ($source === self::CONTENT_SOURCE_DIFF && $group->generator !== NULL) {
+			return $group->generator->generateContent();
+
+		} elseif ($source === self::CONTENT_SOURCE_STDIN) {
+			return stream_get_contents(STDIN);
+
+		} else {
+			return '';
+		}
+	}
+
+
+	/**
+	 * @param  string          $path
+	 * @param  string          $content
+	 * @param  OutputInterface $output
+	 * @return void
+	 */
+	protected function createFile($path, $content, OutputInterface $output)
+	{
+		@mkdir(dirname($path), 0777, TRUE); // directory may already exist
+
+		if (file_put_contents("$path.tmp", $content) !== strlen($content) || !rename("$path.tmp", $path)) {
+			$output->writeln("Unable to write to '$path'.");
+			exit(1);
+		}
 	}
 
 }
