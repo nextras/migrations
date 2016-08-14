@@ -24,13 +24,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'dbal' => NULL,
 		'diffGenerator' => TRUE, // false|doctrine
 		'handlers' => [],
-		'configuration' => 'Nextras\Migrations\Configurations\DefaultConfiguration',
 		'withDummyData' => FALSE,
-		'commands' => [
-			'continue' => 'Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand',
-			'create' => 'Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand',
-			'reset' => 'Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand',
-		],
 		'contentSource' => NULL, // CreateCommand::CONTENT_SOURCE_*
 		'ignoredQueriesFile' => NULL,
 	];
@@ -82,18 +76,23 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		}
 
 		$configuration = $builder->addDefinition($this->prefix('configuration'))
-			->setClass($config['configuration'])
+			->setClass('Nextras\Migrations\Configurations\DefaultConfiguration')
 			->setArguments([$config['dir'], $handlers, $config['withDummyData']]);
 
 
 		$builder->addExcludedClasses(['Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand']);
-		foreach (array_filter($config['commands']) as $name => $commandClass) {
-			// filter NULLed command classes to enable disabling default command completely
-			$builder->addDefinition($this->prefix("{$name}Command"))
-				->setClass($commandClass)
-				->setArguments([$driver, $configuration])
-				->addTag('kdyby.console.command');
-		}
+		$builder->addDefinition($this->prefix("continueCommand"))
+			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand')
+			->setArguments([$driver, $configuration])
+			->addTag('kdyby.console.command');
+		$builder->addDefinition($this->prefix("createCommand"))
+			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand')
+			->setArguments([$driver, $configuration])
+			->addTag('kdyby.console.command');
+		$builder->addDefinition($this->prefix("resetCommand"))
+			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand')
+			->setArguments([$driver, $configuration])
+			->addTag('kdyby.console.command');
 
 		if ($config['diffGenerator'] !== FALSE) {
 			$builder->addDefinition($this->prefix('structureDiffGenerator'))
