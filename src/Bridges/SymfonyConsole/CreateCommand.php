@@ -179,13 +179,13 @@ class CreateCommand extends BaseCommand
 	 */
 	protected function getFileContentSource(InputInterface $input)
 	{
-		if ($input->hasOption('diff')) {
+		if ($input->getOption('diff')) {
 			return self::CONTENT_SOURCE_DIFF;
 
-		} elseif ($input->hasOption('stdin')) {
+		} elseif ($input->getOption('stdin')) {
 			return self::CONTENT_SOURCE_STDIN;
 
-		} elseif ($input->hasOption('empty')) {
+		} elseif ($input->getOption('empty')) {
 			return self::CONTENT_SOURCE_EMPTY;
 
 		} else {
