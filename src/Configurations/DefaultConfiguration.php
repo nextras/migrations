@@ -26,6 +26,9 @@ class DefaultConfiguration implements IConfiguration
 	/** @var bool */
 	protected $withDummyData;
 
+	/** @var Group[] */
+	protected $groups;
+
 	/** @var IExtensionHandler[] */
 	protected $handlers;
 
@@ -54,27 +57,31 @@ class DefaultConfiguration implements IConfiguration
 	 */
 	public function getGroups()
 	{
-		$structures = new Group();
-		$structures->enabled = TRUE;
-		$structures->name = 'structures';
-		$structures->directory = $this->dir . '/structures';
-		$structures->dependencies = [];
-		$structures->generator = $this->structureDiffGenerator;
+		if ($this->groups === NULL) {
+			$structures = new Group();
+			$structures->enabled = TRUE;
+			$structures->name = 'structures';
+			$structures->directory = $this->dir . '/structures';
+			$structures->dependencies = [];
+			$structures->generator = $this->structureDiffGenerator;
 
-		$basicData = new Group();
-		$basicData->enabled = TRUE;
-		$basicData->name = 'basic-data';
-		$basicData->directory = $this->dir . '/basic-data';
-		$basicData->dependencies = ['structures'];
+			$basicData = new Group();
+			$basicData->enabled = TRUE;
+			$basicData->name = 'basic-data';
+			$basicData->directory = $this->dir . '/basic-data';
+			$basicData->dependencies = ['structures'];
 
-		$dummyData = new Group();
-		$dummyData->enabled = $this->withDummyData;
-		$dummyData->name = 'dummy-data';
-		$dummyData->directory = $this->dir . '/dummy-data';
-		$dummyData->dependencies = ['structures', 'basic-data'];
-		$dummyData->generator = $this->dummyDataDiffGenerator;
+			$dummyData = new Group();
+			$dummyData->enabled = $this->withDummyData;
+			$dummyData->name = 'dummy-data';
+			$dummyData->directory = $this->dir . '/dummy-data';
+			$dummyData->dependencies = ['structures', 'basic-data'];
+			$dummyData->generator = $this->dummyDataDiffGenerator;
 
-		return [$structures, $basicData, $dummyData];
+			$this->groups = [$structures, $basicData, $dummyData];
+		}
+
+		return $this->groups;
 	}
 
 
