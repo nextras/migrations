@@ -65,15 +65,15 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			->setArguments([$config['dir'], $driver, $config['withDummyData'], $config['phpParams']]);
 
 		$builder->addExcludedClasses(['Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand']);
-		$builder->addDefinition($this->prefix("continueCommand"))
+		$builder->addDefinition($this->prefix('continueCommand'))
 			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand')
 			->setArguments([$driver, $configuration])
 			->addTag('kdyby.console.command');
-		$builder->addDefinition($this->prefix("createCommand"))
+		$builder->addDefinition($this->prefix('createCommand'))
 			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand')
 			->setArguments([$driver, $configuration])
 			->addTag('kdyby.console.command');
-		$builder->addDefinition($this->prefix("resetCommand"))
+		$builder->addDefinition($this->prefix('resetCommand'))
 			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand')
 			->setArguments([$driver, $configuration])
 			->addTag('kdyby.console.command');

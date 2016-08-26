@@ -113,7 +113,8 @@ class DefaultConfiguration implements IConfiguration
 
 
 	/**
-	 * @param IDiffGenerator|NULL $generator
+	 * @param  IDiffGenerator|NULL $generator
+	 * @return void
 	 */
 	public function setStructureDiffGenerator(IDiffGenerator $generator = NULL)
 	{
@@ -122,7 +123,8 @@ class DefaultConfiguration implements IConfiguration
 
 
 	/**
-	 * @param IDiffGenerator|NULL $generator
+	 * @param  IDiffGenerator|NULL $generator
+	 * @return void
 	 */
 	public function setDummyDataDiffGenerator(IDiffGenerator $generator = NULL)
 	{
