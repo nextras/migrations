@@ -23,7 +23,6 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'driver' => NULL,
 		'dbal' => NULL,
 		'diffGenerator' => TRUE, // false|doctrine
-		'handlers' => [],
 		'withDummyData' => FALSE,
 		'contentSource' => NULL, // CreateCommand::CONTENT_SOURCE_*
 		'ignoredQueriesFile' => NULL,
@@ -55,30 +54,15 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		$config = $this->validateConfig($this->defaults);
 		Validators::assertField($config, 'dir', 'string');
 		Validators::assertField($config, 'phpParams', 'array');
-		Validators::assertField($config, 'handlers', 'array');
 		Validators::assertField($config, 'contentSource', 'string|null');
 		Validators::assertField($config, 'ignoredQueriesFile', 'string|null');
 
 		$dbal = $this->getDbal($config['dbal']);
 		$driver = $this->getDriver($config['driver'], $dbal);
 
-
-		$handlers = [];
-		$handlers['sql'] = $builder->addDefinition($this->prefix('sqlHandler'))
-			->setClass('Nextras\Migrations\Extensions\SqlHandler')
-			->setArguments([$driver]);
-		$handlers['php'] = $builder->addDefinition($this->prefix('phpHandler'))
-			->setClass('Nextras\Migrations\Extensions\PhpHandler')
-			->setArguments($config['phpParams']);
-
-		foreach ($config['handlers'] as $extension => $handler) {
-			$handlers[$extension] = $handler;
-		}
-
 		$configuration = $builder->addDefinition($this->prefix('configuration'))
 			->setClass('Nextras\Migrations\Configurations\DefaultConfiguration')
-			->setArguments([$config['dir'], $handlers, $config['withDummyData']]);
-
+			->setArguments([$config['dir'], $driver, $config['withDummyData'], $config['phpParams']]);
 
 		$builder->addExcludedClasses(['Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand']);
 		$builder->addDefinition($this->prefix("continueCommand"))

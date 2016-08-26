@@ -10,8 +10,11 @@
 namespace Nextras\Migrations\Configurations;
 
 use Nextras\Migrations\Entities\Group;
+use Nextras\Migrations\Extensions\PhpHandler;
+use Nextras\Migrations\Extensions\SqlHandler;
 use Nextras\Migrations\IConfiguration;
 use Nextras\Migrations\IDiffGenerator;
+use Nextras\Migrations\IDriver;
 use Nextras\Migrations\IExtensionHandler;
 
 
@@ -23,8 +26,14 @@ class DefaultConfiguration implements IConfiguration
 	/** @var string */
 	protected $dir;
 
+	/** @var IDriver */
+	protected $driver;
+
 	/** @var bool */
 	protected $withDummyData;
+
+	/** @var array */
+	protected $phpParams;
 
 	/** @var Group[] */
 	protected $groups;
@@ -40,15 +49,17 @@ class DefaultConfiguration implements IConfiguration
 
 
 	/**
-	 * @param  string              $dir
-	 * @param  IExtensionHandler[] $handlers       (extension => IExtensionHandler)
-	 * @param  bool                $withDummyData
+	 * @param  string  $dir
+	 * @param  IDriver $driver
+	 * @param  bool    $withDummyData
+	 * @param  array   $phpParams
 	 */
-	public function __construct($dir, array $handlers, $withDummyData = TRUE)
+	public function __construct($dir, IDriver $driver, $withDummyData = TRUE, array $phpParams = [])
 	{
 		$this->dir = $dir;
-		$this->handlers = $handlers;
+		$this->driver = $driver;
 		$this->withDummyData = $withDummyData;
+		$this->phpParams = $phpParams;
 	}
 
 
@@ -86,10 +97,17 @@ class DefaultConfiguration implements IConfiguration
 
 
 	/**
-	 * @return IExtensionHandler[] (extension => IExtensionHandler)
+	 * @return array|IExtensionHandler[] (extension => IExtensionHandler)
 	 */
 	public function getExtensionHandlers()
 	{
+		if ($this->handlers === NULL) {
+			$this->handlers = [
+				'sql' => new SqlHandler($this->driver),
+				'php' => new PhpHandler($this->phpParams),
+			];
+		}
+
 		return $this->handlers;
 	}
 
