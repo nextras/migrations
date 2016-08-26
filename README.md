@@ -5,7 +5,6 @@ Nextras\Migrations
 [![Downloads this Month](https://img.shields.io/packagist/dm/nextras/migrations.svg?style=flat)](https://packagist.org/packages/nextras/migrations)
 [![Stable version](http://img.shields.io/packagist/v/nextras/migrations.svg?style=flat)](https://packagist.org/packages/nextras/migrations)
 [![Code coverage](https://img.shields.io/coveralls/nextras/migrations.svg?style=flat)](https://coveralls.io/r/nextras/migrations)
-[![HHVM Status](http://img.shields.io/hhvm/nextras/migrations.svg?style=flat)](http://hhvm.h4cc.de/package/nextras/migrations)
 
 For more information read **[documentation](http://nextras.cz/migrations/docs)**.
 
