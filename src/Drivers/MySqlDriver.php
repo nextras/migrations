@@ -66,7 +66,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	public function lock()
 	{
 		$lock = $this->dbal->escapeString(self::LOCK_NAME);
-		$result = (int) $this->dbal->query("SELECT GET_LOCK(CONCAT($lock, '-', DATABASE()), 3) AS `result`")[0]['result'];
+		$result = (int) $this->dbal->query("SELECT GET_LOCK(SHA1(CONCAT($lock, '-', DATABASE())), 3) AS `result`")[0]['result'];
 		if ($result !== 1) {
 			throw new LockException('Unable to acquire a lock.');
 		}
@@ -76,7 +76,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	public function unlock()
 	{
 		$lock = $this->dbal->escapeString(self::LOCK_NAME);
-		$result = (int) $this->dbal->query("SELECT RELEASE_LOCK(CONCAT($lock, '-', DATABASE())) AS `result`")[0]['result'];
+		$result = (int) $this->dbal->query("SELECT RELEASE_LOCK(SHA1(CONCAT($lock, '-', DATABASE()))) AS `result`")[0]['result'];
 		if ($result !== 1) {
 			throw new LockException('Unable to release a lock.');
 		}
