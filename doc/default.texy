@@ -27,6 +27,18 @@ Three basic commands are available:
 * Run new migrations with `migrations:continue` command.
 * Drop database and run all migrations with `migrations:reset` command.
 
+-------------------------
+
+Dummy data
+=================================
+
+If you want the `dummy-data` folder to be executed as well, set the `withDummyData` value to TRUE in the extension's configuration. You typically want to set this in the local config of your development environment.
+
+/--
+migrations:
+    withDummyData: TRUE
+\--
+
 ---------------
 
 Low-level Usage
