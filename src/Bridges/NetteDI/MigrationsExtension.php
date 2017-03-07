@@ -52,7 +52,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults);
-		Validators::assertField($config, 'dir', 'string');
+		Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral');
 		Validators::assertField($config, 'phpParams', 'array');
 		Validators::assertField($config, 'contentSource', 'string|null');
 		Validators::assertField($config, 'ignoredQueriesFile', 'string|null');
