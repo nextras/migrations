@@ -1,0 +1,7 @@
+migrations:
+	dir: %rootDir%/migrations
+	driver: mysql
+	dbal: dibi
+
+services:
+	- DibiConnection(%dibiConfig%)

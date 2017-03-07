@@ -9,6 +9,7 @@ namespace NextrasTests\Migrations;
 use Nette;
 use Nextras\Migrations\Bridges\NetteDI\MigrationsExtension;
 use Tester\Assert;
+use Tester\Environment;
 use Tester\TestCase;
 
 require __DIR__ . '/../../bootstrap.php';
@@ -69,11 +70,24 @@ class MigrationsExtensionTest extends TestCase
 	}
 
 
+	public function testDynamicContainerParameters()
+	{
+		if (!method_exists('Nette\DI\Compiler', 'setDynamicParameterNames')) {
+			Environment::skip('Required Nette >= 2.4.7');
+		}
+		Assert::noError(function() {
+			$this->createContainer('dynamicParameters', [
+				'rootDir' => __DIR__,
+			]);
+		});
+	}
+
+
 	/**
 	 * @param  string $config
 	 * @return Nette\DI\Container
 	 */
-	protected function createContainer($config)
+	protected function createContainer($config, array $dynamicParameters = NULL)
 	{
 		$options = parse_ini_file(__DIR__ . '/../../drivers.ini', TRUE)['mysql'];
 
@@ -96,7 +110,7 @@ class MigrationsExtensionTest extends TestCase
 		$loader = new Nette\DI\ContainerLoader(TEMP_DIR);
 		$key = __FILE__ . ':' . __LINE__ . ':' . $config;
 		$className = $loader->load(
-			function (Nette\DI\Compiler $compiler) use ($config, $dibiConfig, $doctrineConfig) {
+			function (Nette\DI\Compiler $compiler) use ($config, $dibiConfig, $doctrineConfig, $dynamicParameters) {
 				$compiler->addExtension('migrations', new MigrationsExtension());
 				$compiler->addConfig([
 					'parameters' => [
@@ -106,11 +120,14 @@ class MigrationsExtensionTest extends TestCase
 					]
 				]);
 				$compiler->loadConfig(__DIR__ . "/MigrationsExtension.$config.neon");
+				if ($dynamicParameters !== NULL) {
+					$compiler->setDynamicParameterNames(array_keys($dynamicParameters));
+				}
 			},
 			$key
 		);
 
-		return new $className;
+		return new $className($dynamicParameters ?: []);
 	}
 }
 
