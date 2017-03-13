@@ -59,7 +59,7 @@ class Console implements IPrinter
 		$this->output(
 			'- ' . $file->group->name . '/' . $file->name . '; '
 			. $this->color($count, self::COLOR_INFO) . ' queries; '
-			. $this->color(sprintf('%0.3f', $time), self::COLOR_INFO) . ' ms'
+			. $this->color(sprintf('%0.3f', $time), self::COLOR_INFO) . ' s'
 		);
 	}
 

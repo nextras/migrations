@@ -55,7 +55,7 @@ class HtmlDump implements IPrinter
 		$format = '%0' . strlen($this->count) . 'd';
 		$name = htmlspecialchars($file->group->name . '/' . $file->name);
 		$this->output(sprintf(
-			$format . '/' . $format . ': <strong>%s</strong> (%d %s, %0.3f ms)',
+			$format . '/' . $format . ': <strong>%s</strong> (%d %s, %0.3f s)',
 			++$this->index, $this->count, $name, $count, ($count === 1 ? 'query' : 'queries'), $time
 		));
 	}

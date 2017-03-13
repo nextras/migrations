@@ -23,7 +23,7 @@ class TestPrinter extends Console
 
 	protected function output($s, $color = NULL)
 	{
-		$this->lines[] = preg_replace('#; \d+\.\d+ ms#', '; XX ms', $s);
+		$this->lines[] = preg_replace('#; \d+\.\d+ s#', '; XX s', $s);
 		$this->out .= "$s\n";
 	}
 }

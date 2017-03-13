@@ -27,11 +27,11 @@ class SecondRunTest extends IntegrationTestCase
 			'Nextras Migrations',
 			'RESET',
 			'5 migrations need to be executed.',
-			'- structures/001.sql; 1 queries; XX ms',
-			'- structures/002.sql; 1 queries; XX ms',
-			'- basic-data/003.sql; 2 queries; XX ms',
-			'- dummy-data/004.sql; 1 queries; XX ms',
-			'- structures/005.sql; 1 queries; XX ms',
+			'- structures/001.sql; 1 queries; XX s',
+			'- structures/002.sql; 1 queries; XX s',
+			'- basic-data/003.sql; 2 queries; XX s',
+			'- dummy-data/004.sql; 1 queries; XX s',
+			'- structures/005.sql; 1 queries; XX s',
 			'OK',
 		], $this->printer->lines);
 
@@ -49,8 +49,8 @@ class SecondRunTest extends IntegrationTestCase
 			'Nextras Migrations',
 			'CONTINUE',
 			'2 migrations need to be executed.',
-			'- dummy-data/004.sql; 1 queries; XX ms',
-			'- structures/005.sql; 1 queries; XX ms',
+			'- dummy-data/004.sql; 1 queries; XX s',
+			'- structures/005.sql; 1 queries; XX s',
 			'OK',
 		], $this->printer->lines);
 
