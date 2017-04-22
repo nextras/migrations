@@ -131,4 +131,13 @@ class DefaultConfiguration implements IConfiguration
 		$this->dummyDataDiffGenerator = $generator;
 	}
 
+
+	/**
+	 * @return string
+	 */
+	public function getPlanFile()
+	{
+		return $this->dir . '/plan.tsv';
+	}
+
 }

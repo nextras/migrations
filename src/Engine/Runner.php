@@ -97,6 +97,9 @@ class Runner
 			}
 		}
 
+		$plan = new Plan($config->getPlanFile());
+		$plan->validate();
+
 		if ($mode === self::MODE_INIT) {
 			$this->printer->printSource($this->driver->getInitTableSource() . "\n");
 			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
