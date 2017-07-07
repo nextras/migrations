@@ -28,7 +28,6 @@ class NextrasAdapter implements IDbal
 	public function __construct(Connection $connection)
 	{
 		$this->conn = $connection;
-		$this->conn->connect();
 		$this->oldDriver = method_exists($connection->getDriver(), 'convertToSql');
 	}
 
@@ -51,6 +50,7 @@ class NextrasAdapter implements IDbal
 
 	public function escapeString($value)
 	{
+		$this->conn->connect();
 		if (!$this->oldDriver) {
 			return $this->conn->getDriver()->convertStringToSql($value);
 		} else {
@@ -67,6 +67,7 @@ class NextrasAdapter implements IDbal
 
 	public function escapeBool($value)
 	{
+		$this->conn->connect();
 		if (!$this->oldDriver) {
 			return $this->conn->getDriver()->convertBoolToSql($value);
 		} else {
@@ -77,6 +78,7 @@ class NextrasAdapter implements IDbal
 
 	public function escapeDateTime(DateTime $value)
 	{
+		$this->conn->connect();
 		if (!$this->oldDriver) {
 			return $this->conn->getDriver()->convertDateTimeToSql($value);
 		} else {
@@ -87,6 +89,7 @@ class NextrasAdapter implements IDbal
 
 	public function escapeIdentifier($value)
 	{
+		$this->conn->connect();
 		if (!$this->oldDriver) {
 			return $this->conn->getDriver()->convertIdentifierToSql($value);
 		} else {

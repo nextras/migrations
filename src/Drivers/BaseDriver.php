@@ -35,7 +35,7 @@ abstract class BaseDriver implements IDriver
 	public function __construct(IDbal $dbal, $tableName = 'migrations')
 	{
 		$this->dbal = $dbal;
-		$this->tableName = $dbal->escapeIdentifier($tableName);
+		$this->tableName = $tableName;
 	}
 
 
@@ -122,6 +122,12 @@ abstract class BaseDriver implements IDriver
 		}
 
 		return $queries;
+	}
+
+
+	protected function getTableName()
+	{
+		return $this->dbal->escapeIdentifier($this->tableName);
 	}
 
 }
