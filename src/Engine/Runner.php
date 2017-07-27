@@ -18,6 +18,7 @@ use Nextras\Migrations\ExecutionException;
 use Nextras\Migrations\IDriver;
 use Nextras\Migrations\IExtensionHandler;
 use Nextras\Migrations\IPrinter;
+use Nextras\Migrations\LockException;
 use Nextras\Migrations\LogicException;
 
 
@@ -116,6 +117,9 @@ class Runner
 
 			$this->driver->unlock();
 			$this->printer->printDone();
+
+		} catch (LockException $e) {
+			$this->printer->printError($e);
 
 		} catch (Exception $e) {
 			$this->driver->unlock();
