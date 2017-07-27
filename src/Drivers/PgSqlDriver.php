@@ -97,7 +97,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 
 			$this->dbal->exec("CREATE TABLE {$this->schema}.{$this->lockTableName} (\"foo\" INT)");
 		} catch (\Exception $e) {
-			throw new LockException('Unable to acquire a lock.', NULL, $e);
+			throw new LockException('Unable to acquire a lock.', 3, $e);
 		}
 	}
 
