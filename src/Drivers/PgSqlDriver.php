@@ -26,16 +26,6 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	/** @var string */
 	protected $schema;
 
-	/** @var string */
-	protected $schemaStr;
-
-	/** @var string */
-	protected $primarySequence;
-
-	/** @var string */
-	protected $lockTableName;
-
-
 	/**
 	 * @param IDbal  $dbal
 	 * @param string $tableName
@@ -44,10 +34,30 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function __construct(IDbal $dbal, $tableName = 'migrations', $schema = 'public')
 	{
 		parent::__construct($dbal, $tableName);
-		$this->schema = $dbal->escapeIdentifier($schema);
-		$this->schemaStr = $dbal->escapeString($schema);
-		$this->primarySequence = $this->dbal->escapeString($tableName . '_id_seq');
-		$this->lockTableName = $dbal->escapeIdentifier($tableName . '_lock');
+		$this->schema = $schema;
+	}
+
+
+	protected function getSchema()
+	{
+		return $this->dbal->escapeIdentifier($this->schema);
+	}
+
+
+	protected function getSchemaStr()
+	{
+		return $this->dbal->escapeString($this->schema);
+	}
+
+
+	protected function getPrimarySequence()
+	{
+		return $this->dbal->escapeString($this->tableName . '_id_seq');
+	}
+
+	protected function getLockTableName()
+	{
+		return $this->dbal->escapeIdentifier($this->tableName . '_lock');
 	}
 
 
@@ -58,8 +68,8 @@ class PgSqlDriver extends BaseDriver implements IDriver
 
 	public function emptyDatabase()
 	{
-		$this->dbal->exec("DROP SCHEMA IF EXISTS {$this->schema} CASCADE");
-		$this->dbal->exec("CREATE SCHEMA {$this->schema}");
+		$this->dbal->exec("DROP SCHEMA IF EXISTS {$this->getSchema()} CASCADE");
+		$this->dbal->exec("CREATE SCHEMA {$this->getSchema()}");
 	}
 
 
@@ -87,15 +97,15 @@ class PgSqlDriver extends BaseDriver implements IDriver
 			$schemaExist = (bool) $this->dbal->query("
 				SELECT schema_name
 				FROM information_schema.schemata
-				WHERE schema_name = {$this->schemaStr}
+				WHERE schema_name = {$this->getSchemaStr()}
 			");
 
 			if (!$schemaExist) {
 				// CREATE SCHEMA IF NOT EXIST is not available in PostgreSQL < 9.3
-				$this->dbal->exec("CREATE SCHEMA {$this->schema}");
+				$this->dbal->exec("CREATE SCHEMA {$this->getSchema()}");
 			}
 
-			$this->dbal->exec("CREATE TABLE {$this->schema}.{$this->lockTableName} (\"foo\" INT)");
+			$this->dbal->exec("CREATE TABLE {$this->getSchema()}.{$this->getLockTableName()} (\"foo\" INT)");
 		} catch (\Exception $e) {
 			throw new LockException('Unable to acquire a lock.', NULL, $e);
 		}
@@ -105,7 +115,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function unlock()
 	{
 		try {
-			$this->dbal->exec("DROP TABLE IF EXISTS {$this->schema}.{$this->lockTableName}");
+			$this->dbal->exec("DROP TABLE IF EXISTS {$this->getSchema()}.{$this->getLockTableName()}");
 		} catch (\Exception $e) {
 			throw new LockException('Unable to release a lock.', NULL, $e);
 		}
@@ -120,14 +130,14 @@ class PgSqlDriver extends BaseDriver implements IDriver
 
 	public function dropTable()
 	{
-		$this->dbal->exec("DROP TABLE {$this->schema}.{$this->tableName}");
+		$this->dbal->exec("DROP TABLE {$this->getSchema()}.{$this->getTableName()}");
 	}
 
 
 	public function insertMigration(Migration $migration)
 	{
 		$this->dbal->exec("
-			INSERT INTO {$this->schema}.{$this->tableName}" . '
+			INSERT INTO {$this->getSchema()}.{$this->getTableName()}" . '
 			("group", "file", "checksum", "executed", "ready") VALUES (' .
 				$this->dbal->escapeString($migration->group) . "," .
 				$this->dbal->escapeString($migration->filename) . "," .
@@ -137,14 +147,14 @@ class PgSqlDriver extends BaseDriver implements IDriver
 			")
 		");
 
-		$migration->id = (int) $this->dbal->query('SELECT CURRVAL('. $this->primarySequence . ') AS id')[0]['id'];
+		$migration->id = (int) $this->dbal->query('SELECT CURRVAL('. $this->getPrimarySequence() . ') AS id')[0]['id'];
 	}
 
 
 	public function markMigrationAsReady(Migration $migration)
 	{
 		$this->dbal->exec("
-			UPDATE {$this->schema}.{$this->tableName}" . '
+			UPDATE {$this->getSchema()}.{$this->getTableName()}" . '
 			SET "ready" = TRUE
 			WHERE "id" = ' . $this->dbal->escapeInt($migration->id)
 		);
@@ -154,7 +164,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function getAllMigrations()
 	{
 		$migrations = array();
-		$result = $this->dbal->query("SELECT * FROM {$this->schema}.{$this->tableName} ORDER BY \"executed\"");
+		$result = $this->dbal->query("SELECT * FROM {$this->getSchema()}.{$this->getTableName()} ORDER BY \"executed\"");
 		foreach ($result as $row) {
 			$migration = new Migration;
 			$migration->id = (int) $row['id'];
@@ -174,7 +184,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function getInitTableSource()
 	{
 		return preg_replace('#^\t{3}#m', '', trim("
-			CREATE TABLE IF NOT EXISTS {$this->schema}.{$this->tableName} (" . '
+			CREATE TABLE IF NOT EXISTS {$this->getSchema()}.{$this->getTableName()} (" . '
 				"id" serial4 NOT NULL,
 				"group" varchar(100) NOT NULL,
 				"file" varchar(100) NOT NULL,
@@ -192,7 +202,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	{
 		$out = '';
 		foreach ($files as $file) {
-			$out .= "INSERT INTO {$this->schema}.{$this->tableName} ";
+			$out .= "INSERT INTO {$this->getSchema()}.{$this->getTableName()} ";
 			$out .= '("group", "file", "checksum", "executed", "ready") VALUES (' .
 					$this->dbal->escapeString($file->group->name) . ", " .
 					$this->dbal->escapeString($file->name) . ", " .

@@ -91,14 +91,14 @@ class MySqlDriver extends BaseDriver implements IDriver
 
 	public function dropTable()
 	{
-		$this->dbal->exec("DROP TABLE {$this->tableName}");
+		$this->dbal->exec("DROP TABLE {$this->getTableName()}");
 	}
 
 
 	public function insertMigration(Migration $migration)
 	{
 		$this->dbal->exec("
-			INSERT INTO {$this->tableName}
+			INSERT INTO {$this->getTableName()}
 			(`group`, `file`, `checksum`, `executed`, `ready`) VALUES (" .
 				$this->dbal->escapeString($migration->group) . "," .
 				$this->dbal->escapeString($migration->filename) . "," .
@@ -115,7 +115,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	public function markMigrationAsReady(Migration $migration)
 	{
 		$this->dbal->exec("
-			UPDATE {$this->tableName}
+			UPDATE {$this->getTableName()}
 			SET `ready` = 1
 			WHERE `id` = " . $this->dbal->escapeInt($migration->id)
 		);
@@ -125,7 +125,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	public function getAllMigrations()
 	{
 		$migrations = array();
-		$result = $this->dbal->query("SELECT * FROM {$this->tableName} ORDER BY `executed`");
+		$result = $this->dbal->query("SELECT * FROM {$this->getTableName()} ORDER BY `executed`");
 		foreach ($result as $row) {
 			$migration = new Migration;
 			$migration->id = (int) $row['id'];
@@ -145,7 +145,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	public function getInitTableSource()
 	{
 		return preg_replace('#^\t{3}#m', '', trim("
-			CREATE TABLE IF NOT EXISTS {$this->tableName} (
+			CREATE TABLE IF NOT EXISTS {$this->getTableName()} (
 				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 				`group` varchar(100) NOT NULL,
 				`file` varchar(100) NOT NULL,
@@ -163,7 +163,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	{
 		$out = '';
 		foreach ($files as $file) {
-			$out .= "INSERT INTO {$this->tableName} ";
+			$out .= "INSERT INTO {$this->getTableName()} ";
 			$out .= "(`group`, `file`, `checksum`, `executed`, `ready`) VALUES (" .
 				$this->dbal->escapeString($file->group->name) . ", " .
 				$this->dbal->escapeString($file->name) . ", " .
