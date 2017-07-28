@@ -32,9 +32,6 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	/** @var string */
 	protected $primarySequence;
 
-	/** @var string */
-	protected $lockTableName;
-
 
 	/**
 	 * @param IDbal  $dbal
@@ -47,7 +44,6 @@ class PgSqlDriver extends BaseDriver implements IDriver
 		$this->schema = $dbal->escapeIdentifier($schema);
 		$this->schemaStr = $dbal->escapeString($schema);
 		$this->primarySequence = $this->dbal->escapeString($tableName . '_id_seq');
-		$this->lockTableName = $dbal->escapeIdentifier($tableName . '_lock');
 	}
 
 
@@ -84,18 +80,8 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function lock()
 	{
 		try {
-			$schemaExist = (bool) $this->dbal->query("
-				SELECT schema_name
-				FROM information_schema.schemata
-				WHERE schema_name = {$this->schemaStr}
-			");
+			$this->dbal->exec('SELECT pg_advisory_lock(-2099128779216184107)');
 
-			if (!$schemaExist) {
-				// CREATE SCHEMA IF NOT EXIST is not available in PostgreSQL < 9.3
-				$this->dbal->exec("CREATE SCHEMA {$this->schema}");
-			}
-
-			$this->dbal->exec("CREATE TABLE {$this->schema}.{$this->lockTableName} (\"foo\" INT)");
 		} catch (\Exception $e) {
 			throw new LockException('Unable to acquire a lock.', NULL, $e);
 		}
@@ -105,7 +91,8 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function unlock()
 	{
 		try {
-			$this->dbal->exec("DROP TABLE IF EXISTS {$this->schema}.{$this->lockTableName}");
+			$this->dbal->exec('SELECT pg_advisory_unlock(-2099128779216184107)');
+
 		} catch (\Exception $e) {
 			throw new LockException('Unable to release a lock.', NULL, $e);
 		}
