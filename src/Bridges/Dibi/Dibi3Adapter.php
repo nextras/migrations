@@ -48,7 +48,7 @@ class Dibi3Adapter implements IDbal
 
 	public function escapeInt($value)
 	{
-		return (int) $value;
+		return (string) (int) $value;
 	}
 
 

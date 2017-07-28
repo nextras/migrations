@@ -61,7 +61,7 @@ class NextrasAdapter implements IDbal
 
 	public function escapeInt($value)
 	{
-		return (int) $value;
+		return (string) (int) $value;
 	}
 
 
