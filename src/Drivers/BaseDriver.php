@@ -65,7 +65,7 @@ abstract class BaseDriver implements IDriver
 		$space = "(?:\\s|/\\*.*\\*/|(?:#|-- )[^\\n]*\\n|--\\n)";
 		$spacesRe = "~^{$space}*\\z~";
 		$delimiter = ';';
-		$delimiterRe = "~^{$space}*DELIMITER\\s+(\\S+)~i";
+		$delimiterRe = "~\\G{$space}*DELIMITER\\s+(\\S+)~i";
 
 		$openRe = $this instanceof PgSqlDriver ? '[\'"]|/\*|-- |\z|\$[^$]*\$' : '[\'"`#]|/\*|-- |\z';
 		$parseRe = "(;|$openRe)";
