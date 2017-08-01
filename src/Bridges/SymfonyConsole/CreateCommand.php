@@ -135,10 +135,13 @@ class CreateCommand extends BaseCommand
 	protected function hasNumericSubdirectory($dir, & $found)
 	{
 		$items = @scandir($dir); // directory may not exist
-		foreach ($items as $item) {
-			if ($item !== '.' && $item !== '..' && is_dir($dir . '/' . $item)) {
-				$found = $dir . '/' . $item;
-				return TRUE;
+
+		if ($items) {
+			foreach ($items as $item) {
+				if ($item !== '.' && $item !== '..' && is_dir($dir . '/' . $item)) {
+					$found = $dir . '/' . $item;
+					return TRUE;
+				}
 			}
 		}
 
