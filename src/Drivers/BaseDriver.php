@@ -63,7 +63,7 @@ abstract class BaseDriver implements IDriver
 		$queries = 0;
 
 		$space = "(?:\\s|/\\*.*\\*/|(?:#|-- )[^\\n]*\\n|--\\n)";
-		$spacesRe = "~^{$space}*\\z~";
+		$spacesRe = "~\\G{$space}*\\z~";
 		$delimiter = ';';
 		$delimiterRe = "~\\G{$space}*DELIMITER\\s+(\\S+)~i";
 
@@ -104,7 +104,7 @@ abstract class BaseDriver implements IDriver
 					}
 
 				} else { // last query or EOF
-					if (preg_match($spacesRe, substr($content, $queryOffset))) {
+					if (preg_match($spacesRe, $content, $_, 0, $queryOffset)) {
 						break 2;
 
 					} else {
