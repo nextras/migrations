@@ -83,7 +83,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 			$this->dbal->exec('SELECT pg_advisory_lock(-2099128779216184107)');
 
 		} catch (\Exception $e) {
-			throw new LockException('Unable to acquire a lock.', NULL, $e);
+			throw new LockException('Unable to acquire a lock.', 3, $e);
 		}
 	}
 
