@@ -91,6 +91,7 @@ Open the script in your browser (`HttpController`) or in a terminal (`ConsoleCon
 Organizing Migrations
 =====================
 
+Migrations are executed in alphabetical order (by filename), e.g. `structures/2015-03-17-aaa.sql` is executed before `dummy-data/2015-03-17-zzz.sql`.
 The following structure is recommended and used by Symfony Console Commands by default:
 
 /--
