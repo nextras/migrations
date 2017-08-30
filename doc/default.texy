@@ -107,6 +107,10 @@ migrations
 └── run.php                              # start script if you don't
                                          # use Symfony Console Commands
 \--
+Notice
+------
+If you use Symfony commands then migrations are executed in alphabetical order (by filename).
+For example `dummy-data/2015-03-17_aaa.sql` is executed before`structures/2015-03-17_zzz.sql`.
 
 Optionally you can use **deep directory structure** which is suitable if you have a lot of migrations:
 
