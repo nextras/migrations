@@ -26,8 +26,8 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	/** @var string */
 	protected $schema;
 
-	/** @var string */
-	protected $schemaStr;
+	/** @var NULL|string */
+	protected $schemaQuoted;
 
 
 	/**
@@ -38,20 +38,21 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function __construct(IDbal $dbal, $tableName = 'migrations', $schema = 'public')
 	{
 		parent::__construct($dbal, $tableName);
-		$this->schema = $dbal->escapeIdentifier($schema);
-		$this->schemaStr = $dbal->escapeString($schema);
+		$this->schema = $schema;
 	}
 
 
 	public function setupConnection()
 	{
+		parent::setupConnection();
+		$this->schemaQuoted = $this->dbal->escapeIdentifier($this->schema);
 	}
 
 
 	public function emptyDatabase()
 	{
-		$this->dbal->exec("DROP SCHEMA IF EXISTS {$this->schema} CASCADE");
-		$this->dbal->exec("CREATE SCHEMA {$this->schema}");
+		$this->dbal->exec("DROP SCHEMA IF EXISTS {$this->schemaQuoted} CASCADE");
+		$this->dbal->exec("CREATE SCHEMA {$this->schemaQuoted}");
 	}
 
 
@@ -103,14 +104,14 @@ class PgSqlDriver extends BaseDriver implements IDriver
 
 	public function dropTable()
 	{
-		$this->dbal->exec("DROP TABLE {$this->schema}.{$this->tableName}");
+		$this->dbal->exec("DROP TABLE {$this->schemaQuoted}.{$this->tableNameQuoted}");
 	}
 
 
 	public function insertMigration(Migration $migration)
 	{
 		$rows = $this->dbal->query("
-			INSERT INTO {$this->schema}.{$this->tableName}" . '
+			INSERT INTO {$this->schemaQuoted}.{$this->tableNameQuoted}" . '
 			("group", "file", "checksum", "executed", "ready") VALUES (' .
 				$this->dbal->escapeString($migration->group) . "," .
 				$this->dbal->escapeString($migration->filename) . "," .
@@ -128,7 +129,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function markMigrationAsReady(Migration $migration)
 	{
 		$this->dbal->exec("
-			UPDATE {$this->schema}.{$this->tableName}" . '
+			UPDATE {$this->schemaQuoted}.{$this->tableNameQuoted}" . '
 			SET "ready" = TRUE
 			WHERE "id" = ' . $this->dbal->escapeInt($migration->id)
 		);
@@ -138,7 +139,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function getAllMigrations()
 	{
 		$migrations = array();
-		$result = $this->dbal->query("SELECT * FROM {$this->schema}.{$this->tableName} ORDER BY \"executed\"");
+		$result = $this->dbal->query("SELECT * FROM {$this->schemaQuoted}.{$this->tableNameQuoted} ORDER BY \"executed\"");
 		foreach ($result as $row) {
 			$migration = new Migration;
 			$migration->id = (int) $row['id'];
@@ -158,7 +159,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function getInitTableSource()
 	{
 		return preg_replace('#^\t{3}#m', '', trim("
-			CREATE TABLE IF NOT EXISTS {$this->schema}.{$this->tableName} (" . '
+			CREATE TABLE IF NOT EXISTS {$this->schemaQuoted}.{$this->tableNameQuoted} (" . '
 				"id" serial4 NOT NULL,
 				"group" varchar(100) NOT NULL,
 				"file" varchar(100) NOT NULL,
@@ -176,7 +177,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	{
 		$out = '';
 		foreach ($files as $file) {
-			$out .= "INSERT INTO {$this->schema}.{$this->tableName} ";
+			$out .= "INSERT INTO {$this->schemaQuoted}.{$this->tableNameQuoted} ";
 			$out .= '("group", "file", "checksum", "executed", "ready") VALUES (' .
 					$this->dbal->escapeString($file->group->name) . ", " .
 					$this->dbal->escapeString($file->name) . ", " .
