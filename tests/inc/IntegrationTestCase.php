@@ -58,6 +58,8 @@ abstract class IntegrationTestCase extends TestCase
 		$initDb();
 
 		$this->driver = $this->createDriver($options['driver'], $this->dbal);
+		$this->driver->setupConnection();
+
 		$this->printer = $this->createPrinter();
 		$this->runner = new Runner($this->driver, $this->printer);
 

@@ -27,6 +27,9 @@ abstract class BaseDriver implements IDriver
 	/** @var string */
 	protected $tableName;
 
+	/** @var NULL|string */
+	protected $tableNameQuoted;
+
 
 	/**
 	 * @param IDbal  $dbal
@@ -35,7 +38,13 @@ abstract class BaseDriver implements IDriver
 	public function __construct(IDbal $dbal, $tableName = 'migrations')
 	{
 		$this->dbal = $dbal;
-		$this->tableName = $dbal->escapeIdentifier($tableName);
+		$this->tableName = $tableName;
+	}
+
+
+	public function setupConnection()
+	{
+		$this->tableNameQuoted = $this->dbal->escapeIdentifier($this->tableName);
 	}
 
 
