@@ -29,9 +29,6 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	/** @var string */
 	protected $schemaStr;
 
-	/** @var string */
-	protected $primarySequence;
-
 
 	/**
 	 * @param IDbal  $dbal
@@ -43,7 +40,6 @@ class PgSqlDriver extends BaseDriver implements IDriver
 		parent::__construct($dbal, $tableName);
 		$this->schema = $dbal->escapeIdentifier($schema);
 		$this->schemaStr = $dbal->escapeString($schema);
-		$this->primarySequence = $this->dbal->escapeString($tableName . '_id_seq');
 	}
 
 
@@ -113,7 +109,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 
 	public function insertMigration(Migration $migration)
 	{
-		$this->dbal->exec("
+		$rows = $this->dbal->query("
 			INSERT INTO {$this->schema}.{$this->tableName}" . '
 			("group", "file", "checksum", "executed", "ready") VALUES (' .
 				$this->dbal->escapeString($migration->group) . "," .
@@ -122,9 +118,10 @@ class PgSqlDriver extends BaseDriver implements IDriver
 				$this->dbal->escapeDateTime($migration->executedAt) . "," .
 				$this->dbal->escapeBool(FALSE) .
 			")
+			RETURNING id
 		");
 
-		$migration->id = (int) $this->dbal->query('SELECT CURRVAL('. $this->primarySequence . ') AS id')[0]['id'];
+		$migration->id = (int) $rows[0]['id'];
 	}
 
 
