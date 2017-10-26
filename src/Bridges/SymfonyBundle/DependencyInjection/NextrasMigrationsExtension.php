@@ -45,6 +45,11 @@ class NextrasMigrationsExtension extends Extension
 		$driverDefinition = new Definition($this->drivers[$driverAlias]);
 		$driverDefinition->setAutowired(TRUE);
 
+		$container->addDefinitions([
+			'nextras_migrations.dbal' => $dbalDefinition,
+			'nextras_migrations.driver' => $driverDefinition,
+		]);
+
 		if ($config['diff_generator'] === 'doctrine') {
 			$structureDiffGeneratorDefinition = new Definition('Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator');
 			$structureDiffGeneratorDefinition->setAutowired(TRUE);
@@ -54,8 +59,15 @@ class NextrasMigrationsExtension extends Extension
 			$structureDiffGeneratorDefinition = NULL;
 		}
 
+		foreach ($config['php_params'] as $phpParamKey => $phpParamValue) {
+			if (is_string($phpParamValue) && strlen($phpParamValue) > 1 && $phpParamValue[0] === '@') {
+				$serviceName = substr($phpParamValue, 1);
+				$config['php_params'][$phpParamKey] = $container->getDefinition($serviceName);
+			}
+		}
+
 		$configurationDefinition = new Definition('Nextras\Migrations\Configurations\DefaultConfiguration');
-		$configurationDefinition->setArguments([$config['dir'], $driverDefinition, $config['with_dummy_data']]);
+		$configurationDefinition->setArguments([$config['dir'], $driverDefinition, $config['with_dummy_data'], $config['php_params']]);
 		$configurationDefinition->addMethodCall('setStructureDiffGenerator', [$structureDiffGeneratorDefinition]);
 
 		$continueCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand');
@@ -71,8 +83,6 @@ class NextrasMigrationsExtension extends Extension
 		$resetCommandDefinition->addTag('console.command');
 
 		$container->addDefinitions([
-			'nextras_migrations.dbal' => $dbalDefinition,
-			'nextras_migrations.driver' => $driverDefinition,
 			'nextras_migrations.configuration' => $configurationDefinition,
 			'nextras_migrations.continue_command' => $continueCommandDefinition,
 			'nextras_migrations.create_command' => $createCommandDefinition,
