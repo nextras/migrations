@@ -144,15 +144,10 @@ class Finder
 	/**
 	 * @param  string $dir
 	 * @return array
-	 * @throws IOException
 	 */
 	protected function getItems($dir)
 	{
-		$items = @scandir($dir); // directory may not exist
-		if ($items === FALSE) {
-			throw new IOException(sprintf('Finder: Directory "%s" does not exist.', $dir));
-		}
-		return $items;
+		return @scandir($dir) ?: []; // directory may not exist
 	}
 
 }
