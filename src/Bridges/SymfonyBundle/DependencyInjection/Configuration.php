@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
 	public function getConfigTreeBuilder()
 	{
 		$treeBuilder = new TreeBuilder();
-		$treeBuilder->root('nextras_migrations')->cannotBeEmpty()->children()
+		$treeBuilder->root('nextras_migrations')->requiresAtLeastOneElement()->children()
 			->scalarNode('dir')
 				->defaultValue('%kernel.root_dir%/NextrasMigrations')
 				->cannotBeEmpty()
