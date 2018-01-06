@@ -112,7 +112,8 @@ class CreateCommand extends BaseCommand
 			}
 		}
 
-		throw new Nextras\Migrations\LogicException("Unknown type '$type' given, expected on of 's', 'b' or 'd'.");
+		$types = $this->getTypeArgDescription();
+		throw new Nextras\Migrations\LogicException("Unknown type '$type' given, expected one of $types.");
 	}
 
 
