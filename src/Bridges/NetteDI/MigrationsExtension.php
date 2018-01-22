@@ -16,15 +16,18 @@ use Nextras;
 
 class MigrationsExtension extends Nette\DI\CompilerExtension
 {
+	const TAG_GROUP = 'nextras.migrations.group';
+	const TAG_EXTENSION_HANDLER = 'nextras.migrations.extensionHandler';
+
 	/** @var array */
 	public $defaults = [
 		'dir' => NULL,
 		'phpParams' => [],
 		'driver' => NULL,
 		'dbal' => NULL,
+		'groups' => NULL,        // null|array
 		'diffGenerator' => TRUE, // false|doctrine
 		'withDummyData' => FALSE,
-		'contentSource' => NULL, // CreateCommand::CONTENT_SOURCE_*
 		'ignoredQueriesFile' => NULL,
 	];
 
@@ -44,50 +47,44 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'pgsql' => 'Nextras\Migrations\Drivers\PgSqlDriver',
 	];
 
-	/**
-	 * Processes configuration data. Intended to be overridden by descendant.
-	 * @return void
-	 */
 	public function loadConfiguration()
 	{
-		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults);
-		Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral');
-		Validators::assertField($config, 'phpParams', 'array');
-		Validators::assertField($config, 'contentSource', 'string|null');
-		Validators::assertField($config, 'ignoredQueriesFile', 'string|null');
 
-		$dbal = $this->getDbal($config['dbal']);
-		$driver = $this->getDriver($config['driver'], $dbal);
+		// dbal
+		Validators::assertField($config, 'dbal', 'null|string|Nette\DI\Statement');
+		$dbal = $this->getDbalDefinition($config['dbal']);
 
-		$configuration = $builder->addDefinition($this->prefix('configuration'))
-			->setClass('Nextras\Migrations\Configurations\DefaultConfiguration')
-			->setArguments([$config['dir'], $driver, $config['withDummyData'], $config['phpParams']]);
+		// driver
+		Validators::assertField($config, 'driver', 'null|string|Nette\DI\Statement');
+		$driver = $this->getDriverDefinition($config['driver'], $dbal);
 
-		if (class_exists('Symfony\Component\Console\Command\Command')) {
-			$builder->addExcludedClasses(['Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand']);
-			$builder->addDefinition($this->prefix('continueCommand'))
-				->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand')
-				->setArguments([$driver, $configuration])
-				->addTag('kdyby.console.command');
-			$builder->addDefinition($this->prefix('createCommand'))
-				->setClass('Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand')
-				->setArguments([$driver, $configuration])
-				->addTag('kdyby.console.command');
-			$builder->addDefinition($this->prefix('resetCommand'))
-				->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand')
-				->setArguments([$driver, $configuration])
-				->addTag('kdyby.console.command');
+		// diffGenerator
+		if ($config['diffGenerator'] === 'doctrine') {
+			Validators::assertField($config, 'ignoredQueriesFile', 'null|string');
+			$this->createDoctrineStructureDiffGeneratorDefinition($config['ignoredQueriesFile']);
 		}
 
-		if ($config['diffGenerator'] !== FALSE) {
-			$builder->addDefinition($this->prefix('structureDiffGenerator'))
-				->setClass('Nextras\Migrations\IDiffGenerator')
-				->setDynamic(); // hack to suppress "Class Nextras\Migrations\IDiffGenerator (...) not found"
+		// groups
+		if ($config['groups'] === NULL) {
+			Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral');
+			Validators::assertField($config, 'withDummyData', 'bool');
+			$config['groups'] = $this->createDefaultGroupConfiguration($config['dir'], $config['withDummyData']);
+		}
 
-			if ($config['diffGenerator'] === 'doctrine') {
-				$this->configureDoctrineStructureDiffGenerator();
-			}
+		Validators::assertField($config, 'groups', 'array');
+		$groups = $this->createGroupDefinitions($config['groups']);
+
+		// extensionHandlers
+		Validators::assertField($config, 'phpParams', 'array');
+		$extensionHandlers = $this->createExtensionHandlerDefinitions($driver, $config['phpParams']);
+
+		// configuration
+		$configuration = $this->createConfigurationDefinition();
+
+		// commands
+		if (class_exists('Symfony\Component\Console\Command\Command')) {
+			$this->createSymfonyCommandDefinitions($driver, $configuration);
 		}
 	}
 
@@ -112,47 +109,33 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			$factory->arguments = ["@$conn"];
 		}
 
-		// diff generators
-		if ($config['diffGenerator'] === TRUE && $builder->findByType('Doctrine\ORM\EntityManager')) {
-			$this->configureDoctrineStructureDiffGenerator();
+		// diff generator
+		if ($config['diffGenerator'] === TRUE) {
+			if ($builder->findByType('Doctrine\ORM\EntityManager') && $builder->hasDefinition($this->prefix('group.structures'))) {
+				Validators::assertField($config, 'ignoredQueriesFile', 'null|string');
+				$diffGenerator = $this->createDoctrineStructureDiffGeneratorDefinition($config['ignoredQueriesFile']);
+				$builder->getDefinition($this->prefix('group.structures'))
+					->addSetup('$generator', [$diffGenerator]);
+			}
 		}
+
+		// configuration
+		$groups = [];
+		foreach ($builder->findByTag(self::TAG_GROUP) as $serviceName => $_) {
+			$groups[] = $builder->getDefinition($serviceName);
+		}
+
+		$extensionHandlers = [];
+		foreach ($builder->findByTag(self::TAG_EXTENSION_HANDLER) as $serviceName => $extensionName) {
+			$extensionHandlers[$extensionName] = $builder->getDefinition($serviceName);
+		}
+
+		$builder->getDefinition($this->prefix('configuration'))
+			->setArguments([$groups, $extensionHandlers]);
 	}
 
 
-	private function getDriver($driver, $dbal)
-	{
-		$factory = $this->getDriverFactory($driver, $dbal);
-
-		if ($factory) {
-			return $this->getContainerBuilder()
-				->addDefinition($this->prefix('driver'))
-				->setClass('Nextras\Migrations\IDriver')
-				->setFactory($factory);
-
-		} elseif ($driver === NULL) {
-			return '@Nextras\Migrations\IDriver';
-
-		} else {
-			throw new Nextras\Migrations\LogicException('Invalid driver value.');
-		}
-	}
-
-
-	private function getDriverFactory($driver, $dbal)
-	{
-		if ($driver instanceof Nette\DI\Statement) {
-			return Nette\DI\Compiler::filterArguments([$driver])[0];
-
-		} elseif (is_string($driver) && isset($this->drivers[$driver])) {
-			return new Nette\DI\Statement($this->drivers[$driver], [$dbal]);
-
-		} else {
-			return NULL;
-		}
-	}
-
-
-	private function getDbal($dbal)
+	private function getDbalDefinition($dbal)
 	{
 		$factory = $this->getDbalFactory($dbal);
 
@@ -185,21 +168,157 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	private function configureDoctrineStructureDiffGenerator()
+	private function getDriverDefinition($driver, $dbal)
+	{
+		$factory = $this->getDriverFactory($driver, $dbal);
+
+		if ($factory) {
+			return $this->getContainerBuilder()
+				->addDefinition($this->prefix('driver'))
+				->setClass('Nextras\Migrations\IDriver')
+				->setFactory($factory);
+
+		} elseif ($driver === NULL) {
+			return '@Nextras\Migrations\IDriver';
+
+		} else {
+			throw new Nextras\Migrations\LogicException('Invalid driver value.');
+		}
+	}
+
+
+	private function getDriverFactory($driver, $dbal)
+	{
+		if ($driver instanceof Nette\DI\Statement) {
+			return Nette\DI\Compiler::filterArguments([$driver])[0];
+
+		} elseif (is_string($driver) && isset($this->drivers[$driver])) {
+			return new Nette\DI\Statement($this->drivers[$driver], [$dbal]);
+
+		} else {
+			return NULL;
+		}
+	}
+
+
+	private function createDefaultGroupConfiguration($dir, $withDummyData)
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
 
-		$structureDiffGenerator = $builder->getDefinition($this->prefix('structureDiffGenerator'))
-			->setDynamic(FALSE)
+		$groups = [
+			'structures' => [
+				'directory' => "$dir/structures",
+			],
+			'basic-data' => [
+				'directory' => "$dir/basic-data",
+				'dependencies' => ['structures'],
+			],
+			'dummy-data' => [
+				'enabled' => $withDummyData,
+				'directory' => "$dir/dummy-data",
+				'dependencies' => ['structures', 'basic-data'],
+			],
+		];
+
+		foreach ($groups as $groupName => $groupConfig) {
+			$serviceName = $this->prefix("diffGenerator.$groupName");
+			$diffGenerator = $builder->hasDefinition($serviceName) ? $builder->getDefinition($serviceName) : NULL;
+			$groups[$groupName]['generator'] = $diffGenerator;
+		}
+
+		return $groups;
+	}
+
+
+	private function createGroupDefinitions(array $groups)
+	{
+		$builder = $this->getContainerBuilder();
+		$groupDefinitions = [];
+
+		foreach ($groups as $groupName => $groupConfig) {
+			Validators::assertField($groupConfig, 'directory', 'string');
+
+			$enabled = isset($groupConfig['enabled']) ? $groupConfig['enabled'] : true;
+			$directory = $groupConfig['directory'];
+			$dependencies = isset($groupConfig['dependencies']) ? $groupConfig['dependencies'] : [];
+			$generator = isset($groupConfig['generator']) ? $groupConfig['generator'] : null;
+
+			$serviceName = lcfirst(str_replace('-', '', ucwords($groupName, '-')));
+			$groupDefinitions[] = $builder->addDefinition($this->prefix("group.$serviceName"))
+				->addTag(self::TAG_GROUP)
+				->setAutowired(FALSE)
+				->setClass('Nextras\Migrations\Entities\Group')
+				->addSetup('$name', [$groupName])
+				->addSetup('$enabled', [$enabled])
+				->addSetup('$directory', [$directory])
+				->addSetup('$dependencies', [$dependencies])
+				->addSetup('$generator', [$generator]);
+		}
+
+		return $groupDefinitions;
+	}
+
+
+	private function createExtensionHandlerDefinitions($driver, $phpParams)
+	{
+		$builder = $this->getContainerBuilder();
+
+		$sqlHandler = $builder->addDefinition($this->prefix('extensionHandler.sql'))
+			->addTag(self::TAG_EXTENSION_HANDLER, 'sql')
+			->setAutowired(FALSE)
+			->setClass('Nextras\Migrations\Extensions\SqlHandler')
+			->setArguments([$driver]);
+
+		$phpHandler = $builder->addDefinition($this->prefix('extensionHandler.php'))
+			->addTag(self::TAG_EXTENSION_HANDLER, 'php')
+			->setClass('Nextras\Migrations\Extensions\PhpHandler')
+			->setAutowired(FALSE)
+			->setArguments([$phpParams]);
+
+		return [$sqlHandler, $phpHandler];
+	}
+
+
+	private function createConfigurationDefinition()
+	{
+		return $this->getContainerBuilder()
+			->addDefinition($this->prefix('configuration'))
+			->setClass('Nextras\Migrations\IConfiguration')
+			->setFactory('Nextras\Migrations\Configurations\Configuration');
+	}
+
+
+	private function createDoctrineStructureDiffGeneratorDefinition($ignoredQueriesFile)
+	{
+		$builder = $this->getContainerBuilder();
+
+		return $builder->addDefinition($this->prefix('diffGenerator.structures'))
+			->setAutowired(FALSE)
+			->setClass('Nextras\Migrations\IDiffGenerator')
 			->setFactory('Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator')
-			->setArguments([
-				'@Doctrine\ORM\EntityManager',
-				$config['ignoredQueriesFile']
-			]);
+			->setArguments(['@Doctrine\ORM\EntityManager', $ignoredQueriesFile]);
+	}
 
-		$configuration = $builder->getDefinition($this->prefix('configuration'));
-		$configuration->addSetup('setStructureDiffGenerator', [$structureDiffGenerator]);
+
+	private function createSymfonyCommandDefinitions($driver, $configuration)
+	{
+		$builder = $this->getContainerBuilder();
+		$builder->addExcludedClasses(['Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand']);
+
+		$builder->addDefinition($this->prefix('continueCommand'))
+			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand')
+			->setArguments([$driver, $configuration])
+			->addTag('kdyby.console.command');
+
+		$builder->addDefinition($this->prefix('createCommand'))
+			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand')
+			->setArguments([$driver, $configuration])
+			->addTag('kdyby.console.command');
+
+		$builder->addDefinition($this->prefix('resetCommand'))
+			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand')
+			->setArguments([$driver, $configuration])
+			->addTag('kdyby.console.command');
 	}
 
 }
