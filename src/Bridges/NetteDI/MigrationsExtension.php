@@ -232,6 +232,18 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 	private function createGroupDefinitions(array $groups)
 	{
+		/** @var IMigrationGroupsProvider $provider */
+		foreach ($this->compiler->getExtensions('Nextras\Migrations\Bridges\NetteDI\IMigrationGroupsProvider') as $provider) {
+			foreach ($provider->getMigrationGroups() as $group) {
+				$groups[$group->name] = [
+					'enabled' => $group->enabled,
+					'directory' => $group->directory,
+					'dependencies' => $group->dependencies,
+					'generator' => $group->generator,
+				];
+			}
+		}
+
 		$builder = $this->getContainerBuilder();
 		$groupDefinitions = [];
 
