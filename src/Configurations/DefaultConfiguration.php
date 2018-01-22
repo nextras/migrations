@@ -20,6 +20,7 @@ use Nextras\Migrations\IExtensionHandler;
 
 /**
  * @author Jan Tvrdík
+ * @deprecated
  */
 class DefaultConfiguration implements IConfiguration
 {
