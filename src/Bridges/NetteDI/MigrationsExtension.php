@@ -18,7 +18,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 {
 	/** @var array */
 	public $defaults = [
-		'dir' => '%appDir%/../migrations',
+		'dir' => NULL,
 		'phpParams' => [],
 		'driver' => NULL,
 		'dbal' => NULL,
