@@ -25,7 +25,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	public function setupConnection()
 	{
 		parent::setupConnection();
-		$this->dbal->exec('SET NAMES "utf8"');
+		$this->dbal->exec('SET NAMES "utf8mb4"');
 		$this->dbal->exec('SET foreign_key_checks = 0');
 		$this->dbal->exec('SET time_zone = "SYSTEM"');
 		$this->dbal->exec('SET sql_mode = "TRADITIONAL"');
