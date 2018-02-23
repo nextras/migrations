@@ -117,7 +117,16 @@ class CreateCommand extends BaseCommand
 				$matchedGroups[] = $group;
 			}
 		}
+		if (count($matchedGroups) === 1) {
+			return $matchedGroups[0];
+		}
 
+		if (count($matchedGroups) > 1) {
+			$groupNames = array_map(function (Group $group) {
+				return $group->name;
+			}, $matchedGroups);
+			throw new Nextras\Migrations\LogicException("Type '$type' is ambigous.\nDid you mean one of these?\n  - " . implode("\n  - ", $groupNames) . "\n");
+		}
 		$types = $this->getTypeArgDescription();
 		throw new Nextras\Migrations\LogicException("Unknown type '$type' given, expected one of $types.");
 	}
