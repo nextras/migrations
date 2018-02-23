@@ -109,9 +109,12 @@ class CreateCommand extends BaseCommand
 	 */
 	protected function getGroup($type)
 	{
+		$groupNamePattern = preg_quote($type, "~");
+		$groupNamePattern = str_replace('\-', '\w*-\-', $groupNamePattern);
+		$matchedGroups = [];
 		foreach ($this->config->getGroups() as $group) {
-			if (Strings::startsWith($group->name, $type)) {
-				return $group;
+			if (Strings::match($group->name, "~^$groupNamePattern~U")) {
+				$matchedGroups[] = $group;
 			}
 		}
 
