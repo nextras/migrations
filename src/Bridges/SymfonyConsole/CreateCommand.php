@@ -178,7 +178,9 @@ class CreateCommand extends BaseCommand
 
 		foreach ($groups as $i => $group) {
 			for ($j = 1; $j < strlen($group->name); $j++) {
-				if (!isset($groups[$i + 1]) || strncmp($group->name, $groups[$i + 1]->name, $j) !== 0) {
+				$doesCollideWithPrevious = isset($groups[$i - 1]) && strncmp($group->name, $groups[$i - 1]->name, $j) === 0;
+				$doesCollideWithNext = isset($groups[$i + 1]) && strncmp($group->name, $groups[$i + 1]->name, $j) === 0;
+				if (!$doesCollideWithPrevious && !$doesCollideWithNext) {
 					$options[] = substr($group->name, 0, $j) . '(' . substr($group->name, $j) . ')';
 					break;
 				}
