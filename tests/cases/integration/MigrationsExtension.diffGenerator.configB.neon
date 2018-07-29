@@ -2,6 +2,7 @@ migrations:
 	dir: migrations
 	dbal: doctrine
 	driver: mysql
+	enableResetCommand: true
 
 services:
 	- Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration([%doctrineDir%])

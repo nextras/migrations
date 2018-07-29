@@ -2,6 +2,7 @@ migrations:
 	dir: migrations
 	dbal: dibi
 	driver: Nextras\Migrations\Drivers\MySqlDriver(..., m)
+	enableResetCommand: true
 
 services:
 	- DibiConnection(%dibiConfig%)

@@ -3,6 +3,7 @@ migrations:
 	dbal: doctrine
 	driver: mysql
 	diffGenerator: doctrine
+	enableResetCommand: true
 
 services:
 	- Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration([%doctrineDir%])
