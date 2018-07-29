@@ -1,6 +1,7 @@
 migrations:
 	dir: migrations
 	driver: mysql
+	enableResetCommand: true
 
 services:
 	- DibiConnection(%dibiConfig%)

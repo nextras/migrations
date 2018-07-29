@@ -1,5 +1,6 @@
 migrations:
 	dir: migrations
+	enableResetCommand: true
 
 services:
 	- DibiConnection(%dibiConfig%)

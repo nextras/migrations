@@ -29,6 +29,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'diffGenerator' => TRUE, // false|doctrine
 		'withDummyData' => FALSE,
 		'ignoredQueriesFile' => NULL,
+		'enableResetCommand' => FALSE,
 	];
 
 	/** @var array */
@@ -84,7 +85,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 		// commands
 		if (class_exists('Symfony\Component\Console\Command\Command')) {
-			$this->createSymfonyCommandDefinitions($driver, $configuration);
+			$this->createSymfonyCommandDefinitions($driver, $configuration, $config['enableResetCommand']);
 		}
 	}
 
@@ -312,7 +313,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	private function createSymfonyCommandDefinitions($driver, $configuration)
+	private function createSymfonyCommandDefinitions($driver, $configuration, $enableResetCommand)
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addExcludedClasses(['Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand']);
@@ -327,10 +328,12 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			->setArguments([$driver, $configuration])
 			->addTag('kdyby.console.command');
 
-		$builder->addDefinition($this->prefix('resetCommand'))
-			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand')
-			->setArguments([$driver, $configuration])
-			->addTag('kdyby.console.command');
+		if ($enableResetCommand) {
+			$builder->addDefinition($this->prefix('resetCommand'))
+				->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand')
+				->setArguments([$driver, $configuration])
+				->addTag('kdyby.console.command');
+		}
 	}
 
 }
