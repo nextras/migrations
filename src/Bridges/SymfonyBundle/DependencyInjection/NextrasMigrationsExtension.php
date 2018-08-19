@@ -11,6 +11,7 @@ namespace Nextras\Migrations\Bridges\SymfonyBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 
@@ -50,9 +51,14 @@ class NextrasMigrationsExtension extends Extension
 			'nextras_migrations.driver' => $driverDefinition,
 		]);
 
+		$container->addAliases([
+			'Nextras\Migrations\IDbal' => 'nextras_migrations.dbal',
+			'Nextras\Migrations\IDriver' => 'nextras_migrations.driver',
+		]);
+
 		if ($config['diff_generator'] === 'doctrine') {
 			$structureDiffGeneratorDefinition = new Definition('Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator');
-			$structureDiffGeneratorDefinition->setAutowired(TRUE);
+			$structureDiffGeneratorDefinition->setArgument('$entityManager', new Reference('doctrine.orm.entity_manager'));
 			$structureDiffGeneratorDefinition->setArgument('$ignoredQueriesFile', $config['ignored_queries_file']);
 
 		} else {
@@ -87,6 +93,10 @@ class NextrasMigrationsExtension extends Extension
 			'nextras_migrations.continue_command' => $continueCommandDefinition,
 			'nextras_migrations.create_command' => $createCommandDefinition,
 			'nextras_migrations.reset_command' => $resetCommandDefinition,
+		]);
+
+		$container->addAliases([
+			'Nextras\Migrations\IConfiguration' => 'nextras_migrations.configuration'
 		]);
 
 		if ($structureDiffGeneratorDefinition) {
