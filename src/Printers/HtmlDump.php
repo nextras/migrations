@@ -67,7 +67,7 @@ class HtmlDump implements IPrinter
 			$count = count($toExecute);
 			$this->output(sprintf(
 				'%s migration%s need%s to be executed%s',
-				$count,$$count > 1 ? 's' : '', $count > 1 ? '' : 's', ($withFileList ? ':' : '.'))
+				$count,$count > 1 ? 's' : '', $count > 1 ? '' : 's', ($withFileList ? ':' : '.'))
 			);
 			if ($withFileList) {
 				/** @var File $file */
