@@ -49,7 +49,10 @@ class NextrasMigrationsExtension extends Extension
 			'nextras_migrations.dbal' => $dbalDefinition,
 			'nextras_migrations.driver' => $driverDefinition,
 		]);
-
+		
+        $container->setAlias('Nextras\Migrations\IDriver', 'nextras_migrations.driver');
+        $container->setAlias('Nextras\Migrations\IDbal', 'nextras_migrations.dbal');
+        
 		if ($config['diff_generator'] === 'doctrine') {
 			$structureDiffGeneratorDefinition = new Definition('Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator');
 			$structureDiffGeneratorDefinition->setAutowired(TRUE);
@@ -69,7 +72,11 @@ class NextrasMigrationsExtension extends Extension
 		$configurationDefinition = new Definition('Nextras\Migrations\Configurations\DefaultConfiguration');
 		$configurationDefinition->setArguments([$config['dir'], $driverDefinition, $config['with_dummy_data'], $config['php_params']]);
 		$configurationDefinition->addMethodCall('setStructureDiffGenerator', [$structureDiffGeneratorDefinition]);
-
+        $container->addDefinitions([
+            'nextras_migrations.configuration' => $configurationDefinition,
+        ]);
+        
+        $container->setAlias('Nextras\Migrations\IConfiguration', 'nextras_migrations.configuration');
 		$continueCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand');
 		$continueCommandDefinition->setAutowired(TRUE);
 		$continueCommandDefinition->addTag('console.command');
@@ -83,7 +90,6 @@ class NextrasMigrationsExtension extends Extension
 		$resetCommandDefinition->addTag('console.command');
 
 		$container->addDefinitions([
-			'nextras_migrations.configuration' => $configurationDefinition,
 			'nextras_migrations.continue_command' => $continueCommandDefinition,
 			'nextras_migrations.create_command' => $createCommandDefinition,
 			'nextras_migrations.reset_command' => $resetCommandDefinition,
