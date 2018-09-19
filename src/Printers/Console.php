@@ -54,8 +54,8 @@ class Console implements IPrinter
 			$this->output('Executed migrations:');
 			/** @var Migration $migration */
 			foreach ($migrations as $migration) {
-					$this->output('- ' . $migration->group . '/' . $migration->filename . ' OK', self::COLOR_SUCCESS);
-				}
+				$this->output('- ' . $migration->group . '/' . $migration->filename . ' OK', self::COLOR_SUCCESS);
+			}
 			$this->output(' ');
 		} else {
 			$this->output('No migrations has executed yet.');
@@ -65,13 +65,15 @@ class Console implements IPrinter
 	/**
 	 * @inheritdoc
 	 */
-	public function printToExecute(array $toExecute, $withFileList = false)
+	public function printToExecute(array $toExecute, $withFileList = FALSE)
 	{
 		if ($toExecute) {
 			$count = count($toExecute);
-			$this->output(sprintf(
-				'%s migration%s need%s to be executed%s',
-				$count,$count > 1 ? 's' : '', $count > 1 ? '' : 's', ($withFileList ? ':' : '.'))
+			$this->output(
+				sprintf(
+					'%s migration%s need%s to be executed%s',
+					$count, $count > 1 ? 's' : '', $count > 1 ? '' : 's', ($withFileList ? ':' : '.')
+				)
 			);
 			if ($withFileList) {
 				/** @var File $file */
