@@ -91,6 +91,24 @@ class FirstRunTest extends IntegrationTestCase
 		Assert::type('DateTime', $migrations[2]->executedAt);
 		Assert::same('basic-data', $migrations[2]->group);
 	}
+	
+	public function testStatus()
+	{
+		$this->runner->run(Runner::MODE_STATUS);
+		Assert::same([
+			'Nextras Migrations',
+			'STATUS',
+			'No migrations has executed yet.',
+			'5 migrations need to be executed:',
+			'- structures/001.sql',
+			'- structures/002.sql',
+			'- basic-data/003.sql',
+			'- dummy-data/004.sql',
+			'- structures/005.sql',
+			'OK',
+		], $this->printer->lines);
+		
+	}
 
 
 	public function testInit()

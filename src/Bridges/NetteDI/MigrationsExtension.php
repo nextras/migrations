@@ -78,6 +78,10 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 				->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand')
 				->setArguments([$driver, $configuration])
 				->addTag('kdyby.console.command');
+			$builder->addDefinition($this->prefix('statusCommand'))
+			        ->setClass('Nextras\Migrations\Bridges\SymfonyConsole\StatusCommand')
+			        ->setArguments([$driver, $configuration])
+			        ->addTag('kdyby.console.command');
 		}
 
 		if ($config['diffGenerator'] !== FALSE) {

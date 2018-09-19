@@ -81,12 +81,17 @@ class NextrasMigrationsExtension extends Extension
 		$resetCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand');
 		$resetCommandDefinition->setAutowired(TRUE);
 		$resetCommandDefinition->addTag('console.command');
+		
+		$statusCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\StatusCommand');
+		$statusCommandDefinition->setAutowired(TRUE);
+		$statusCommandDefinition->addTag('console.command');
 
 		$container->addDefinitions([
 			'nextras_migrations.configuration' => $configurationDefinition,
 			'nextras_migrations.continue_command' => $continueCommandDefinition,
 			'nextras_migrations.create_command' => $createCommandDefinition,
 			'nextras_migrations.reset_command' => $resetCommandDefinition,
+			'nextras_migrations.status_command' => $statusCommandDefinition,
 		]);
 
 		if ($structureDiffGeneratorDefinition) {

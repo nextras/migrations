@@ -10,6 +10,7 @@
 namespace Nextras\Migrations\Printers;
 
 use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\Entities\Migration;
 use Nextras\Migrations\Exception;
 use Nextras\Migrations\IPrinter;
 
@@ -20,32 +21,54 @@ use Nextras\Migrations\IPrinter;
  */
 class DevNull implements IPrinter
 {
+	/**
+	 * @inheritdoc
+	 */
 	public function printIntro($mode)
 	{
 	}
-
-
-	public function printToExecute(array $toExecute)
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function printToExecute(array $toExecute, $withFileList = false)
 	{
 	}
-
-
+	
+	/**
+	 * @inheritdoc
+	 */
 	public function printExecute(File $file, $count, $time)
 	{
 	}
-
-
+	
+	/**
+	 * @inheritdoc
+	 */
 	public function printDone()
 	{
 	}
-
-
+	
+	/**
+	 * @inheritdoc
+	 */
 	public function printError(Exception $e)
 	{
 	}
-
-
+	
+	/**
+	 * @inheritdoc
+	 */
 	public function printSource($code)
 	{
 	}
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function printExecutedMigrations(array $migrations)
+	{
+	
+	}
 }
+

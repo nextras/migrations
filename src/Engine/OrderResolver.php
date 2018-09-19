@@ -27,13 +27,13 @@ class OrderResolver
 	 */
 	public function resolve(array $migrations, array $groups, array $files, $mode)
 	{
+		$this->checkModeSupport($mode);
+		
 		$groups = $this->getAssocGroups($groups);
 		$this->validateGroups($groups);
 
 		if ($mode === Runner::MODE_RESET) {
 			return $this->sortFiles($files, $groups);
-		} elseif ($mode !== Runner::MODE_CONTINUE) {
-			throw new LogicException('Unsupported mode.');
 		}
 
 		$migrations = $this->getAssocMigrations($migrations);
@@ -254,5 +254,21 @@ class OrderResolver
 			}
 		}
 	}
-
+	
+	/**
+	 * @param string $mode
+	 */
+	private function checkModeSupport($mode)
+	{
+		$supportedModes = [
+			Runner::MODE_CONTINUE,
+			Runner::MODE_RESET,
+			Runner::MODE_STATUS,
+		];
+		
+		if (!in_array($mode, $supportedModes, true)) {
+			throw new LogicException('Unsupported mode.');
+		}
+	}
+	
 }

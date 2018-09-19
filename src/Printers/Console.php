@@ -10,6 +10,7 @@
 namespace Nextras\Migrations\Printers;
 
 use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\Entities\Migration;
 use Nextras\Migrations\Exception;
 use Nextras\Migrations\IPrinter;
 
@@ -34,26 +35,58 @@ class Console implements IPrinter
 	{
 		$this->useColors = $this->detectColorSupport();
 	}
-
-
+	
+	/**
+	 * @inheritdoc
+	 */
 	public function printIntro($mode)
 	{
 		$this->output('Nextras Migrations');
 		$this->output(strtoupper($mode), self::COLOR_INTRO);
 	}
-
-
-	public function printToExecute(array $toExecute)
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function printExecutedMigrations(array $migrations)
+	{
+		if ($migrations) {
+			$this->output('Executed migrations:');
+			/** @var Migration $migration */
+			foreach ($migrations as $migration) {
+					$this->output('- ' . $migration->group . '/' . $migration->filename . ' OK', self::COLOR_SUCCESS);
+				}
+			$this->output(' ');
+		} else {
+			$this->output('No migrations has executed yet.');
+		}
+	}
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function printToExecute(array $toExecute, $withFileList = false)
 	{
 		if ($toExecute) {
 			$count = count($toExecute);
-			$this->output($count . ' migration' . ($count > 1 ? 's' : '') . ' need' . ($count > 1 ? '' : 's') . ' to be executed.');
+			$this->output(sprintf(
+				'%s migration%s need%s to be executed%s',
+				$count,$count > 1 ? 's' : '', $count > 1 ? '' : 's', ($withFileList ? ':' : '.'))
+			);
+			if ($withFileList) {
+				/** @var File $file */
+				foreach ($toExecute as $file) {
+					$this->output('- ' . $file->group->name . '/' . $file->name, self::COLOR_INFO);
+				}
+			}
 		} else {
 			$this->output('No migration needs to be executed.');
 		}
 	}
-
-
+	
+	/**
+	 * @inheritdoc
+	 */
 	public function printExecute(File $file, $count, $time)
 	{
 		$this->output(
@@ -62,14 +95,18 @@ class Console implements IPrinter
 			. $this->color(sprintf('%0.3f', $time), self::COLOR_INFO) . ' s'
 		);
 	}
-
-
+	
+	/**
+	 * @inheritdoc
+	 */
 	public function printDone()
 	{
 		$this->output('OK', self::COLOR_SUCCESS);
 	}
-
-
+	
+	/**
+	 * @inheritdoc
+	 */
 	public function printError(Exception $e)
 	{
 		$this->output('ERROR: ' . $e->getMessage(), self::COLOR_ERROR);
