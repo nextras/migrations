@@ -38,7 +38,7 @@ class HtmlDump implements IPrinter
 		if ($mode === Runner::MODE_CONTINUE) {
 			$this->output('     CONTINUE: Running only new migrations.');
 		}
-		if($mode === Runner::MODE_STATUS) {
+		if ($mode === Runner::MODE_STATUS) {
 			$this->output('     STATUS: Show lists of completed or waiting migrations');
 		}
 	}
@@ -60,14 +60,16 @@ class HtmlDump implements IPrinter
 	/**
 	 * @inheritdoc
 	 */
-	public function printToExecute(array $toExecute, $withFileList = false)
+	public function printToExecute(array $toExecute, $withFileList = FALSE)
 	{
 		$count = 0;
 		if ($toExecute) {
 			$count = count($toExecute);
-			$this->output(sprintf(
-				'%s migration%s need%s to be executed%s',
-				$count,$count > 1 ? 's' : '', $count > 1 ? '' : 's', ($withFileList ? ':' : '.'))
+			$this->output(
+				sprintf(
+					'%s migration%s need%s to be executed%s',
+					$count, $count > 1 ? 's' : '', $count > 1 ? '' : 's', ($withFileList ? ':' : '.')
+				)
 			);
 			if ($withFileList) {
 				/** @var File $file */
@@ -90,10 +92,12 @@ class HtmlDump implements IPrinter
 	{
 		$format = '%0' . strlen($this->count) . 'd';
 		$name = htmlspecialchars($file->group->name . '/' . $file->name);
-		$this->output(sprintf(
-			$format . '/' . $format . ': <strong>%s</strong> (%d %s, %0.3f s)',
-			++$this->index, $this->count, $name, $count, ($count === 1 ? 'query' : 'queries'), $time
-		));
+		$this->output(
+			sprintf(
+				$format . '/' . $format . ': <strong>%s</strong> (%d %s, %0.3f s)',
+				++$this->index, $this->count, $name, $count, ($count === 1 ? 'query' : 'queries'), $time
+			)
+		);
 	}
 	
 	/**
@@ -120,16 +124,17 @@ class HtmlDump implements IPrinter
 	{
 		$this->output($code);
 	}
-
-
+	
+	
 	/**
-	 * @param  string $s     HTML string
+	 * @param  string $s HTML string
 	 * @param  string $class
+	 *
 	 * @return void
 	 */
 	protected function output($s, $class = 'info')
 	{
 		echo "<div class=\"$class\">$s</div>\n";
 	}
-
+	
 }
