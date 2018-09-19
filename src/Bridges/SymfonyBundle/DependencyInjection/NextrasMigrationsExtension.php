@@ -16,83 +16,91 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class NextrasMigrationsExtension extends Extension
 {
-	/** @var array */
-	protected $dbals = [
-		'dibi' => 'Nextras\Migrations\Bridges\Dibi\DibiAdapter',
-		'dibi2' => 'Nextras\Migrations\Bridges\Dibi\Dibi2Adapter',
-		'dibi3' => 'Nextras\Migrations\Bridges\Dibi\Dibi3Adapter',
-		'doctrine' => 'Nextras\Migrations\Bridges\DoctrineDbal\DoctrineAdapter',
-		'nette' => 'Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter',
-		'nextras' => 'Nextras\Migrations\Bridges\NextrasDbal\NextrasAdapter',
-	];
-
-	/** @var array */
-	protected $drivers = [
-		'mysql' => 'Nextras\Migrations\Drivers\MySqlDriver',
-		'pgsql' => 'Nextras\Migrations\Drivers\PgSqlDriver',
-	];
-
-
-	public function load(array $configs, ContainerBuilder $container)
-	{
-		$config = $this->processConfiguration(new Configuration(), $configs);
-
-		$dbalAlias = $config['dbal'];
-		$dbalDefinition = new Definition($this->dbals[$dbalAlias]);
-		$dbalDefinition->setAutowired(TRUE);
-
-		$driverAlias = $config['driver'];
-		$driverDefinition = new Definition($this->drivers[$driverAlias]);
-		$driverDefinition->setAutowired(TRUE);
-
-		$container->addDefinitions([
-			'nextras_migrations.dbal' => $dbalDefinition,
-			'nextras_migrations.driver' => $driverDefinition,
-		]);
-
-		if ($config['diff_generator'] === 'doctrine') {
-			$structureDiffGeneratorDefinition = new Definition('Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator');
-			$structureDiffGeneratorDefinition->setAutowired(TRUE);
-			$structureDiffGeneratorDefinition->setArgument('$ignoredQueriesFile', $config['ignored_queries_file']);
-
-		} else {
-			$structureDiffGeneratorDefinition = NULL;
-		}
-
-		foreach ($config['php_params'] as $phpParamKey => $phpParamValue) {
-			if (is_string($phpParamValue) && strlen($phpParamValue) > 1 && $phpParamValue[0] === '@') {
-				$serviceName = substr($phpParamValue, 1);
-				$config['php_params'][$phpParamKey] = $container->getDefinition($serviceName);
-			}
-		}
-
-		$configurationDefinition = new Definition('Nextras\Migrations\Configurations\DefaultConfiguration');
-		$configurationDefinition->setArguments([$config['dir'], $driverDefinition, $config['with_dummy_data'], $config['php_params']]);
-		$configurationDefinition->addMethodCall('setStructureDiffGenerator', [$structureDiffGeneratorDefinition]);
-
-		$continueCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand');
-		$continueCommandDefinition->setAutowired(TRUE);
-		$continueCommandDefinition->addTag('console.command');
-
-		$createCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand');
-		$createCommandDefinition->setAutowired(TRUE);
-		$createCommandDefinition->addTag('console.command');
-
-		$resetCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand');
-		$resetCommandDefinition->setAutowired(TRUE);
-		$resetCommandDefinition->addTag('console.command');
-
-		$container->addDefinitions([
-			'nextras_migrations.configuration' => $configurationDefinition,
-			'nextras_migrations.continue_command' => $continueCommandDefinition,
-			'nextras_migrations.create_command' => $createCommandDefinition,
-			'nextras_migrations.reset_command' => $resetCommandDefinition,
-		]);
-
-		if ($structureDiffGeneratorDefinition) {
-			$container->addDefinitions([
-				'nextras_migrations.structure_diff_generator' => $structureDiffGeneratorDefinition,
-			]);
-		}
-	}
+    /** @var array */
+    protected $dbals = [
+        'dibi' => 'Nextras\Migrations\Bridges\Dibi\DibiAdapter',
+        'dibi2' => 'Nextras\Migrations\Bridges\Dibi\Dibi2Adapter',
+        'dibi3' => 'Nextras\Migrations\Bridges\Dibi\Dibi3Adapter',
+        'doctrine' => 'Nextras\Migrations\Bridges\DoctrineDbal\DoctrineAdapter',
+        'nette' => 'Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter',
+        'nextras' => 'Nextras\Migrations\Bridges\NextrasDbal\NextrasAdapter',
+    ];
+    
+    /** @var array */
+    protected $drivers = [
+        'mysql' => 'Nextras\Migrations\Drivers\MySqlDriver',
+        'pgsql' => 'Nextras\Migrations\Drivers\PgSqlDriver',
+    ];
+    
+    
+    public function load(array $configs, ContainerBuilder $container)
+    {
+        $config = $this->processConfiguration(new Configuration(), $configs);
+        
+        $dbalAlias = $config['dbal'];
+        $dbalDefinition = new Definition($this->dbals[$dbalAlias]);
+        $dbalDefinition->setAutowired(TRUE);
+        
+        $driverAlias = $config['driver'];
+        $driverDefinition = new Definition($this->drivers[$driverAlias]);
+        $driverDefinition->setAutowired(TRUE);
+        
+        $container->addDefinitions([
+            'nextras_migrations.dbal' => $dbalDefinition,
+            'nextras_migrations.driver' => $driverDefinition,
+        ]);
+        
+        $container->setAlias('Nextras\Migrations\IDriver', 'nextras_migrations.driver');
+        $container->setAlias('Nextras\Migrations\IDbal', 'nextras_migrations.dbal');
+        
+        if ($config['diff_generator'] === 'doctrine') {
+            $structureDiffGeneratorDefinition = new Definition('Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator');
+            $structureDiffGeneratorDefinition->setAutowired(TRUE);
+            $structureDiffGeneratorDefinition->setArgument('$ignoredQueriesFile', $config['ignored_queries_file']);
+            
+        } else {
+            $structureDiffGeneratorDefinition = NULL;
+        }
+        
+        foreach ($config['php_params'] as $phpParamKey => $phpParamValue) {
+            if (is_string($phpParamValue) && strlen($phpParamValue) > 1 && $phpParamValue[0] === '@') {
+                $serviceName = substr($phpParamValue, 1);
+                $config['php_params'][$phpParamKey] = $container->getDefinition($serviceName);
+            }
+        }
+        
+        $configurationDefinition = new Definition('Nextras\Migrations\Configurations\DefaultConfiguration');
+        $configurationDefinition->setArguments([$config['dir'], $driverDefinition, $config['with_dummy_data'], $config['php_params']]);
+        $configurationDefinition->addMethodCall('setStructureDiffGenerator', [$structureDiffGeneratorDefinition]);
+        
+        $container->addDefinitions([
+            'nextras_migrations.configuration' => $configurationDefinition,
+        ]);
+        
+        $container->setAlias('Nextras\Migrations\IConfiguration', 'nextras_migrations.configuration');
+        
+        $continueCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand');
+        $continueCommandDefinition->setAutowired(TRUE);
+        $continueCommandDefinition->addTag('console.command');
+        
+        $createCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand');
+        $createCommandDefinition->setAutowired(TRUE);
+        $createCommandDefinition->addTag('console.command');
+        
+        $resetCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand');
+        $resetCommandDefinition->setAutowired(TRUE);
+        $resetCommandDefinition->addTag('console.command');
+        
+        $container->addDefinitions([
+            'nextras_migrations.continue_command' => $continueCommandDefinition,
+            'nextras_migrations.create_command' => $createCommandDefinition,
+            'nextras_migrations.reset_command' => $resetCommandDefinition,
+        ]);
+        
+        if ($structureDiffGeneratorDefinition) {
+            $container->addDefinitions([
+                'nextras_migrations.structure_diff_generator' => $structureDiffGeneratorDefinition,
+            ]);
+        }
+    }
 }
