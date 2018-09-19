@@ -51,7 +51,7 @@ class MigrationsExtensionTest extends TestCase
 		$dic = $this->createContainer($config);
 
 		$configuration = $dic->getByType('Nextras\Migrations\IConfiguration');
-		Assert::type('Nextras\Migrations\Configurations\DefaultConfiguration', $configuration);
+		Assert::type('Nextras\Migrations\Configurations\Configuration', $configuration);
 
 		$groups = $configuration->getGroups();
 		Assert::count(3, $groups);

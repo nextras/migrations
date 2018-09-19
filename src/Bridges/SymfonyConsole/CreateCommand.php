@@ -26,6 +26,9 @@ class CreateCommand extends BaseCommand
 	const CONTENT_SOURCE_EMPTY = 'empty';
 
 	/** @var string */
+	protected static $defaultName = 'migrations:create';
+
+	/** @var string */
 	protected $defaultContentSource = self::CONTENT_SOURCE_DIFF;
 
 
@@ -44,7 +47,7 @@ class CreateCommand extends BaseCommand
 	 */
 	protected function configure()
 	{
-		$this->setName('migrations:create');
+		$this->setName(self::$defaultName);
 		$this->setDescription('Creates new migration file with proper name (e.g. 2015-03-14-130836-label.sql)');
 		$this->setHelp('Prints path of the created file to standard output.');
 
@@ -112,7 +115,8 @@ class CreateCommand extends BaseCommand
 			}
 		}
 
-		throw new Nextras\Migrations\LogicException("Unknown type '$type' given, expected on of 's', 'b' or 'd'.");
+		$types = $this->getTypeArgDescription();
+		throw new Nextras\Migrations\LogicException("Unknown type '$type' given, expected one of $types.");
 	}
 
 
