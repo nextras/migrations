@@ -25,8 +25,8 @@ class MigrationsExtensionTest extends TestCase
 		$dic = $this->createContainer($config);
 
 		Assert::type('Nextras\Migrations\Drivers\MySqlDriver', $dic->getByType('Nextras\Migrations\IDriver'));
-		Assert::count(3, $dic->findByType('Symfony\Component\Console\Command\Command'));
-		Assert::count(3, $dic->findByTag('kdyby.console.command'));
+		Assert::count(4, $dic->findByType('Symfony\Component\Console\Command\Command'));
+		Assert::count(4, $dic->findByTag('kdyby.console.command'));
 	}
 
 
