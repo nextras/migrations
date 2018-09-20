@@ -9,7 +9,7 @@
 
 namespace Nextras\Migrations\Bridges\DoctrineOrm;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Nextras;
 use Nextras\Migrations\IDiffGenerator;
@@ -18,7 +18,7 @@ use Nextras\Migrations\IDiffGenerator;
 class StructureDiffGenerator implements IDiffGenerator
 {
 
-	/** @var EntityManager */
+	/** @var EntityManagerInterface */
 	private $entityManager;
 
 	/** @var string|NULL absolute path to a file */
@@ -26,10 +26,10 @@ class StructureDiffGenerator implements IDiffGenerator
 
 
 	/**
-	 * @param EntityManager $entityManager
+	 * @param EntityManagerInterface $entityManager
 	 * @param string|NULL   $ignoredQueriesFile
 	 */
-	public function __construct(EntityManager $entityManager, $ignoredQueriesFile = NULL)
+	public function __construct(EntityManagerInterface $entityManager, $ignoredQueriesFile = NULL)
 	{
 		$this->entityManager = $entityManager;
 		$this->ignoredQueriesFile = $ignoredQueriesFile;
