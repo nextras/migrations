@@ -95,6 +95,28 @@ class SecondRunTest extends IntegrationTestCase
 			}
 		}
 	}
+	
+	public function testStatus()
+	{
+		$this->driver->loadFile($this->fixtureDir . '/3ok.sql');
+		Assert::count(3, $this->driver->getAllMigrations());
+		
+		$this->runner->run(Runner::MODE_STATUS);
+		Assert::same([
+			'Nextras Migrations',
+			'STATUS',
+			'Executed migrations:',
+			'- structures/001.sql OK',
+			'- structures/002.sql OK',
+			'- basic-data/003.sql OK',
+			' ',
+			'2 migrations need to be executed:',
+			'- dummy-data/004.sql',
+			'- structures/005.sql',
+			'OK',
+		], $this->printer->lines);
+		
+	}
 
 }
 

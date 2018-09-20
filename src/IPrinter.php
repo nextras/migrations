@@ -10,6 +10,7 @@
 namespace Nextras\Migrations;
 
 use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\Entities\Migration;
 
 
 /**
@@ -23,14 +24,25 @@ interface IPrinter
 	 * - continue = Running new migrations.
 	 * @param  string $mode
 	 */
-	function printIntro($mode);
-
-
+	public function printIntro($mode);
+	
+	/**
+	 * List of migrations which executed has been completed.
+	 * @param Migration[] $migrations
+	 *
+	 * @return void
+	 */
+	public function printExecutedMigrations(array $migrations);
+	
 	/**
 	 * List of migrations which should be executed has been completed.
+	 *
 	 * @param  File[] $toExecute
+	 * @param  bool   $withFileList
+	 *
+	 * @return void
 	 */
-	function printToExecute(array $toExecute);
+	public function printToExecute(array $toExecute, $withFileList = false);
 
 
 	/**
@@ -39,26 +51,26 @@ interface IPrinter
 	 * @param  int $count number of executed queries
 	 * @param  float $time elapsed time in milliseconds
 	 */
-	function printExecute(File $file, $count, $time);
+	public function printExecute(File $file, $count, $time);
 
 
 	/**
 	 * All migrations have been successfully executed.
 	 */
-	function printDone();
+	public function printDone();
 
 
 	/**
 	 * An error has occurred during execution of a migration.
 	 * @param  Exception $e
 	 */
-	function printError(Exception $e);
+	public function printError(Exception $e);
 
 
 	/**
 	 * Prints init source code.
 	 * @param  string $code
 	 */
-	function printSource($code);
+	public function printSource($code);
 
 }

@@ -29,6 +29,8 @@ class Runner
 	const MODE_CONTINUE = 'continue';
 	const MODE_RESET = 'reset';
 	const MODE_INIT = 'init';
+	const MODE_STATUS = 'status';
+	
 
 	/** @var IPrinter */
 	private $printer;
@@ -82,9 +84,11 @@ class Runner
 
 
 	/**
-	 * @param  string         $mode self::MODE_CONTINUE|self::MODE_RESET|self::MODE_INIT
+	 * @param  string         $mode self::MODE_CONTINUE|self::MODE_RESET|self::MODE_INIT|self::MODE_STATUS
 	 * @param  IConfiguration $config
+	 *
 	 * @return void
+	 * @throws Exception
 	 */
 	public function run($mode = self::MODE_CONTINUE, IConfiguration $config = NULL)
 	{
@@ -120,12 +124,17 @@ class Runner
 			$migrations = $this->driver->getAllMigrations();
 			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
 			$toExecute = $this->orderResolver->resolve($migrations, $this->groups, $files, $mode);
-			$this->printer->printToExecute($toExecute);
 
-			foreach ($toExecute as $file) {
-				$time = microtime(TRUE);
-				$queriesCount = $this->execute($file);
-				$this->printer->printExecute($file, $queriesCount, microtime(TRUE) - $time);
+			if ($mode === self::MODE_STATUS) {
+				$this->printer->printExecutedMigrations($migrations);
+				$this->printer->printToExecute($toExecute, true);
+			} else {
+				$this->printer->printToExecute($toExecute, false);
+				foreach ($toExecute as $file) {
+					$time = microtime(TRUE);
+					$queriesCount = $this->execute($file);
+					$this->printer->printExecute($file, $queriesCount, microtime(TRUE) - $time);
+				}
 			}
 
 			$this->driver->unlock();
