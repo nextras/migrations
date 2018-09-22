@@ -112,7 +112,7 @@ abstract class IntegrationTestCase extends TestCase
 	protected function getExtensionHandlers()
 	{
 		return [
-			'sql' => new Nextras\Migrations\Extensions\SqlHandler($this->driver, $this->dbal),
+			'sql' => new Nextras\Migrations\Extensions\SqlHandler($this->driver),
 		];
 	}
 
