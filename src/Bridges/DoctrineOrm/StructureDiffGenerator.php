@@ -9,6 +9,7 @@
 
 namespace Nextras\Migrations\Bridges\DoctrineOrm;
 
+use Doctrine\Common\Cache\ClearableCache;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use Nextras;
@@ -66,6 +67,7 @@ class StructureDiffGenerator implements IDiffGenerator
 		if ($cache instanceof ClearableCache) {
 			$cache->deleteAll();
 		}
+
 		$schemaTool = new SchemaTool($this->entityManager);
 		$metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
 		$queries = $schemaTool->getUpdateSchemaSql($metadata, TRUE);
