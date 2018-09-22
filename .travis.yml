@@ -15,8 +15,6 @@ before_script:
     - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then cat ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini >> ./tests/php.ini; fi
     - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then NTESTER_FLAGS="--coverage ./coverage.xml --coverage-src ./src"; else NTESTER_FLAGS=""; fi
 
-    - if [ "$TRAVIS_PHP_VERSION" == "hhvm" -o "$TRAVIS_PHP_VERSION" == "hhvm-nightly" ]; then cp ./tests/dbals.hhvm.ini ./tests/dbals.ini; fi
-    - if ! [ "$TRAVIS_PHP_VERSION" == "hhvm" -o "$TRAVIS_PHP_VERSION" == "hhvm-nightly" ]; then cp ./tests/dbals.sample.ini ./tests/dbals.ini; fi
     - cp ./tests/drivers.sample.ini ./tests/drivers.ini
 
     - psql -c 'CREATE DATABASE nextras_migrations_test' -U postgres
