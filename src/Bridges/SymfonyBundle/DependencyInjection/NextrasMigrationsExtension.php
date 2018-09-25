@@ -44,16 +44,18 @@ class NextrasMigrationsExtension extends Extension
 
 		$driverAlias = $config['driver'];
 		$driverDefinition = new Definition($this->drivers[$driverAlias]);
-		$driverDefinition->setAutowired(TRUE);
+		$driverDefinition->setArgument('$dbal', $dbalDefinition);
 
 		$container->addDefinitions([
 			'nextras_migrations.dbal' => $dbalDefinition,
 			'nextras_migrations.driver' => $driverDefinition,
 		]);
-		$container->setAlias('Nextras\Migrations\IDriver', 'nextras_migrations.driver');
-		$container->setAlias('Nextras\Migrations\IDbal', 'nextras_migrations.dbal');
-		
-		
+
+		$container->addAliases([
+			'Nextras\Migrations\IDbal' => 'nextras_migrations.dbal',
+			'Nextras\Migrations\IDriver' => 'nextras_migrations.driver',
+		]);
+
 		if ($config['diff_generator'] === 'doctrine') {
 			$structureDiffGeneratorDefinition = new Definition('Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator');
 			$structureDiffGeneratorDefinition->setAutowired(TRUE);
@@ -73,27 +75,28 @@ class NextrasMigrationsExtension extends Extension
 		$configurationDefinition = new Definition('Nextras\Migrations\Configurations\DefaultConfiguration');
 		$configurationDefinition->setArguments([$config['dir'], $driverDefinition, $config['with_dummy_data'], $config['php_params']]);
 		$configurationDefinition->addMethodCall('setStructureDiffGenerator', [$structureDiffGeneratorDefinition]);
-		$container->addDefinitions([
-			'nextras_migrations.configuration' => $configurationDefinition,
-		]);
-		$container->setAlias('Nextras\Migrations\IConfiguration', 'nextras_migrations.configuration');
-		
+
 		$continueCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand');
-		$continueCommandDefinition->setAutowired(TRUE);
+		$continueCommandDefinition->setArguments([$driverDefinition, $configurationDefinition]);
 		$continueCommandDefinition->addTag('console.command');
 
 		$createCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand');
-		$createCommandDefinition->setAutowired(TRUE);
+		$createCommandDefinition->setArguments([$driverDefinition, $configurationDefinition]);
 		$createCommandDefinition->addTag('console.command');
 
 		$resetCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand');
-		$resetCommandDefinition->setAutowired(TRUE);
+		$resetCommandDefinition->setArguments([$driverDefinition, $configurationDefinition]);
 		$resetCommandDefinition->addTag('console.command');
 
 		$container->addDefinitions([
+			'nextras_migrations.configuration' => $configurationDefinition,
 			'nextras_migrations.continue_command' => $continueCommandDefinition,
 			'nextras_migrations.create_command' => $createCommandDefinition,
 			'nextras_migrations.reset_command' => $resetCommandDefinition,
+		]);
+
+		$container->addAliases([
+			'Nextras\Migrations\IConfiguration' => 'nextras_migrations.configuration',
 		]);
 
 		if ($structureDiffGeneratorDefinition) {
