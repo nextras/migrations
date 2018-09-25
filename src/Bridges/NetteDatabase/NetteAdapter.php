@@ -56,7 +56,7 @@ class NetteAdapter implements IDbal
 
 	public function escapeBool($value)
 	{
-		return $this->conn->getSupplementalDriver()->formatBool($value);
+		return $this->escapeString((string) (int) $value);
 	}
 
 
