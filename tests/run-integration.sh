@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -o errexit -o pipefail -o nounset
+shopt -s globstar
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$DIR")"
-PHP_VERSION=$(php -r "echo PHP_VERSION_ID;")
+PHP_VERSION="$(php --run "echo PHP_VERSION_ID;")"
 
 
 run()
@@ -41,7 +42,7 @@ run()
 create_dbals_ini()
 {
 	DBAL="$1"
-	INI_PATH="$DIR/dbals.ini"
+	INI_PATH="$PROJECT_DIR/tests/dbals.ini"
 
 	rm --force "$INI_PATH"
 	if [[ ! -z "$DBAL" ]]; then
@@ -90,14 +91,24 @@ tester_run_integration_group()
 }
 
 
-if [[ "$#" -gt 0 ]]; then
-	run "$1"
-	exit $?
-fi
-
-
-for INTEGRATION_GROUP in "$PROJECT_DIR/tests/cases/integration"/*; do
-	for FILENAME in "$PROJECT_DIR/tests/matrix/$(basename "$INTEGRATION_GROUP")"/*.sh; do
+if [[ "$#" -eq 0 ]]; then
+	for FILENAME in "$PROJECT_DIR/tests/matrix"/**/*.sh; do
 		run "$FILENAME"
 	done
-done
+
+else
+	for ARG in "$@"; do
+		if [[ -f "$ARG" ]]; then
+			run "$ARG"
+
+		elif [[ -d "$ARG" ]]; then
+			for FILENAME in "$ARG"/**/*.sh; do
+				run "$FILENAME"
+			done
+
+		else
+			echo "Invalid argument, $ARG is neither file nor directory"
+			exit 1
+		fi
+	done
+fi
