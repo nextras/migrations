@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
 	public function getConfigTreeBuilder()
 	{
 		$treeBuilder = new TreeBuilder();
-		$treeBuilder->root('nextras_migrations')->requiresAtLeastOneElement()->children()
+		$treeBuilder->root('nextras_migrations')->children()
 			->scalarNode('dir')
 				->defaultValue('%kernel.root_dir%/NextrasMigrations')
 				->cannotBeEmpty()
@@ -30,6 +30,7 @@ class Configuration implements ConfigurationInterface
 				->end()
 			->enumNode('driver')
 				->values(['mysql', 'pgsql'])
+				->isRequired()
 				->cannotBeEmpty()
 				->end()
 			->scalarNode('diff_generator')
