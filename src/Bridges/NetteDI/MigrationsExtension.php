@@ -158,7 +158,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	private function getDbalFactory($dbal)
 	{
 		if ($dbal instanceof Nette\DI\Statement) {
-			return Nette\DI\Compiler::filterArguments([$dbal])[0];
+			return $this->filterArguments([$dbal])[0];
 
 		} elseif (is_string($dbal) && isset($this->dbals[$dbal])) {
 			return $this->dbals[$dbal];
@@ -191,7 +191,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	private function getDriverFactory($driver, $dbal)
 	{
 		if ($driver instanceof Nette\DI\Statement) {
-			return Nette\DI\Compiler::filterArguments([$driver])[0];
+			return $this->filterArguments([$driver])[0];
 
 		} elseif (is_string($driver) && isset($this->drivers[$driver])) {
 			return new Nette\DI\Statement($this->drivers[$driver], [$dbal]);
@@ -334,4 +334,17 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			->addTag('kdyby.console.command');
 	}
 
+
+	private function filterArguments(array $arguments)
+	{
+		if (method_exists('Nette\DI\Helpers', 'filterArguments')) {
+			return Nette\DI\Helpers::filterArguments($arguments);
+
+		} elseif (method_exists('Nette\DI\Compiler', 'filterArguments')) {
+			return Nette\DI\Compiler::filterArguments($arguments);
+
+		} else {
+			throw new Nextras\Migrations\LogicException();
+		}
+	}
 }
