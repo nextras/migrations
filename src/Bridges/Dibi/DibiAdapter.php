@@ -10,6 +10,7 @@
 namespace Nextras\Migrations\Bridges\Dibi;
 
 use DateTime;
+use dibi;
 use LogicException;
 use Nextras\Migrations\IDbal;
 
@@ -22,14 +23,14 @@ class DibiAdapter implements IDbal
 
 	public function __construct($conn)
 	{
-		if (get_class($conn) === 'Dibi\Connection') {
+		if (version_compare(dibi::VERSION, '3.0.0', '>=')) {
 			$this->innerAdapter = new Dibi3Adapter($conn);
 
-		} elseif (get_class($conn) === 'DibiConnection') {
+		} elseif (version_compare(dibi::VERSION, '2.0.0', '>=')) {
 			$this->innerAdapter = new Dibi2Adapter($conn);
 
 		} else {
-			throw new LogicException('Invalid argument, expected instance of Dibi\Connection or DibiConnection.');
+			throw new LogicException('Unsupported dibi version');
 		}
 	}
 

@@ -141,12 +141,22 @@ class PgSqlDriver extends BaseDriver implements IDriver
 		$migrations = array();
 		$result = $this->dbal->query("SELECT * FROM {$this->schemaQuoted}.{$this->tableNameQuoted} ORDER BY \"executed\"");
 		foreach ($result as $row) {
+			if (is_string($row['executed'])) {
+				$executedAt = new DateTime($row['executed']);
+
+			} elseif ($row['executed'] instanceof \DateTimeImmutable) {
+				$executedAt = new DateTime('@' . $row['executed']->getTimestamp());
+
+			} else {
+				$executedAt = $row['executed'];
+			}
+
 			$migration = new Migration;
 			$migration->id = (int) $row['id'];
 			$migration->group = $row['group'];
 			$migration->filename = $row['file'];
 			$migration->checksum = $row['checksum'];
-			$migration->executedAt = (is_string($row['executed']) ? new DateTime($row['executed']) : $row['executed']);
+			$migration->executedAt = $executedAt;
 			$migration->completed = (bool) $row['ready'];
 
 			$migrations[] = $migration;
