@@ -125,26 +125,14 @@ abstract class IntegrationTestCase extends TestCase
 	protected function createDbal($options)
 	{
 		switch ($options['dbal']) {
-			case 'dibi2':
+			case 'dibi':
 				$drivers = [
 					'mysql' => 'mysqli',
 					'pgsql' => 'postgre',
 				];
-				return new DibiAdapter(new DibiConnection([
-					'host' => $options['host'],
-					'username' => $options['username'],
-					'password' => $options['password'],
-					'database' => $options['database'],
-					'driver' => $drivers[$options['driver']],
-				]));
 
-
-			case 'dibi3':
-				$drivers = [
-					'mysql' => 'mysqli',
-					'pgsql' => 'postgre',
-				];
-				return new DibiAdapter(new Dibi\Connection([
+				$dibiConnectionClass = class_exists('Dibi\Connection') ? 'Dibi\Connection' : 'DibiConnection';
+				return new DibiAdapter(new $dibiConnectionClass([
 					'host' => $options['host'],
 					'username' => $options['username'],
 					'password' => $options['password'],

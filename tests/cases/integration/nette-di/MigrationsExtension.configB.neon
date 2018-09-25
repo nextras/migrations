@@ -4,4 +4,4 @@ migrations:
 	dbal: Nextras\Migrations\Bridges\Dibi\DibiAdapter(...)
 
 services:
-	- DibiConnection(%dibiConfig%)
+	- Dibi\Connection(%dibiConfig%)

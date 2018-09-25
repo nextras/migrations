@@ -8,7 +8,6 @@
 	},
 	"require-dev": {
 		"dibi/dibi": "~3.0",
-		"dibi/dibi-legacy-2.x": "~2.3",
 		"doctrine/dbal": "~2.5",
 		"doctrine/orm": "~2.5",
 		"doctrine/cache": "~1.5",
@@ -41,22 +40,7 @@
 		"psr-4": { "Nextras\\Migrations\\": "src/" },
 		"classmap": ["src/exceptions.php", "src/deprecated"]
 	},
-	"repositories": [
-		{
-			"type": "package",
-			"package": {
-				"name": "dibi/dibi-legacy-2.x",
-				"version": "2.3.99",
-				"autoload": {
-					"classmap": ["dibi/drivers", "dibi/libs"],
-					"exclude-from-classmap": ["dibi/libs/Dibi.php"]
-				},
-				"source": {
-					"url": "https://github.com/dg/dibi.git",
-					"type": "git",
-					"reference": "v2.3.5"
-				}
-			}
-		}
-	]
+	"autoload-dev": {
+		"classmap": ["tests/inc"]
+	}
 }

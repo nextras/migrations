@@ -12,7 +12,7 @@ use Tester\Assert;
 use Tester\Environment;
 use Tester\TestCase;
 
-require __DIR__ . '/../../bootstrap.php';
+require __DIR__ . '/../../../bootstrap.php';
 
 
 class MigrationsExtensionTest extends TestCase
@@ -89,7 +89,7 @@ class MigrationsExtensionTest extends TestCase
 	 */
 	protected function createContainer($config, array $dynamicParameters = NULL)
 	{
-		$options = parse_ini_file(__DIR__ . '/../../drivers.ini', TRUE)['mysql'];
+		$options = parse_ini_file(__DIR__ . '/../../../drivers.ini', TRUE)['mysql'];
 
 		$dibiConfig = [
 			'host' => $options['host'],
@@ -116,7 +116,7 @@ class MigrationsExtensionTest extends TestCase
 					'parameters' => [
 						'dibiConfig' => $dibiConfig,
 						'doctrineConfig' => $doctrineConfig,
-						'doctrineDir' => __DIR__ . '/../../fixtures/doctrine',
+						'doctrineDir' => __DIR__ . '/../../../fixtures/doctrine',
 					]
 				]);
 				$compiler->loadConfig(__DIR__ . "/MigrationsExtension.$config.neon");

@@ -4,4 +4,4 @@ migrations:
 	dbal: dibi
 
 services:
-	- DibiConnection(%dibiConfig%)
+	- Dibi\Connection(%dibiConfig%)

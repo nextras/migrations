@@ -6,15 +6,14 @@ php:
     - 5.5
     - 5.6
     - 7.0
+    - 7.1
+    - 7.2
 
 matrix:
     fast_finish: true
 
 before_script:
     - touch ./tests/php.ini
-    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then cat ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini >> ./tests/php.ini; fi
-    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then NTESTER_FLAGS="--coverage ./coverage.xml --coverage-src ./src"; else NTESTER_FLAGS=""; fi
-
     - cp ./tests/drivers.sample.ini ./tests/drivers.ini
 
     - psql -c 'CREATE DATABASE nextras_migrations_test' -U postgres
@@ -22,11 +21,8 @@ before_script:
     - mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
 
     - composer self-update
-    - composer install --no-interaction
+    - composer install --no-interaction --no-progress
 
 script:
-    - ./tests/run.sh $NTESTER_FLAGS ./tests/cases
-
-after_script:
-    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then composer require satooshi/php-coveralls; fi
-    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then php vendor/bin/coveralls -c tests/.coveralls.yml -v; fi
+    - ./tests/run-unit.sh
+    - ./tests/run-integration.sh

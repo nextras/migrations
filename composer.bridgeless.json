@@ -1,0 +1,13 @@
+{
+	"require-dev": {
+		"nette/tester": "~1.4",
+		"mockery/mockery": "~0.9"
+	},
+	"autoload": {
+		"psr-4": { "Nextras\\Migrations\\": "src/" },
+		"classmap": ["src/exceptions.php", "src/deprecated"]
+	},
+	"autoload-dev": {
+		"classmap": ["tests/inc"]
+	}
+}

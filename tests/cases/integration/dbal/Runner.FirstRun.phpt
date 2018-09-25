@@ -2,7 +2,7 @@
 
 /**
  * @testCase
- * @dataProvider ../../dbals.ini
+ * @dataProvider ../../../dbals.ini
  */
 
 namespace NextrasTests\Migrations;
@@ -12,7 +12,7 @@ use Nextras\Migrations\Engine\Runner;
 use Tester;
 use Tester\Assert;
 
-require __DIR__ . '/../../bootstrap.php';
+require __DIR__ . '/../../../bootstrap.php';
 
 
 class FirstRunTest extends IntegrationTestCase
