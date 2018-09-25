@@ -34,7 +34,16 @@ run()
 	fi
 
 	create_dbals_ini "$DBAL"
-	composer_prepare_dependencies "$COMPOSER_REQUIRE"
+
+	composer_prepare_dependencies "$COMPOSER_REQUIRE" ""
+	tester_run_integration_group "$INTEGRATION_GROUP"
+
+	echo
+	echo
+	echo "# $FILENAME with --prefer-lowest"
+	echo
+
+	composer_prepare_dependencies "$COMPOSER_REQUIRE" "--prefer-lowest"
 	tester_run_integration_group "$INTEGRATION_GROUP"
 }
 
@@ -60,6 +69,7 @@ create_dbals_ini()
 composer_prepare_dependencies()
 {
 	COMPOSER_REQUIRE="$1"
+	COMPOSER_PREFER_LOWEST="$2"
 
 	cp "$PROJECT_DIR/composer.bridgeless.json" "$PROJECT_DIR/composer.json"
 
@@ -75,7 +85,8 @@ composer_prepare_dependencies()
 	composer update \
 		--no-interaction \
 		--no-progress \
-		--quiet
+		--quiet \
+		$COMPOSER_PREFER_LOWEST
 }
 
 

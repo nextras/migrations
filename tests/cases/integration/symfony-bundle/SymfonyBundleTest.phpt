@@ -28,6 +28,8 @@ class SymfonyBundleTest extends TestCase
 	{
 		parent::setUp();
 
+		Environment::lock(__CLASS__, __DIR__ . '/../../../temp');
+
 		$options = Environment::loadData();
 		$driversConfig = parse_ini_file(__DIR__ . '/../../../drivers.ini', TRUE);
 		$dbalOptions = $driversConfig[$options['driver']];

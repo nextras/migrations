@@ -13,7 +13,7 @@
 		"doctrine/cache": "~1.5",
 		"nette/database": "~2.2",
 		"nette/di": "~2.3.12 | ~2.4",
-		"nette/tester": "~1.4",
+		"nette/tester": "~1.7",
 		"nette/utils": "~2.3",
 		"nextras/dbal": "~1.0 | ~2.0",
 		"mockery/mockery": "~0.9",

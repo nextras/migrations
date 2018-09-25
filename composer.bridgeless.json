@@ -1,6 +1,6 @@
 {
 	"require-dev": {
-		"nette/tester": "~1.4",
+		"nette/tester": "~1.7",
 		"mockery/mockery": "~0.9"
 	},
 	"autoload": {
