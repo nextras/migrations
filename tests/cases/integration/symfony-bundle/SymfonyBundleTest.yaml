@@ -1,0 +1,19 @@
+parameters:
+  kernel.secret: 'foobar'
+
+
+doctrine:
+  dbal:
+    driver: '%doctrine_dbal_driver%'
+    host: '%doctrine_dbal_host%'
+    dbname: '%doctrine_dbal_database%'
+    user: '%doctrine_dbal_username%'
+    password: '%doctrine_dbal_password%'
+    logging: false
+
+  orm: ~
+
+
+nextras_migrations:
+  driver: '%nextras_migrations_driver%'
+  dir: '%nextras_migrations_dir%'
