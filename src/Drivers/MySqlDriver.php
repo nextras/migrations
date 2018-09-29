@@ -104,7 +104,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 				$this->dbal->escapeString($migration->group) . "," .
 				$this->dbal->escapeString($migration->filename) . "," .
 				$this->dbal->escapeString($migration->checksum) . "," .
-				$this->dbal->escapeDateTime($migration->executedAt) . "," .
+				" NOW()," .
 				$this->dbal->escapeBool(FALSE) .
 			")
 		");
