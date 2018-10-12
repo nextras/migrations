@@ -29,6 +29,7 @@ class Runner
 	const MODE_CONTINUE = 'continue';
 	const MODE_RESET = 'reset';
 	const MODE_INIT = 'init';
+	const MODE_CHECK = 'check';
 
 	/** @var IPrinter */
 	private $printer;
@@ -82,7 +83,7 @@ class Runner
 
 
 	/**
-	 * @param  string         $mode self::MODE_CONTINUE|self::MODE_RESET|self::MODE_INIT
+	 * @param  string         $mode self::MODE_CONTINUE|self::MODE_RESET|self::MODE_INIT|self::MODE_CHECK_ORDER
 	 * @param  IConfiguration $config
 	 * @return void
 	 */
@@ -121,6 +122,12 @@ class Runner
 			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
 			$toExecute = $this->orderResolver->resolve($migrations, $this->groups, $files, $mode);
 			$this->printer->printToExecute($toExecute);
+
+			if ($mode === self::MODE_CHECK) {
+				$this->driver->unlock();
+				$this->printer->printCheckDone();
+				return;
+			}
 
 			foreach ($toExecute as $file) {
 				$time = microtime(TRUE);

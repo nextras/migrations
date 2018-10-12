@@ -43,6 +43,11 @@ interface IPrinter
 
 
 	/**
+	 * All migrations have been successfully checked.
+	 */
+	function printCheckDone();
+
+	/**
 	 * All migrations have been successfully executed.
 	 */
 	function printDone();

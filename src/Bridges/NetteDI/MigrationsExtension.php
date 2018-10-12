@@ -332,6 +332,11 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand')
 			->setArguments([$driver, $configuration])
 			->addTag('kdyby.console.command');
+
+		$builder->addDefinition($this->prefix('checkOrderCommand'))
+			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\CheckCommand')
+			->setArguments([$driver, $configuration])
+			->addTag('kdyby.console.command');
 	}
 
 

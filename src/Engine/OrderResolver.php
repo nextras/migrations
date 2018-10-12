@@ -32,7 +32,7 @@ class OrderResolver
 
 		if ($mode === Runner::MODE_RESET) {
 			return $this->sortFiles($files, $groups);
-		} elseif ($mode !== Runner::MODE_CONTINUE) {
+		} elseif ($mode !== Runner::MODE_CONTINUE && $mode !== Runner::MODE_CHECK) {
 			throw new LogicException('Unsupported mode.');
 		}
 

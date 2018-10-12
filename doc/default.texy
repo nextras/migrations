@@ -25,6 +25,7 @@ Three basic commands are available:
 
 * Create new migrations with `migrations:create` command.
 * Run new migrations with `migrations:continue` command.
+* Check correct order of all migrations with `migrations:check` command.
 * Drop database and run all migrations with `migrations:reset` command.
 
 -------------------------

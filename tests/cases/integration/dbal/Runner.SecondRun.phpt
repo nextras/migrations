@@ -77,6 +77,44 @@ class SecondRunTest extends IntegrationTestCase
 	}
 
 
+	public function testCheckOk()
+	{
+		$this->driver->loadFile($this->fixtureDir . '/3ok.sql');
+		Assert::count(3, $this->driver->getAllMigrations());
+
+		$this->runner->run(Runner::MODE_CHECK);
+		Assert::same([
+			'Nextras Migrations',
+			'CONTINUE',
+			'2 migrations need to be executed.',
+			'- dummy-data/004.sql; 1 queries; XX s',
+			'- structures/005.sql; 1 queries; XX s',
+			'Check OK',
+		], $this->printer->lines);
+
+		Assert::count(5, $this->driver->getAllMigrations());
+	}
+
+
+	public function testCheckError()
+	{
+		$this->driver->loadFile($this->fixtureDir . '/2ok, 1ko.sql');
+		Assert::count(3, $this->driver->getAllMigrations());
+
+		Assert::throws(function () {
+			$this->runner->run(Runner::MODE_CHECK);
+		}, 'Nextras\Migrations\LogicException');
+
+		Assert::same([
+			'Nextras Migrations',
+			'CONTINUE',
+			'ERROR: Previously executed migration "basic-data/003.sql" did not succeed. Please fix this manually or reset the migrations.',
+		], $this->printer->lines);
+
+		Assert::count(3, $this->driver->getAllMigrations());
+	}
+
+
 	public function testInit()
 	{
 		$options = Tester\Environment::loadData();

@@ -30,7 +30,9 @@ class HtmlDump implements IPrinter
 	public function printIntro($mode)
 	{
 		if ($mode === Runner::MODE_RESET) {
-			$this->output('     RESET: All tables, views and data has been destroyed!');
+			$this->output('	 RESET: All tables, views and data has been destroyed!');
+		} elseif ($mode === Runner::MODE_CHECK) {
+			$this->output('CHECK: Check order and checksum.');
 		} else {
 			$this->output('     CONTINUE: Running only new migrations.');
 		}
@@ -58,6 +60,12 @@ class HtmlDump implements IPrinter
 			$format . '/' . $format . ': <strong>%s</strong> (%d %s, %0.3f s)',
 			++$this->index, $this->count, $name, $count, ($count === 1 ? 'query' : 'queries'), $time
 		));
+	}
+
+
+	public function printCheckDone()
+	{
+		$this->output('Check OK', 'success');
 	}
 
 

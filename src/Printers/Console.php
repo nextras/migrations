@@ -64,6 +64,12 @@ class Console implements IPrinter
 	}
 
 
+	public function printCheckDone()
+	{
+		$this->output('Check OK', self::COLOR_SUCCESS);
+	}
+
+
 	public function printDone()
 	{
 		$this->output('OK', self::COLOR_SUCCESS);

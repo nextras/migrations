@@ -65,6 +65,16 @@ class SymfonyBundleTest extends TestCase
 		$commandTester = new CommandTester($command);
 		Assert::same(0, $commandTester->execute([]));
 	}
+
+
+	public function testMigrationsCheck()
+	{
+		$application = new Application($this->symfonyKernel);
+
+		$command = $application->find('migrations:check');
+		$commandTester = new CommandTester($command);
+		Assert::same(0, $commandTester->execute([]));
+	}
 }
 
 
