@@ -102,7 +102,8 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 				continue;
 			}
 
-			$conn = $builder->getByType('Dibi\Connection') ?: $builder->getByType('DibiConnection');
+			$dibiClassName = version_compare(\dibi::VERSION, '3.0.0', '<') ? 'DibiConnection' : 'Dibi\Connection';
+			$conn = $builder->getByType($dibiClassName);
 			if (!$conn) {
 				continue;
 			}
