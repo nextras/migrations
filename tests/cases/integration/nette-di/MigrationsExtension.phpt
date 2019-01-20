@@ -7,7 +7,6 @@
 namespace NextrasTests\Migrations;
 
 use Nette;
-use Nextras\Migrations\Bridges\NetteDI\MigrationsExtension;
 use Tester\Assert;
 use Tester\Environment;
 use Tester\TestCase;
@@ -111,7 +110,7 @@ class MigrationsExtensionTest extends TestCase
 		$key = __FILE__ . ':' . __LINE__ . ':' . $config;
 		$className = $loader->load(
 			function (Nette\DI\Compiler $compiler) use ($config, $dibiConfig, $doctrineConfig, $dynamicParameters) {
-				$compiler->addExtension('migrations', new MigrationsExtension());
+				$compiler->addExtension('extensions', new Nette\DI\Extensions\ExtensionsExtension());
 				$compiler->addConfig([
 					'parameters' => [
 						'dibiConfig' => $dibiConfig,

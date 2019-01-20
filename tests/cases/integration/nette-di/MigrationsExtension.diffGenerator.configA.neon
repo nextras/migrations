@@ -1,3 +1,6 @@
+extensions:
+	migrations: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
+
 migrations:
 	dir: migrations
 	dbal: doctrine
