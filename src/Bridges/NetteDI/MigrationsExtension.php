@@ -10,6 +10,7 @@
 namespace Nextras\Migrations\Bridges\NetteDI;
 
 use Nette;
+use Nette\DI\ContainerBuilder;
 use Nette\Utils\Validators;
 use Nextras;
 
@@ -213,19 +214,30 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 	private function createDefaultGroupConfiguration($dir, $withDummyData)
 	{
+		if ($dir instanceof Nette\PhpGenerator\PhpLiteral) {
+			$append = function ($path) use ($dir) {
+				return ContainerBuilder::literal('? . ?', [$dir, $path]);
+			};
+
+		} else {
+			$append = function ($path) use ($dir) {
+				return $dir . $path;
+			};
+		}
+
 		$builder = $this->getContainerBuilder();
 
 		$groups = [
 			'structures' => [
-				'directory' => "$dir/structures",
+				'directory' => $append('/structures'),
 			],
 			'basic-data' => [
-				'directory' => "$dir/basic-data",
+				'directory' => $append('/basic-data'),
 				'dependencies' => ['structures'],
 			],
 			'dummy-data' => [
 				'enabled' => $withDummyData,
-				'directory' => "$dir/dummy-data",
+				'directory' => $append('/dummy-data'),
 				'dependencies' => ['structures', 'basic-data'],
 			],
 		];
@@ -246,7 +258,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		$groupDefinitions = [];
 
 		foreach ($groups as $groupName => $groupConfig) {
-			Validators::assertField($groupConfig, 'directory', 'string');
+			Validators::assertField($groupConfig, 'directory', 'string|Nette\PhpGenerator\PhpLiteral');
 
 			$enabled = isset($groupConfig['enabled']) ? $groupConfig['enabled'] : true;
 			$directory = $groupConfig['directory'];

@@ -75,11 +75,15 @@ class MigrationsExtensionTest extends TestCase
 			Environment::skip('Required Nette >= 2.4.7');
 		}
 
-		Assert::noError(function() {
-			$this->createContainer('dynamicParameters', [
-				'rootDir' => __DIR__,
-			]);
-		});
+		$container = $this->createContainer('dynamicParameters', [
+			'rootDir' => '__rootDir__',
+		]);
+
+		$config = $container->getService('migrations.configuration');
+		$groups = $config->getGroups();
+		Assert::same('__rootDir__/migrations/structures', $groups[0]->directory);
+		Assert::same('__rootDir__/migrations/basic-data', $groups[1]->directory);
+		Assert::same('__rootDir__/migrations/dummy-data', $groups[2]->directory);
 	}
 
 
