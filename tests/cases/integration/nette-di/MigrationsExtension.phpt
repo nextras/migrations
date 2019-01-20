@@ -74,11 +74,25 @@ class MigrationsExtensionTest extends TestCase
 		if (!method_exists('Nette\DI\Compiler', 'setDynamicParameterNames')) {
 			Environment::skip('Required Nette >= 2.4.7');
 		}
+
 		Assert::noError(function() {
 			$this->createContainer('dynamicParameters', [
 				'rootDir' => __DIR__,
 			]);
 		});
+	}
+
+
+	public function testMultipleRegistrations()
+	{
+		$container = $this->createContainer('multipleRegistrations');
+
+		$configA = $container->getService('migrationsA.configuration');
+		$configB = $container->getService('migrationsB.configuration');
+
+		Assert::notSame($configA, $configB);
+		Assert::count(3, $configA->getGroups());
+		Assert::count(3, $configB->getGroups());
 	}
 
 

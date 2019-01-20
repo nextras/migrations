@@ -16,7 +16,10 @@ use Nextras;
 
 class MigrationsExtension extends Nette\DI\CompilerExtension
 {
+	/** attributes = ['for' => names of target migration extensions] */
 	const TAG_GROUP = 'nextras.migrations.group';
+
+	/** attributes = ['for' => names of target migration extensions, 'extension' => name of handled file extension] */
 	const TAG_EXTENSION_HANDLER = 'nextras.migrations.extensionHandler';
 
 	/** @var array */
@@ -123,13 +126,18 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 		// configuration
 		$groups = [];
-		foreach ($builder->findByTag(self::TAG_GROUP) as $serviceName => $_) {
-			$groups[] = $builder->getDefinition($serviceName);
+		foreach ($builder->findByTag(self::TAG_GROUP) as $serviceName => $tagAttributes) {
+			if (!isset($tagAttributes['for']) || in_array($this->name, $tagAttributes['for'], true)) {
+				$groups[] = $builder->getDefinition($serviceName);
+			}
 		}
 
 		$extensionHandlers = [];
-		foreach ($builder->findByTag(self::TAG_EXTENSION_HANDLER) as $serviceName => $extensionName) {
-			$extensionHandlers[$extensionName] = $builder->getDefinition($serviceName);
+		foreach ($builder->findByTag(self::TAG_EXTENSION_HANDLER) as $serviceName => $tagAttributes) {
+			if (!isset($tagAttributes['for']) || in_array($this->name, $tagAttributes['for'], true)) {
+				$extensionName = is_string($tagAttributes) ? $tagAttributes : $tagAttributes['extension'];
+				$extensionHandlers[$extensionName] = $builder->getDefinition($serviceName);
+			}
 		}
 
 		$builder->getDefinition($this->prefix('configuration'))
@@ -247,7 +255,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 			$serviceName = lcfirst(str_replace('-', '', ucwords($groupName, '-')));
 			$groupDefinitions[] = $builder->addDefinition($this->prefix("group.$serviceName"))
-				->addTag(self::TAG_GROUP)
+				->addTag(self::TAG_GROUP, ['for' => [$this->name]])
 				->setAutowired(FALSE)
 				->setClass('Nextras\Migrations\Entities\Group')
 				->addSetup('$name', [$groupName])
@@ -266,13 +274,13 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$sqlHandler = $builder->addDefinition($this->prefix('extensionHandler.sql'))
-			->addTag(self::TAG_EXTENSION_HANDLER, 'sql')
+			->addTag(self::TAG_EXTENSION_HANDLER, ['for' => [$this->name], 'extension' => 'sql'])
 			->setAutowired(FALSE)
 			->setClass('Nextras\Migrations\Extensions\SqlHandler')
 			->setArguments([$driver]);
 
 		$phpHandler = $builder->addDefinition($this->prefix('extensionHandler.php'))
-			->addTag(self::TAG_EXTENSION_HANDLER, 'php')
+			->addTag(self::TAG_EXTENSION_HANDLER, ['for' => [$this->name], 'extension' => 'php'])
 			->setClass('Nextras\Migrations\Extensions\PhpHandler')
 			->setAutowired(FALSE)
 			->setArguments([$phpParams]);

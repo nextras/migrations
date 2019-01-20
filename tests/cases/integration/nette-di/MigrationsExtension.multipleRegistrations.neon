@@ -1,0 +1,13 @@
+extensions:
+	migrationsA: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
+	migrationsB: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
+
+migrationsA:
+	dir: migrationsA
+	driver: mysql
+	dbal: Nextras\Migrations\Bridges\Dibi\DibiAdapter(Dibi\Connection(%dibiConfig%))
+
+migrationsB:
+	dir: migrationsB
+	driver: mysql
+	dbal: Nextras\Migrations\Bridges\Dibi\DibiAdapter(Dibi\Connection(%dibiConfig%))
