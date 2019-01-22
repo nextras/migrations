@@ -17,6 +17,7 @@
 		"nette/tester": "~1.7 | ~2.0",
 		"nette/utils": "~2.3",
 		"nextras/dbal": "~1.0 | ~2.0 | ~3.0",
+		"phalcon/ide-stubs": "~3.4",
 		"symfony/config": "~2.6 | ~3.0 | ~4.0",
 		"symfony/console": "~2.6 | ~3.0 | ~4.0",
 		"symfony/dependency-injection": "~2.6 | ~3.0 | ~4.0",
