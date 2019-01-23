@@ -148,3 +148,178 @@ $controller->addExtension('php', new Extensions\PhpHandler([
 	'dibi' => $conn,
 ]));
 \--
+
+
+Using as Phalcon Framework Task
+===============================
+
+Migrations come with predefined Phalcon CLI Task. Task uses these two services:
+
+* **config** (`\Phalcon\Config`) with key `migrationsDir`. See example config.php below.
+* **driver** (`\Nextras\Migrations\IDriver`). See example in cli.php below.
+
+Service `driver` needs `\Nextras\Migrations\Bridges\Phalcon\PhalconAdapter` as argument. Therefore you will probably need to declare other services (see cli.php) or create phalcon adapter inside **driver**'s lambda function.
+
+`config/config.php`
+/--code php
+<?php
+declare(strict_types=1);
+
+return [
+    'migrationsDir' => __DIR__ . '/../migrations',
+    'database' => [
+        'host' => getenv('DB_HOST'),
+        'username' => getenv('DB_NAME'),
+        'password' => getenv('DB_USER'),
+        'dbname' => getenv('DB_PASS'),
+    ],
+];
+\--
+
+`app/cli.php`
+/--code php
+<?php
+declare(strict_types=1);
+
+
+// Using the CLI factory default services container
+$di = new \Phalcon\Di\FactoryDefault\Cli();
+
+
+// Autoloader - register Nextras/Migrations
+$loader = new \Phalcon\Loader();
+$loader->registerNamespaces(
+    [
+        'Nextras\Migrations' => __DIR__ . '/../vendor/nextras/migrations/src',
+    ]
+);
+$loader->register();
+
+// DI services
+$di->set(
+    'config',
+    function () {
+        $configFile = __DIR__ . '/../config/config.php';
+        if (!is_readable($configFile)) {
+            die('Config file not readable.');
+        }
+        $config = include $configFile;
+        return new Phalcon\Config($config);
+    }
+);
+$di->set(
+    'migrationsDir',
+    function () {
+        /** @var \Phalcon\Config $config */
+        $config = $this->get('config');
+        return $config->migrationsDir;
+    }
+);
+$di->set(
+    'connection',
+    function () {
+        /** @var \Phalcon\Config $config */
+        $config = $this->get('config');
+        return new \Phalcon\Db\Adapter\Pdo\Mysql([
+            'host' => $config->database->host,
+            'username' => $config->database->username,
+            'password' => $config->database->password,
+            'dbname' => $config->database->dbname,
+            'dialectClass' => new \Phalcon\Db\Dialect\Mysql(),
+        ]);
+    }
+);
+$di->set(
+    'phalconAdapter',
+    function () {
+        /** @var \Phalcon\Db\Adapter\Pdo $connection */
+        $connection = $this->get('connection');
+        return new \Nextras\Migrations\Bridges\Phalcon\PhalconAdapter($connection);
+    }
+);
+$di->set(
+    'driver',
+    function () {
+        /** @var \Nextras\Migrations\Bridges\Phalcon\PhalconAdapter $phalconAdapter */
+        $phalconAdapter = $this->get('phalconAdapter');
+        return new \Nextras\Migrations\Drivers\MySqlDriver($phalconAdapter);
+    }
+);
+
+// Create a console application
+$console = new \Phalcon\Cli\Console();
+$console->setDI($di);
+
+// Process the console arguments
+$arguments = [];
+
+foreach ($argv as $k => $arg) {
+    if ($k === 1) {
+        $arguments['task'] = $arg;
+    } elseif ($k === 2) {
+        $arguments['action'] = $arg;
+    } elseif ($k >= 3) {
+        $arguments['params'][] = $arg;
+    }
+}
+
+try {
+    // Handle incoming arguments
+    $console->handle($arguments);
+} catch (\Phalcon\Exception $e) {
+    // Do Phalcon related stuff here
+    // ..
+    fwrite(STDERR, $e->getMessage() . PHP_EOL);
+    exit(1);
+} catch (\Throwable $throwable) {
+    fwrite(STDERR, $throwable->getMessage() . PHP_EOL);
+    exit(1);
+}
+
+\--
+
+Usage
+-----
+
+`php app/cli.php Nextras\\Migrations\\Bridges\\Phalcon\\Migrations main <action>[:<group>:<label>][:production]`
+
+Examples:
+* `php app/cli.php Nextras\\Migrations\\Bridges\\Phalcon\\Migrations main create:dummy-data:users`
+* `php app/cli.php Nextras\\Migrations\\Bridges\\Phalcon\\Migrations main cr:d:users`
+* `php app/cli.php Nextras\\Migrations\\Bridges\\Phalcon\\Migrations main reset`
+* `php app/cli.php Nextras\\Migrations\\Bridges\\Phalcon\\Migrations main co:production`
+
+**Actions:**
+* create
+  * Can be aliased as "cr".
+  * Creates empty sql file named YYYY-MM-DD-HHMMSS-label.sql.
+  * E.g. 2015-03-16-170342-users.sql.
+  * <label> is mandatory for "create" action.
+* continue
+  * Can be aliased as "co".
+  * Migrates not migrated sql files only.
+  * Optional flag "production" (if present all dummy-data files are skipped).
+* reset
+  * Can be aliased as "re".
+  * Drop whole database and then migrates all sql files.
+  * Optional flag "production" (if present all dummy-data files are skipped).
+
+**Groups:**
+* basic-data
+  * Can be aliased as "b".
+  * Data for both development and production.
+* dummy-data
+  * Can be aliased as "d".
+  * Data for development on localhost.
+* structures
+  * Can be aliased as "s".
+  * Creates, alter tables, etc.
+
+**Label:**
+* For "create" action only. Should be some brief name for sql file contents.
+
+**Production:**
+* For "continue" and "reset" actions only.
+* If present all dummy-data files are skipped.
+
+-------------------------
