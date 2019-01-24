@@ -22,6 +22,7 @@
 		"symfony/console": "~2.6 | ~3.0 | ~4.0",
 		"symfony/dependency-injection": "~2.6 | ~3.0 | ~4.0",
 		"symfony/http-kernel": "~2.6 | ~3.0 | ~4.0",
+		"techpivot/phalcon-ci-installer": "~1.0",
 		"tracy/tracy": "^2.2",
 		"ext-openssl": "*"
 	},
