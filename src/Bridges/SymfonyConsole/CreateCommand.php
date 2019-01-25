@@ -109,10 +109,28 @@ class CreateCommand extends BaseCommand
 	 */
 	protected function getGroup($type)
 	{
+		$groupNamePattern = preg_quote($type, '~');
+		$groupNamePattern = str_replace('\\-', '\\w*+\\-', $groupNamePattern);
+		$groupNamePattern = "~^$groupNamePattern~";
+
+		$matchedGroups = [];
 		foreach ($this->config->getGroups() as $group) {
-			if (Strings::startsWith($group->name, $type)) {
-				return $group;
+			if (Strings::match($group->name, $groupNamePattern)) {
+				$matchedGroups[] = $group;
 			}
+		}
+
+		if (count($matchedGroups) === 1) {
+			return $matchedGroups[0];
+		}
+
+		if (count($matchedGroups) > 1) {
+			$groupNames = [];
+			foreach ($matchedGroups as $matchedGroup) {
+				$groupNames[] = $matchedGroup->name;
+			}
+
+			throw new Nextras\Migrations\LogicException("Type '$type' is ambiguous.\nDid you mean one of these?\n  - " . implode("\n  - ", $groupNames) . "\n");
 		}
 
 		$types = $this->getTypeArgDescription();
@@ -166,7 +184,9 @@ class CreateCommand extends BaseCommand
 
 		foreach ($groups as $i => $group) {
 			for ($j = 1; $j < strlen($group->name); $j++) {
-				if (!isset($groups[$i + 1]) || strncmp($group->name, $groups[$i + 1]->name, $j) !== 0) {
+				$doesCollideWithPrevious = isset($groups[$i - 1]) && strncmp($group->name, $groups[$i - 1]->name, $j) === 0;
+				$doesCollideWithNext = isset($groups[$i + 1]) && strncmp($group->name, $groups[$i + 1]->name, $j) === 0;
+				if (!$doesCollideWithPrevious && !$doesCollideWithNext) {
 					$options[] = substr($group->name, 0, $j) . '(' . substr($group->name, $j) . ')';
 					break;
 				}
