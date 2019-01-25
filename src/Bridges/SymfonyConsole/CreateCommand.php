@@ -109,24 +109,30 @@ class CreateCommand extends BaseCommand
 	 */
 	protected function getGroup($type)
 	{
-		$groupNamePattern = preg_quote($type, "~");
-		$groupNamePattern = str_replace('\-', '\w*-\-', $groupNamePattern);
+		$groupNamePattern = preg_quote($type, '~');
+		$groupNamePattern = str_replace('\\-', '\\w*+\\-', $groupNamePattern);
+		$groupNamePattern = "~^$groupNamePattern~";
+
 		$matchedGroups = [];
 		foreach ($this->config->getGroups() as $group) {
-			if (Strings::match($group->name, "~^$groupNamePattern~U")) {
+			if (Strings::match($group->name, $groupNamePattern)) {
 				$matchedGroups[] = $group;
 			}
 		}
+
 		if (count($matchedGroups) === 1) {
 			return $matchedGroups[0];
 		}
 
 		if (count($matchedGroups) > 1) {
-			$groupNames = array_map(function (Group $group) {
-				return $group->name;
-			}, $matchedGroups);
-			throw new Nextras\Migrations\LogicException("Type '$type' is ambigous.\nDid you mean one of these?\n  - " . implode("\n  - ", $groupNames) . "\n");
+			$groupNames = [];
+			foreach ($matchedGroups as $matchedGroup) {
+				$groupNames[] = $matchedGroup->name;
+			}
+
+			throw new Nextras\Migrations\LogicException("Type '$type' is ambiguous.\nDid you mean one of these?\n  - " . implode("\n  - ", $groupNames) . "\n");
 		}
+
 		$types = $this->getTypeArgDescription();
 		throw new Nextras\Migrations\LogicException("Unknown type '$type' given, expected one of $types.");
 	}
