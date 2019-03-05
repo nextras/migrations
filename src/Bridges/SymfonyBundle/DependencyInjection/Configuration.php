@@ -20,7 +20,7 @@ class Configuration implements ConfigurationInterface
 		$treeBuilder = new TreeBuilder();
 		$treeBuilder->root('nextras_migrations')->children()
 			->scalarNode('dir')
-				->defaultValue('%kernel.root_dir%/NextrasMigrations')
+				->defaultValue('%kernel.project_dir%/migrations')
 				->cannotBeEmpty()
 				->end()
 			->enumNode('dbal')
