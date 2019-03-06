@@ -1,0 +1,38 @@
+Symfony Console Commands
+########################
+
+Nextras Migrations come with predefined Symfony Console commands.
+
+
+Creating New Migration (`migrations:create`)
+============================================
+
+Creates new migration file in given **group** with proper name based on current time and given **label** (e.g. `2015-03-14-130836-create-users.sql`) and prints its path to standard output.
+
+/--
+php bin/console migrations:create <group> <label>
+\--
+
+Instead of writing full group name (e.g. `structures`), you can write any uniquely identifying prefix (e.g. `str` or `s`).
+
+If you use Doctrine ORM and Doctrine DBAL then the content of migration file in `structures` group will automatically be **generated with Doctrine SchemaTool**.
+
+
+Executing Migrations (`migrations:continue`)
+============================================
+
+Updates database schema by running all new migrations. If the table `migrations` does not exist in current database, it is created automatically.
+
+/--
+php bin/console migrations:continue
+\--
+
+
+Resetting Migrations (`migrations:reset`)
+=========================================
+
+Drops current database and recreates it from scratch by running all migrations. This should only be used in development.
+
+/--
+php bin/console migrations:reset
+\--
