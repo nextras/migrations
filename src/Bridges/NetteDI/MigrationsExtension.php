@@ -117,7 +117,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 		// diff generator
 		if ($config['diffGenerator'] === TRUE) {
-			if ($builder->findByType('Doctrine\ORM\EntityManager') && $builder->hasDefinition($this->prefix('group.structures'))) {
+			if ($builder->findByType('Doctrine\ORM\EntityManagerInterface') && $builder->hasDefinition($this->prefix('group.structures'))) {
 				Validators::assertField($config, 'ignoredQueriesFile', 'null|string');
 				$diffGenerator = $this->createDoctrineStructureDiffGeneratorDefinition($config['ignoredQueriesFile']);
 				$builder->getDefinition($this->prefix('group.structures'))
@@ -318,7 +318,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			->setAutowired(FALSE)
 			->setClass('Nextras\Migrations\IDiffGenerator')
 			->setFactory('Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator')
-			->setArguments(['@Doctrine\ORM\EntityManager', $ignoredQueriesFile]);
+			->setArguments(['@Doctrine\ORM\EntityManagerInterface', $ignoredQueriesFile]);
 	}
 
 
