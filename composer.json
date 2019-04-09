@@ -17,10 +17,12 @@
 		"nette/tester": "~1.7 | ~2.0",
 		"nette/utils": "~2.3",
 		"nextras/dbal": "~1.0 | ~2.0 | ~3.0",
+		"phalcon/ide-stubs": "~3.4",
 		"symfony/config": "~2.6 | ~3.0 | ~4.0",
 		"symfony/console": "~2.6 | ~3.0 | ~4.0",
 		"symfony/dependency-injection": "~2.6 | ~3.0 | ~4.0",
 		"symfony/http-kernel": "~2.6 | ~3.0 | ~4.0",
+		"techpivot/phalcon-ci-installer": "~1.0",
 		"tracy/tracy": "^2.2",
 		"ext-openssl": "*"
 	},
@@ -39,7 +41,7 @@
 	},
 	"autoload": {
 		"psr-4": { "Nextras\\Migrations\\": "src/" },
-		"classmap": ["src/exceptions.php", "src/deprecated"]
+		"classmap": ["src/deprecated"]
 	},
 	"autoload-dev": {
 		"classmap": ["tests/inc"]

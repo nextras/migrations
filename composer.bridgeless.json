@@ -5,7 +5,7 @@
 	},
 	"autoload": {
 		"psr-4": { "Nextras\\Migrations\\": "src/" },
-		"classmap": ["src/exceptions.php", "src/deprecated"]
+		"classmap": ["src/deprecated"]
 	},
 	"autoload-dev": {
 		"classmap": ["tests/inc"]

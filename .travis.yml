@@ -10,6 +10,10 @@ php:
     - 7.2
     - 7.3
 
+cache:
+    directories:
+        - ~/cphalcon
+
 matrix:
     fast_finish: true
 
@@ -23,6 +27,7 @@ before_script:
 
     - composer self-update
     - composer install --no-interaction --no-progress
+    - if [[ $TRAVIS_PHP_VERSION == "5.5" ]] || [[ $TRAVIS_PHP_VERSION == "5.6" ]] || [[ $TRAVIS_PHP_VERSION == "7.0" ]] || [[ $TRAVIS_PHP_VERSION == "7.1" ]] || [[ $TRAVIS_PHP_VERSION == "7.2" ]]; then vendor/bin/install-phalcon.sh 3.4.x; fi
 
 script:
     - ./tests/run-unit.sh

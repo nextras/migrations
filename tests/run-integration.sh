@@ -15,6 +15,7 @@ run()
 	PHP_VERSION_MAX=""
 	COMPOSER_REQUIRE=""
 	DBAL=""
+	PHALCON=""
 
 	echo
 	echo
@@ -33,7 +34,7 @@ run()
 		return 0
 	fi
 
-	create_dbals_ini "$DBAL"
+	create_dbals_ini "$DBAL" "$PHALCON"
 
 	composer_prepare_dependencies "$COMPOSER_REQUIRE" ""
 	tester_run_integration_group "$INTEGRATION_GROUP"
@@ -51,9 +52,11 @@ run()
 create_dbals_ini()
 {
 	DBAL="$1"
+	PHALCON="$2"
 	INI_PATH="$PROJECT_DIR/tests/dbals.ini"
 
 	rm --force "$INI_PATH"
+
 	if [[ ! -z "$DBAL" ]]; then
 		echo "[$DBAL.mysql]" >> "$INI_PATH"
 		echo "dbal = $DBAL" >> "$INI_PATH"
@@ -62,6 +65,10 @@ create_dbals_ini()
 		echo "[$DBAL.pgsql]" >> "$INI_PATH"
 		echo "dbal = $DBAL" >> "$INI_PATH"
 		echo "driver = pgsql" >> "$INI_PATH"
+	fi
+
+	if [[ ! -z "$PHALCON" ]]; then
+		echo "extension=phalcon.so" >> "$PROJECT_DIR/tests/php.ini"
 	fi
 }
 
