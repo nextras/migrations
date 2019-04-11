@@ -43,7 +43,7 @@ abstract class BaseCommand extends Command
 	 * @param  bool           $force
 	 * @return void
 	 */
-	protected function runMigrations($mode, $config, $force)
+	protected function runMigrations($mode, $config, $force = false)
 	{
 		$printer = new Console();
 		$runner = new Runner($this->driver, $printer);

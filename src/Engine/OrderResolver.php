@@ -26,7 +26,7 @@ class OrderResolver
 	 * @return File[]
 	 * @throws LogicException
 	 */
-	public function resolve(array $migrations, array $groups, array $files, $mode, $force)
+	public function resolve(array $migrations, array $groups, array $files, $mode, $force = false)
 	{
 		$groups = $this->getAssocGroups($groups);
 		$this->validateGroups($groups);
