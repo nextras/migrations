@@ -22,10 +22,11 @@ class OrderResolver
 	 * @param  Group[]     $groups
 	 * @param  File[]      $files
 	 * @param  string      $mode
+	 * @param  bool        $force
 	 * @return File[]
 	 * @throws LogicException
 	 */
-	public function resolve(array $migrations, array $groups, array $files, $mode)
+	public function resolve(array $migrations, array $groups, array $files, $mode, $force)
 	{
 		$groups = $this->getAssocGroups($groups);
 		$this->validateGroups($groups);
@@ -94,10 +95,12 @@ class OrderResolver
 				}
 
 				if ($this->isGroupDependentOn($groups, $file->group, $group) || $this->isGroupDependentOn($groups, $group, $file->group)) {
-					throw new LogicException(sprintf(
-						'New migration "%s/%s" must follow after the latest executed migration "%s/%s".',
-						$file->group->name, $file->name, $group->name, $lastMigrations[$group->name]
-					));
+					if (!$force) {
+						throw new LogicException(sprintf(
+							'New migration "%s/%s" must follow after the latest executed migration "%s/%s".',
+							$file->group->name, $file->name, $group->name, $lastMigrations[$group->name]
+						));
+					}
 				}
 			}
 		}

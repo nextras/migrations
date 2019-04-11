@@ -11,6 +11,7 @@ namespace Nextras\Migrations\Bridges\SymfonyConsole;
 
 use Nextras\Migrations\Engine\Runner;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
@@ -25,12 +26,14 @@ class ContinueCommand extends BaseCommand
 		$this->setName(self::$defaultName);
 		$this->setDescription('Updates database schema by running all new migrations');
 		$this->setHelp("If table 'migrations' does not exist in current database, it is created automatically.");
+		$this->addOption('force', null, InputOption::VALUE_NONE, 'Run force migrations');
 	}
 
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$this->runMigrations(Runner::MODE_CONTINUE, $this->config);
+		$force = $input->getOptions()['force'];
+		$this->runMigrations(Runner::MODE_CONTINUE, $this->config, $force);
 	}
 
 }
