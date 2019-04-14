@@ -1,0 +1,38 @@
+Integration with Symfony
+########################
+
+Nextras Migrations ship with Symfony **Bundle** and with Symfony **Console commands**.
+
+
+Installation
+============
+
+Enable `NextrasMigrationsBundle` in `config/bundles.php` (or `app/AppKernel.php` in Symfony < 4)
+
+/--php
+return [
+	...
+	Nextras\Migrations\Bridges\SymfonyBundle\NextrasMigrationsBundle::class => ['all' => true],
+];
+\--
+
+
+Configuration
+=============
+
+Create file `config/packages/nextras_migrations.yaml` with the following content:
+
+/--
+nextras_migrations:
+    dir: '%kernel.project_dir%/migrations' # migrations base directory
+    driver: pgsql                          # pgsql or mysql
+    dbal: nextras                          # nextras, nette, doctrine or dibi
+    with_dummy_data: '%kernel.debug%'
+\--
+
+
+
+Usage
+=====
+
+See [Symfony Commands | symfony-console].
