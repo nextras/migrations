@@ -71,7 +71,7 @@ abstract class BaseDriver implements IDriver
 		$parseOffset = 0;
 		$queries = 0;
 
-		$space = "(?:\\s|/\\*.*\\*/|(?:#|-- )[^\\n]*\\n|--\\n)";
+		$space = "(?:\\s|/\\*.*\\*/|(?:#|-- )[^\\n]*(?:\\n|\\z)|--(?:\\n|\\z))";
 		$spacesRe = "~\\G{$space}*\\z~";
 		$delimiter = ';';
 		$delimiterRe = "~\\G{$space}*DELIMITER\\s+(\\S+)~i";
@@ -106,6 +106,10 @@ abstract class BaseDriver implements IDriver
 					$endRe = isset($endReTable[$found]) ? $endReTable[$found] : '(' . (preg_match('~^-- |^#~', $found) ? "\n" : preg_quote($found) . "|\\\\.") . '|\z)s';
 					while (preg_match($endRe, $content, $match, PREG_OFFSET_CAPTURE, $parseOffset)) { //! respect sql_mode NO_BACKSLASH_ESCAPES
 						$s = $match[0][0];
+						if (strlen($s) === 0) {
+							break 3;
+						}
+
 						$parseOffset = $match[0][1] + strlen($s);
 						if ($s[0] !== '\\') {
 							continue 2;

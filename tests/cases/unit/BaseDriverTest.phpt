@@ -77,7 +77,24 @@ class BaseDriverTest extends Tester\TestCase
 					"\nCREATE TRIGGER `users_bu` BEFORE UPDATE ON `users` FOR EACH ROW BEGIN SELECT 1; END; ",
 					"\nSELECT 2",
 				]
-			]
+			],
+			[
+				'-- ', [],
+			],
+			[
+				"--\n", [],
+			],
+			[
+				"SELECT 1;\n--", [
+					'SELECT 1'
+				],
+			],
+			[
+				"SELECT 1;\n--\nSELECT 2;", [
+					'SELECT 1',
+					"\n--\nSELECT 2",
+				],
+			],
 		];
 	}
 }
