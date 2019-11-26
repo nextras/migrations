@@ -11,4 +11,5 @@ COMPOSER_REQUIRE="$COMPOSER_REQUIRE symfony/doctrine-bridge:~5.0"
 COMPOSER_REQUIRE="$COMPOSER_REQUIRE symfony/framework-bundle:~5.0"
 COMPOSER_REQUIRE="$COMPOSER_REQUIRE symfony/http-kernel:~5.0"
 COMPOSER_REQUIRE="$COMPOSER_REQUIRE symfony/yaml:~5.0"
+COMPOSER_REQUIRE="$COMPOSER_REQUIRE nette/tester:~2.3"
 DBAL='doctrine'
