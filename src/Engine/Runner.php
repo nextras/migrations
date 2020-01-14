@@ -99,6 +99,7 @@ class Runner
 		}
 
 		if ($mode === self::MODE_INIT) {
+			$this->driver->setupConnection();
 			$this->printer->printSource($this->driver->getInitTableSource() . "\n");
 			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
 			$files = $this->orderResolver->resolve(array(), $this->groups, $files, self::MODE_RESET);
