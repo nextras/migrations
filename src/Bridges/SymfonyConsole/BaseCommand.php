@@ -40,13 +40,15 @@ abstract class BaseCommand extends Command
 	/**
 	 * @param  string         $mode Runner::MODE_*
 	 * @param  IConfiguration $config
-	 * @return void
+	 * @return int
 	 */
 	protected function runMigrations($mode, $config)
 	{
 		$printer = new Console();
 		$runner = new Runner($this->driver, $printer);
 		$runner->run($mode, $config);
+
+		return 0;
 	}
 
 }

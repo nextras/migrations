@@ -17,8 +17,16 @@ class Configuration implements ConfigurationInterface
 {
 	public function getConfigTreeBuilder()
 	{
-		$treeBuilder = new TreeBuilder();
-		$treeBuilder->root('nextras_migrations')->children()
+		if (!method_exists(TreeBuilder::class, '__construct')) { // Symfony < 4.2.0
+			$treeBuilder = new TreeBuilder();
+			$rootNode = $treeBuilder->root('nextras_migrations');
+
+		} else { // Symfony >= 4.2.0
+			$treeBuilder = new TreeBuilder('nextras_migrations');
+			$rootNode = $treeBuilder->getRootNode();
+		}
+
+		$rootNode->children()
 			->scalarNode('dir')
 				->defaultValue('%kernel.project_dir%/migrations')
 				->cannotBeEmpty()
