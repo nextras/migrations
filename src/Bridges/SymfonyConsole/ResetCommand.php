@@ -30,6 +30,8 @@ class ResetCommand extends BaseCommand
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$this->runMigrations(Runner::MODE_RESET, $this->config);
+
+		return 0;
 	}
 
 }
