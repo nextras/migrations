@@ -21,6 +21,8 @@ jobs:
           dist: xenial
         - php: 7.3
           dist: xenial
+        - php: 7.4
+          dist: xenial
 
 matrix:
     fast_finish: true
