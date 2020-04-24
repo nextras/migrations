@@ -19,6 +19,20 @@ For more information read **[documentation](https://nextras.org/migrations/docs)
 * [dibi](https://github.com/dg/dibi)
 
 
+Development & Running Tests in Docker
+-------------------------------------
+1. Start containers
+    ```bash
+    docker-compose up --always-recreate-deps --build --force-recreate
+    ```
+1. Install dependencies
+    ```bash
+    docker-compose exec php-fpm bash
+    composer install
+    ```
+1. Create `./tests/*.ini` files from samples `./tests/*.docker.ini` and run `./tests/run-integration.sh`
+
+
 License
 -------
 

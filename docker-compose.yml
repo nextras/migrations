@@ -1,0 +1,37 @@
+---
+version: "3.7"
+
+networks:
+  app:
+    driver: bridge
+
+services:
+  php-fpm:
+    build:
+      context: .
+
+    volumes:
+      - .:/var/www/html:cached
+
+    networks:
+      - app
+
+  postgres:
+    image: library/postgres:12-alpine
+
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_DB=nextras_migrations_test
+
+    networks:
+      - app
+
+  mariadb:
+    image: library/mariadb:10
+
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=nextras_migrations_test
+
+    networks:
+      - app

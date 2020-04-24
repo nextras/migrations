@@ -3,5 +3,6 @@
 /tests/php.ini
 /tests/dbals.ini
 /tests/drivers.ini
+/var
 /vendor/
 output
