@@ -17,3 +17,4 @@ doctrine:
 nextras_migrations:
   driver: '%nextras_migrations_driver%'
   dir: '%nextras_migrations_dir%'
+  command_namespace: fooCommandNamespace

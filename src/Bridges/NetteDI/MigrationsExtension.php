@@ -33,6 +33,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'diffGenerator' => TRUE, // false|doctrine
 		'withDummyData' => FALSE,
 		'ignoredQueriesFile' => NULL,
+		'commandNamespace' => Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand::DEFAULT_NAMESPACE,
 	];
 
 	/** @var array */
@@ -78,11 +79,11 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		}
 
 		Validators::assertField($config, 'groups', 'array');
-		$groups = $this->createGroupDefinitions($config['groups']);
+		$this->createGroupDefinitions($config['groups']);
 
 		// extensionHandlers
 		Validators::assertField($config, 'phpParams', 'array');
-		$extensionHandlers = $this->createExtensionHandlerDefinitions($driver, $config['phpParams']);
+		$this->createExtensionHandlerDefinitions($driver, $config['phpParams']);
 
 		// configuration
 		$configuration = $this->createConfigurationDefinition();
@@ -142,7 +143,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		}
 
 		$builder->getDefinition($this->prefix('configuration'))
-			->setArguments([$groups, $extensionHandlers]);
+			->setArguments([$groups, $extensionHandlers, $config['commandNamespace']]);
 	}
 
 

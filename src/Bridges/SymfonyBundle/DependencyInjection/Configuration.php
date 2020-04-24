@@ -9,6 +9,7 @@
 
 namespace Nextras\Migrations\Bridges\SymfonyBundle\DependencyInjection;
 
+use Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -27,6 +28,9 @@ class Configuration implements ConfigurationInterface
 		}
 
 		$rootNode->children()
+			->scalarNode('command_namespace')
+				->defaultValue(BaseCommand::DEFAULT_NAMESPACE)
+				->end()
 			->scalarNode('dir')
 				->defaultValue('%kernel.project_dir%/migrations')
 				->cannotBeEmpty()
