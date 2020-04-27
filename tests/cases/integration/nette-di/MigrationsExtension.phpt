@@ -87,6 +87,17 @@ class MigrationsExtensionTest extends TestCase
 	}
 
 
+	public function testOptionsAsService()
+	{
+		$container = $this->createContainer('optionsAsService');
+
+		Assert::same(
+			$container->getService('dibiAdapter'),
+			$container->getService('migrations.dbal')
+		);
+	}
+
+
 	public function testMultipleRegistrations()
 	{
 		$container = $this->createContainer('multipleRegistrations');

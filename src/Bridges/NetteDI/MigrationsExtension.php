@@ -11,6 +11,7 @@ namespace Nextras\Migrations\Bridges\NetteDI;
 
 use Nette;
 use Nette\DI\ContainerBuilder;
+use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 use Nextras;
 
@@ -172,6 +173,9 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 		} elseif (is_string($dbal) && isset($this->dbals[$dbal])) {
 			return $this->dbals[$dbal];
+
+		} elseif (is_string($dbal) && Strings::startsWith($dbal, '@')) {
+			return $dbal;
 
 		} else {
 			return NULL;
