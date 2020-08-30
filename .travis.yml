@@ -6,6 +6,7 @@ services:
     - postgresql
 
 jobs:
+    fast_finish: true
     include:
         - php: 5.4
           dist: trusty
@@ -23,9 +24,6 @@ jobs:
           dist: xenial
         - php: 7.4
           dist: xenial
-
-matrix:
-    fast_finish: true
 
 before_script:
     - touch ./tests/php.ini
