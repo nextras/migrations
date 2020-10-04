@@ -95,6 +95,30 @@ class BaseDriverTest extends Tester\TestCase
 					"\n--\nSELECT 2",
 				],
 			],
+			[
+				implode("\n", [
+					'DELIMITER ;;',
+					'SELECT 1;;',
+					'DELIMITER ;',
+					'DELIMITER ;;',
+					'SELECT 2;;',
+					'DELIMITER ;',
+				]),
+				[
+					"\nSELECT 1",
+					"\nSELECT 2",
+				]
+			],
+			[
+				implode("\n", [
+					'SELECT 1;',
+					'DELIMITER ;;',
+					'DELIMITER ;',
+				]),
+				[
+					"SELECT 1",
+				]
+			],
 		];
 	}
 }

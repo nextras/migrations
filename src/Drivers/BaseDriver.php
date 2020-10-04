@@ -86,7 +86,7 @@ abstract class BaseDriver implements IDriver
 		];
 
 		while (TRUE) {
-			if (preg_match($delimiterRe, $content, $match, 0, $queryOffset)) {
+			while (preg_match($delimiterRe, $content, $match, 0, $queryOffset)) {
 				$delimiter = $match[1];
 				$queryOffset += strlen($match[0]);
 				$parseOffset += strlen($match[0]);
