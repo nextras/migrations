@@ -1,10 +1,9 @@
 Nextras Migrations
 ==================
 
-[![Build Status](https://travis-ci.org/nextras/migrations.svg?branch=master)](https://travis-ci.org/nextras/migrations)
+[![Build Status](https://github.com/nextras/migrations/workflows/QA/badge.svg?branch=master)](https://github.com/nextras/migrations/actions?query=workflow%3AQA+branch%3Amaster)
 [![Downloads this Month](https://img.shields.io/packagist/dm/nextras/migrations.svg?style=flat)](https://packagist.org/packages/nextras/migrations)
-[![Stable Version](https://poser.pugx.org/nextras/migrations/v/stable)](https://packagist.org/packages/nextras/migrations)
-[![Code coverage](https://img.shields.io/coveralls/nextras/migrations.svg?style=flat)](https://coveralls.io/r/nextras/migrations)
+[![Stable Version](https://img.shields.io/packagist/v/nextras/migrations.svg?style=flat)](https://packagist.org/packages/nextras/migrations)
 
 For more information read **[documentation](https://nextras.org/migrations/docs)**.
 
