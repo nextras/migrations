@@ -1,0 +1,68 @@
+name: QA
+
+on:
+  pull_request:
+    branches:
+      - master
+
+  push:
+    branches:
+      - master
+      - v*
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0']
+
+    name: PHP ${{ matrix.php }}
+
+    services:
+      postgres:
+        image: postgres:9.6
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nextras_migrations_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      mysql:
+        image: mysql:5.6
+        env:
+          MYSQL_DATABASE: nextras_migrations_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -ppass"
+          --health-interval 10s
+          --health-start-period 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, ctype, mysqli, pgsql, pdo_mysql, pdo_pgsql
+          coverage: none
+
+      - name: Prepare Env
+        run: |
+          PHP_DIR=$(php -r 'echo dirname(php_ini_loaded_file());')
+          cat $PHP_DIR/php.ini $PHP_DIR/conf.d/*.ini > ./tests/php.ini
+          cp ./tests/drivers.sample.ini ./tests/drivers.ini
+          composer install --no-interaction --no-progress
+
+      - run: tests/run-unit.sh
+      - run: tests/run-integration.sh

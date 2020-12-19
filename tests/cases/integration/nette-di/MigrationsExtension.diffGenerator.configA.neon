@@ -8,6 +8,6 @@ migrations:
 	diffGenerator: doctrine
 
 services:
-	- Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration([%doctrineDir%])
+	- Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration([%doctrineDir%], true)
 	- Doctrine\DBAL\DriverManager::getConnection(%doctrineConfig%, @Doctrine\ORM\Configuration)
 	- Doctrine\ORM\EntityManager::create(@Doctrine\DBAL\Connection, @Doctrine\ORM\Configuration)
