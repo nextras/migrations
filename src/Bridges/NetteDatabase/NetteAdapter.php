@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * This file is part of the Nextras community extensions of Nette Framework
@@ -50,7 +50,7 @@ class NetteAdapter implements IDbal
 
 	public function escapeInt($value)
 	{
-		return $this->conn->quote($value, PDO::PARAM_INT);
+		return $this->conn->quote((string) $value, PDO::PARAM_INT);
 	}
 
 
