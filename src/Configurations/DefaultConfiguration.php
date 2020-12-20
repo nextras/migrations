@@ -55,7 +55,7 @@ class DefaultConfiguration implements IConfiguration
 	 * @param  bool    $withDummyData
 	 * @param  array   $phpParams
 	 */
-	public function __construct($dir, IDriver $driver, $withDummyData = TRUE, array $phpParams = [])
+	public function __construct($dir, IDriver $driver, $withDummyData = true, array $phpParams = [])
 	{
 		$this->dir = $dir;
 		$this->driver = $driver;
@@ -69,16 +69,16 @@ class DefaultConfiguration implements IConfiguration
 	 */
 	public function getGroups()
 	{
-		if ($this->groups === NULL) {
+		if ($this->groups === null) {
 			$structures = new Group();
-			$structures->enabled = TRUE;
+			$structures->enabled = true;
 			$structures->name = 'structures';
 			$structures->directory = $this->dir . '/structures';
 			$structures->dependencies = [];
 			$structures->generator = $this->structureDiffGenerator;
 
 			$basicData = new Group();
-			$basicData->enabled = TRUE;
+			$basicData->enabled = true;
 			$basicData->name = 'basic-data';
 			$basicData->directory = $this->dir . '/basic-data';
 			$basicData->dependencies = ['structures'];
@@ -102,7 +102,7 @@ class DefaultConfiguration implements IConfiguration
 	 */
 	public function getExtensionHandlers()
 	{
-		if ($this->handlers === NULL) {
+		if ($this->handlers === null) {
 			$this->handlers = [
 				'sql' => new SqlHandler($this->driver),
 				'php' => new PhpHandler($this->phpParams),
@@ -117,7 +117,7 @@ class DefaultConfiguration implements IConfiguration
 	 * @param  IDiffGenerator|NULL $generator
 	 * @return void
 	 */
-	public function setStructureDiffGenerator(IDiffGenerator $generator = NULL)
+	public function setStructureDiffGenerator(IDiffGenerator $generator = null)
 	{
 		$this->structureDiffGenerator = $generator;
 	}
@@ -127,9 +127,8 @@ class DefaultConfiguration implements IConfiguration
 	 * @param  IDiffGenerator|NULL $generator
 	 * @return void
 	 */
-	public function setDummyDataDiffGenerator(IDiffGenerator $generator = NULL)
+	public function setDummyDataDiffGenerator(IDiffGenerator $generator = null)
 	{
 		$this->dummyDataDiffGenerator = $generator;
 	}
-
 }

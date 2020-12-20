@@ -115,9 +115,9 @@ class MigrationsExtensionTest extends TestCase
 	 * @param  string $config
 	 * @return Nette\DI\Container
 	 */
-	protected function createContainer($config, array $dynamicParameters = NULL)
+	protected function createContainer($config, array $dynamicParameters = null)
 	{
-		$options = parse_ini_file(__DIR__ . '/../../../drivers.ini', TRUE)['mysql'];
+		$options = parse_ini_file(__DIR__ . '/../../../drivers.ini', true)['mysql'];
 
 		$dibiConfig = [
 			'host' => $options['host'],
@@ -148,7 +148,7 @@ class MigrationsExtensionTest extends TestCase
 					]
 				]);
 				$compiler->loadConfig(__DIR__ . "/MigrationsExtension.$config.neon");
-				if ($dynamicParameters !== NULL) {
+				if ($dynamicParameters !== null) {
 					$compiler->setDynamicParameterNames(array_keys($dynamicParameters));
 				}
 			},

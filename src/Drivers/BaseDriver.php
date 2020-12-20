@@ -27,13 +27,13 @@ abstract class BaseDriver implements IDriver
 	/** @var string */
 	protected $tableName;
 
-	/** @var NULL|string */
+	/** @var null|string */
 	protected $tableNameQuoted;
 
 
 	/**
-	 * @param IDbal  $dbal
-	 * @param string $tableName
+	 * @param  IDbal  $dbal
+	 * @param  string $tableName
 	 */
 	public function __construct(IDbal $dbal, $tableName = 'migrations')
 	{
@@ -63,7 +63,7 @@ abstract class BaseDriver implements IDriver
 	public function loadFile($path)
 	{
 		$content = @file_get_contents($path);
-		if ($content === FALSE) {
+		if ($content === false) {
 			throw new IOException("Cannot open file '$path'.");
 		}
 
@@ -85,7 +85,7 @@ abstract class BaseDriver implements IDriver
 			'[' => '(]|\z)',
 		];
 
-		while (TRUE) {
+		while (true) {
 			while (preg_match($delimiterRe, $content, $match, 0, $queryOffset)) {
 				$delimiter = $match[1];
 				$queryOffset += strlen($match[0]);
@@ -93,7 +93,7 @@ abstract class BaseDriver implements IDriver
 				$parseRe = '(' . preg_quote($delimiter) . "|$openRe)";
 			}
 
-			while (TRUE) {
+			while (true) {
 				preg_match($parseRe, $content, $match, PREG_OFFSET_CAPTURE, $parseOffset); // should always match
 				$found = $match[0][0];
 				$parseOffset = $match[0][1] + strlen($found);
@@ -136,5 +136,4 @@ abstract class BaseDriver implements IDriver
 
 		return $queries;
 	}
-
 }

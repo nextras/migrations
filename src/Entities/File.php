@@ -30,5 +30,4 @@ class File
 
 	/** @var string */
 	public $checksum;
-
 }

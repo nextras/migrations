@@ -31,7 +31,7 @@ class SymfonyBundleTest extends TestCase
 		Environment::lock(__CLASS__, __DIR__ . '/../../../temp');
 
 		$options = Environment::loadData();
-		$driversConfig = parse_ini_file(__DIR__ . '/../../../drivers.ini', TRUE);
+		$driversConfig = parse_ini_file(__DIR__ . '/../../../drivers.ini', true);
 		$dbalOptions = $driversConfig[$options['driver']];
 
 		$doctrineDriver = $options['driver'] === 'mysql' ? 'pdo_mysql' : 'pdo_pgsql';

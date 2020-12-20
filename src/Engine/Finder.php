@@ -9,8 +9,8 @@
 
 namespace Nextras\Migrations\Engine;
 
-use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\Exception;
 use Nextras\Migrations\IOException;
 use Nextras\Migrations\LogicException;
@@ -28,7 +28,7 @@ class Finder
 	 */
 	public function find(array $groups, array $extensions)
 	{
-		$files = array();
+		$files = [];
 		foreach ($groups as $group) {
 			if (!$group->enabled) {
 				continue;
@@ -51,6 +51,7 @@ class Finder
 
 	/**
 	 * Returns logical name of migration file.
+	 *
 	 * @param  string $path relative path to group directory
 	 * @return string
 	 */
@@ -66,6 +67,7 @@ class Finder
 
 	/**
 	 * Returns file extension.
+	 *
 	 * @param  File     $file
 	 * @param  string[] $extensions
 	 * @return string
@@ -73,11 +75,11 @@ class Finder
 	 */
 	protected function getExtension(File $file, array $extensions)
 	{
-		$fileExt = NULL;
+		$fileExt = null;
 
 		foreach ($extensions as $extension) {
 			if (substr($file->name, -strlen($extension)) === $extension) {
-				if ($fileExt !== NULL) {
+				if ($fileExt !== null) {
 					throw new LogicException(sprintf(
 						'Finder: Extension of "%s" is ambiguous, both "%s" and "%s" can be used.',
 						$file->group->directory . '/' . $file->name, $fileExt, $extension
@@ -89,7 +91,7 @@ class Finder
 			}
 		}
 
-		if ($fileExt === NULL) {
+		if ($fileExt === null) {
 			throw new LogicException(sprintf(
 				'Finder: No extension matched "%s". Supported extensions are %s.',
 				$file->group->directory . '/' . $file->name, '"' . implode('", "', $extensions) . '"'
@@ -107,7 +109,7 @@ class Finder
 	protected function getChecksum(File $file)
 	{
 		$content = @file_get_contents($file->path);
-		if ($content === FALSE) {
+		if ($content === false) {
 			throw new IOException("Unable to read '$file->path'.");
 		}
 
@@ -116,7 +118,7 @@ class Finder
 
 
 	/**
-	 * @param  string  $dir
+	 * @param  string $dir
 	 * @return string[]
 	 * @throws IOException
 	 */
@@ -149,5 +151,4 @@ class Finder
 	{
 		return @scandir($dir) ?: []; // directory may not exist
 	}
-
 }

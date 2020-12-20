@@ -35,5 +35,4 @@ class Migration
 
 	/** @var bool */
 	public $completed;
-
 }

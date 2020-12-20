@@ -29,7 +29,6 @@ class Group
 	/** @var string[] */
 	public $dependencies;
 
-	/** @var IDiffGenerator|NULL */
+	/** @var IDiffGenerator|null */
 	public $generator;
-
 }

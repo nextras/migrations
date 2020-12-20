@@ -27,8 +27,8 @@ class Configuration implements IConfiguration
 
 
 	/**
-	 * @param Group[]             $groups
-	 * @param IExtensionHandler[] $extensionHandlers (extension => IExtensionHandler)
+	 * @param  Group[]             $groups
+	 * @param  IExtensionHandler[] $extensionHandlers (extension => IExtensionHandler)
 	 */
 	public function __construct(array $groups, array $extensionHandlers)
 	{

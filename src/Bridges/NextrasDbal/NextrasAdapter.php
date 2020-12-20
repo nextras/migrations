@@ -108,5 +108,4 @@ class NextrasAdapter implements IDbal
 			return $this->conn->getDriver()->convertToSql($value, IDriver::TYPE_IDENTIFIER);
 		}
 	}
-
 }

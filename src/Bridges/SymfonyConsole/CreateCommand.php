@@ -58,9 +58,9 @@ class CreateCommand extends BaseCommand
 		$this->addArgument('type', InputArgument::REQUIRED, $this->getTypeArgDescription());
 		$this->addArgument('label', InputArgument::REQUIRED, 'short description');
 
-		$this->addOption('empty', NULL, InputOption::VALUE_NONE, 'create empty file');
-		$this->addOption('diff', NULL, InputOption::VALUE_NONE, 'use schema diff as file content');
-		$this->addOption('stdin', NULL, InputOption::VALUE_NONE, 'use stdin as file content');
+		$this->addOption('empty', null, InputOption::VALUE_NONE, 'create empty file');
+		$this->addOption('diff', null, InputOption::VALUE_NONE, 'use schema diff as file content');
+		$this->addOption('stdin', null, InputOption::VALUE_NONE, 'use stdin as file content');
 	}
 
 
@@ -171,11 +171,11 @@ class CreateCommand extends BaseCommand
 
 
 	/**
-	 * @param  string $dir
+	 * @param  string      $dir
 	 * @param  string|NULL $found
 	 * @return bool
 	 */
-	protected function hasNumericSubdirectory($dir, & $found)
+	protected function hasNumericSubdirectory($dir, &$found)
 	{
 		$items = @scandir($dir); // directory may not exist
 
@@ -183,12 +183,12 @@ class CreateCommand extends BaseCommand
 			foreach ($items as $item) {
 				if ($item !== '.' && $item !== '..' && is_dir($dir . '/' . $item)) {
 					$found = $dir . '/' . $item;
-					return TRUE;
+					return true;
 				}
 			}
 		}
 
-		return FALSE;
+		return false;
 	}
 
 
@@ -249,7 +249,7 @@ class CreateCommand extends BaseCommand
 	 */
 	protected function getFileContent(Group $group, $source)
 	{
-		if ($source === self::CONTENT_SOURCE_DIFF && $group->generator !== NULL) {
+		if ($source === self::CONTENT_SOURCE_DIFF && $group->generator !== null) {
 			return $group->generator->generateContent();
 
 		} elseif ($source === self::CONTENT_SOURCE_STDIN) {
@@ -269,12 +269,11 @@ class CreateCommand extends BaseCommand
 	 */
 	protected function createFile($path, $content, OutputInterface $output)
 	{
-		@mkdir(dirname($path), 0777, TRUE); // directory may already exist
+		@mkdir(dirname($path), 0777, true); // directory may already exist
 
 		if (file_put_contents("$path.tmp", $content) !== strlen($content) || !rename("$path.tmp", $path)) {
 			$output->writeln("Unable to write to '$path'.");
 			exit(1);
 		}
 	}
-
 }

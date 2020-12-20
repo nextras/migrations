@@ -18,9 +18,9 @@ interface IDiffGenerator
 	 */
 	function getExtension();
 
+
 	/**
 	 * @return string SQL (semicolon-separated queries)
 	 */
 	function generateContent();
-
 }

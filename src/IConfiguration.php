@@ -27,5 +27,4 @@ interface IConfiguration
 	 * @return array (extension => IExtensionHandler)
 	 */
 	public function getExtensionHandlers();
-
 }

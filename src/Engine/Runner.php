@@ -34,10 +34,10 @@ class Runner
 	private $printer;
 
 	/** @var array (extension => IExtensionHandler) */
-	private $extensionsHandlers = array();
+	private $extensionsHandlers = [];
 
 	/** @var Group[] */
-	private $groups = array();
+	private $groups = [];
 
 	/** @var IDriver */
 	private $driver;
@@ -86,7 +86,7 @@ class Runner
 	 * @param  IConfiguration $config
 	 * @return void
 	 */
-	public function run($mode = self::MODE_CONTINUE, IConfiguration $config = NULL)
+	public function run($mode = self::MODE_CONTINUE, IConfiguration $config = null)
 	{
 		if ($config) {
 			foreach ($config->getGroups() as $group) {
@@ -102,7 +102,7 @@ class Runner
 			$this->driver->setupConnection();
 			$this->printer->printSource($this->driver->getInitTableSource() . "\n");
 			$files = $this->finder->find($this->groups, array_keys($this->extensionsHandlers));
-			$files = $this->orderResolver->resolve(array(), $this->groups, $files, self::MODE_RESET);
+			$files = $this->orderResolver->resolve([], $this->groups, $files, self::MODE_RESET);
 			$this->printer->printSource($this->driver->getInitMigrationsSource($files));
 			return;
 		}
@@ -124,9 +124,9 @@ class Runner
 			$this->printer->printToExecute($toExecute);
 
 			foreach ($toExecute as $file) {
-				$time = microtime(TRUE);
+				$time = microtime(true);
 				$queriesCount = $this->execute($file);
-				$this->printer->printExecute($file, $queriesCount, microtime(TRUE) - $time);
+				$this->printer->printExecute($file, $queriesCount, microtime(true) - $time);
 			}
 
 			$this->driver->unlock();
@@ -183,5 +183,4 @@ class Runner
 
 		return $queriesCount;
 	}
-
 }

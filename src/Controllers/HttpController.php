@@ -32,7 +32,7 @@ class HttpController extends BaseController
 	private function processArguments()
 	{
 		if (isset($_GET['action'])) {
-			if ($_GET['action'] === 'run' || $_GET['action'] === 'css') 	{
+			if ($_GET['action'] === 'run' || $_GET['action'] === 'css') {
 				$this->action = $_GET['action'];
 			} else {
 				$this->action = 'error';
@@ -46,7 +46,7 @@ class HttpController extends BaseController
 				foreach ($_GET['groups'] as $group) {
 					if (is_string($group)) {
 						if (isset($this->groups[$group])) {
-							$this->groups[$group]->enabled = TRUE;
+							$this->groups[$group]->enabled = true;
 						} else {
 							$error = sprintf(
 								"Unknown group '%s', the following groups are registered: '%s'",
@@ -99,11 +99,11 @@ class HttpController extends BaseController
 		$combinations = $this->getGroupsCombinations();
 		$this->printHeader();
 
-		$modes = array(
+		$modes = [
 			0 => '<h2 class="continue">Continue</h2>',
 			1 => '<h2 class="reset">Reset <small>All tables, views and data will be destroyed!</small></h2>',
 			2 => '<h2 class="init">Init SQL</h2>',
-		);
+		];
 
 		echo "<h1>Migrations</h1>\n";
 		foreach ($modes as $mode => $heading) {
@@ -111,7 +111,7 @@ class HttpController extends BaseController
 			echo "$heading\n";
 			echo "<ul>\n";
 			foreach ($combinations as $combination) {
-				$query = htmlspecialchars(http_build_query(array('action' => 'run' , 'groups' => $combination, 'mode' => $mode)));
+				$query = htmlspecialchars(http_build_query(['action' => 'run', 'groups' => $combination, 'mode' => $mode]));
 				$text = htmlspecialchars(implode(' + ', $combination));
 				$alert = $mode === 1 ? ' onclick="return confirm(\'Are you really sure?\')"' : '';
 				echo "\t<li><a href=\"?$query\"{$alert}>Run $text</a>\n";
@@ -137,7 +137,7 @@ class HttpController extends BaseController
 
 	private function actionCss()
 	{
-		header('Content-Type: text/css', TRUE);
+		header('Content-Type: text/css', true);
 		readfile(__DIR__ . '/templates/main.css');
 	}
 
@@ -146,22 +146,22 @@ class HttpController extends BaseController
 	{
 		$this->printHeader();
 		echo "<h1>Migrations – error</h1>\n";
-		echo "<div class=\"error-message\">" . nl2br(htmlspecialchars($this->error), FALSE) . "</div>\n";
+		echo "<div class=\"error-message\">" . nl2br(htmlspecialchars($this->error), false) . "</div>\n";
 	}
 
 
 	private function getGroupsCombinations()
 	{
-		$groups = array();
+		$groups = [];
 		$index = 1;
 		foreach ($this->groups as $group) {
 			$groups[$index] = $group;
 			$index = ($index << 1);
 		}
 
-		$combinations = array();
+		$combinations = [];
 		for ($i = 1; true; $i++) {
-			$combination = array();
+			$combination = [];
 			foreach ($groups as $key => $group) {
 				if ($i & $key) {
 					$combination[] = $group->name;
@@ -193,5 +193,4 @@ class HttpController extends BaseController
 	{
 		return new Printers\HtmlDump();
 	}
-
 }
