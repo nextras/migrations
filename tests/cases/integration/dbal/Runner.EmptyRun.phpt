@@ -7,9 +7,7 @@
 
 namespace NextrasTests\Migrations;
 
-use Mockery;
 use Nextras\Migrations\Engine\Runner;
-use Tester;
 use Tester\Assert;
 
 require __DIR__ . '/../../../bootstrap.php';

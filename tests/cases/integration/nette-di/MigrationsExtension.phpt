@@ -7,6 +7,8 @@
 namespace NextrasTests\Migrations;
 
 use Nette;
+use Nextras;
+use Symfony;
 use Tester\Assert;
 use Tester\Environment;
 use Tester\TestCase;
@@ -23,8 +25,8 @@ class MigrationsExtensionTest extends TestCase
 	{
 		$dic = $this->createContainer($config);
 
-		Assert::type('Nextras\Migrations\Drivers\MySqlDriver', $dic->getByType('Nextras\Migrations\IDriver'));
-		Assert::count(3, $dic->findByType('Symfony\Component\Console\Command\Command'));
+		Assert::type(Nextras\Migrations\Drivers\MySqlDriver::class, $dic->getByType(Nextras\Migrations\IDriver::class));
+		Assert::count(3, $dic->findByType(Symfony\Component\Console\Command\Command::class));
 		Assert::count(3, $dic->findByTag('kdyby.console.command'));
 	}
 
@@ -49,12 +51,12 @@ class MigrationsExtensionTest extends TestCase
 	{
 		$dic = $this->createContainer($config);
 
-		$configuration = $dic->getByType('Nextras\Migrations\IConfiguration');
-		Assert::type('Nextras\Migrations\Configurations\Configuration', $configuration);
+		$configuration = $dic->getByType(Nextras\Migrations\IConfiguration::class);
+		Assert::type(Nextras\Migrations\Configurations\Configuration::class, $configuration);
 
 		$groups = $configuration->getGroups();
 		Assert::count(3, $groups);
-		Assert::type('Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator', $groups[0]->generator);
+		Assert::type(Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator::class, $groups[0]->generator);
 		Assert::null($groups[1]->generator);
 		Assert::null($groups[2]->generator);
 	}
@@ -71,7 +73,7 @@ class MigrationsExtensionTest extends TestCase
 
 	public function testDynamicContainerParameters()
 	{
-		if (!method_exists('Nette\DI\Compiler', 'setDynamicParameterNames')) {
+		if (!method_exists(Nette\DI\Compiler::class, 'setDynamicParameterNames')) {
 			Environment::skip('Required Nette >= 2.4.7');
 		}
 
