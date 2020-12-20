@@ -6,6 +6,7 @@
 
 namespace NextrasTests\Migrations;
 
+use Nextras;
 use Nextras\Migrations\Engine\OrderResolver;
 use Nextras\Migrations\Engine\Runner;
 use Nextras\Migrations\Entities\Group;
@@ -169,7 +170,7 @@ class OrderResolverTest extends Tester\TestCase
 		$groupB = $this->createGroup('data', false, ['structures']);
 		$groupC = $this->createGroup('test-data', false, ['data']);
 
-		$method = new \ReflectionMethod('Nextras\Migrations\Engine\OrderResolver', 'validateGroups');
+		$method = new \ReflectionMethod(Nextras\Migrations\Engine\OrderResolver::class, 'validateGroups');
 		$method->setAccessible(true);
 		$method->invoke(new OrderResolver, [
 			'structures' => $groupA,
@@ -262,7 +263,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileB],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" is missing.');
+		}, Nextras\Migrations\LogicException::class, 'Previously executed migration "structures/1s" is missing.');
 	}
 
 
@@ -283,7 +284,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileB, $fileA],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" has been changed. File checksum is "1s.md5.Y", but executed migration had checksum "1s.md5.X".');
+		}, Nextras\Migrations\LogicException::class, 'Previously executed migration "structures/1s" has been changed. File checksum is "1s.md5.Y", but executed migration had checksum "1s.md5.X".');
 	}
 
 
@@ -304,7 +305,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileB, $fileA],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'Previously executed migration "structures/1s" did not succeed. Please fix this manually or reset the migrations.');
+		}, Nextras\Migrations\LogicException::class, 'Previously executed migration "structures/1s" did not succeed. Please fix this manually or reset the migrations.');
 	}
 
 
@@ -327,7 +328,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileA, $fileB, $fileC],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'New migration "structures/2s" must follow after the latest executed migration "structures/3s".');
+		}, Nextras\Migrations\LogicException::class, 'New migration "structures/2s" must follow after the latest executed migration "structures/3s".');
 	}
 
 
@@ -354,7 +355,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileA, $fileB, $fileC],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'New migration "b/2b" must follow after the latest executed migration "c/3c".');
+		}, Nextras\Migrations\LogicException::class, 'New migration "b/2b" must follow after the latest executed migration "c/3c".');
 	}
 
 
@@ -380,7 +381,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileA, $fileB, $fileC],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'New migration "b/2b" must follow after the latest executed migration "a/3a".');
+		}, Nextras\Migrations\LogicException::class, 'New migration "b/2b" must follow after the latest executed migration "a/3a".');
 	}
 
 
@@ -397,7 +398,7 @@ class OrderResolverTest extends Tester\TestCase
 				[],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'Existing migrations depend on unknown group "foo".');
+		}, Nextras\Migrations\LogicException::class, 'Existing migrations depend on unknown group "foo".');
 	}
 
 
@@ -414,7 +415,7 @@ class OrderResolverTest extends Tester\TestCase
 				[],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'Group "data" depends on unknown group "structures".');
+		}, Nextras\Migrations\LogicException::class, 'Group "data" depends on unknown group "structures".');
 	}
 
 
@@ -432,7 +433,7 @@ class OrderResolverTest extends Tester\TestCase
 				[],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'Group "data" depends on disabled group "structures". Please enable group "structures" to continue.');
+		}, Nextras\Migrations\LogicException::class, 'Group "data" depends on disabled group "structures". Please enable group "structures" to continue.');
 	}
 
 
@@ -453,7 +454,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileA, $fileB],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'Unable to determine order for migrations "data/foo" and "structures/foo".');
+		}, Nextras\Migrations\LogicException::class, 'Unable to determine order for migrations "data/foo" and "structures/foo".');
 	}
 
 
@@ -474,7 +475,7 @@ class OrderResolverTest extends Tester\TestCase
 				[$fileA, $fileB],
 				Runner::MODE_CONTINUE
 			);
-		}, 'Nextras\Migrations\LogicException', 'Unable to determine order for migrations "data/foo" and "structures/foo".');
+		}, Nextras\Migrations\LogicException::class, 'Unable to determine order for migrations "data/foo" and "structures/foo".');
 	}
 
 

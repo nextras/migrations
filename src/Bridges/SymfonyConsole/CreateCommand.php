@@ -17,6 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 
 class CreateCommand extends BaseCommand
@@ -152,12 +153,12 @@ class CreateCommand extends BaseCommand
 		if (preg_match('#^[a-z0-9.-]++$#i', $label)) {
 			$slug = strtolower($label);
 
-		} elseif (class_exists('Nette\Utils\Strings')) {
+		} elseif (class_exists(Strings::class)) {
 			$slug = Strings::webalize($label, '.');
 
 		} elseif (
-			interface_exists('Symfony\Contracts\Translation\LocaleAwareInterface') &&
-			class_exists('Symfony\Component\String\Slugger\AsciiSlugger')
+			interface_exists(LocaleAwareInterface::class) &&
+			class_exists(AsciiSlugger::class)
 		) {
 			$slugger = new AsciiSlugger('en');
 			$slug = $slugger->slug($label)->toString();

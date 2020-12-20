@@ -7,7 +7,7 @@
 
 namespace NextrasTests\Migrations;
 
-use Mockery;
+use Nextras;
 use Nextras\Migrations\Engine\Runner;
 use Tester;
 use Tester\Assert;
@@ -65,7 +65,7 @@ class SecondRunTest extends IntegrationTestCase
 
 		Assert::throws(function () {
 			$this->runner->run(Runner::MODE_CONTINUE);
-		}, 'Nextras\Migrations\LogicException');
+		}, Nextras\Migrations\LogicException::class);
 
 		Assert::same([
 			'Nextras Migrations',

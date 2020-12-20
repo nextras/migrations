@@ -6,6 +6,7 @@
 
 namespace NextrasTests\Migrations\Bridges\SymfonyConsole;
 
+use Nextras;
 use Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand;
 use Nextras\Migrations\Configurations\DefaultConfiguration;
 use Mockery;
@@ -19,7 +20,7 @@ class CreateCommandTest extends Tester\TestCase
 {
 	public function testTypeArgDescription()
 	{
-		$driver = Mockery::mock('Nextras\Migrations\IDriver');
+		$driver = Mockery::mock(Nextras\Migrations\IDriver::class);
 		$config = new DefaultConfiguration('migrations', $driver);
 
 		$command = new CreateCommand($driver, $config);

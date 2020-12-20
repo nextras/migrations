@@ -7,6 +7,7 @@
 namespace NextrasTests\Migrations;
 
 use Mockery;
+use Nextras;
 use Tester;
 use Tester\Assert;
 
@@ -20,10 +21,10 @@ class BaseDriverTest extends Tester\TestCase
 	 */
 	public function testLoadFile($content, array $expectedQueries)
 	{
-		$dbal = Mockery::mock('Nextras\Migrations\IDbal');
+		$dbal = Mockery::mock(Nextras\Migrations\IDbal::class);
 		$dbal->shouldReceive('escapeIdentifier')->with('migrations')->andReturn('migrations');
 
-		$driver = Mockery::mock('Nextras\Migrations\Drivers\BaseDriver', array($dbal));
+		$driver = Mockery::mock(Nextras\Migrations\Drivers\BaseDriver::class, array($dbal));
 		$driver->shouldDeferMissing();
 
 		foreach ($expectedQueries as $expectedQuery) {

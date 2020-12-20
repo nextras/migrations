@@ -7,6 +7,7 @@
 namespace NextrasTests\Migrations;
 
 use Mockery;
+use Nextras;
 use Nextras\Migrations\Engine\Finder;
 use Nextras\Migrations\Entities\Group;
 use Tester;
@@ -28,7 +29,7 @@ class FinderLogicalNameTest extends Tester\TestCase
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->finder = Mockery::mock('Nextras\Migrations\Engine\Finder')
+		$this->finder = Mockery::mock(Nextras\Migrations\Engine\Finder::class)
 			->shouldAllowMockingProtectedMethods()
 			->shouldDeferMissing()
 			->shouldReceive('getChecksum')
