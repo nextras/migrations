@@ -127,7 +127,7 @@ class OrderResolverTest extends Tester\TestCase
 		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
-		$groupB = $this->createGroup('data', FALSE);
+		$groupB = $this->createGroup('data', false);
 
 		$migrationA = $this->createMigration($groupA->name, '1s');
 		$migrationB = $this->createMigration($groupB->name, '2d');
@@ -166,17 +166,17 @@ class OrderResolverTest extends Tester\TestCase
 	public function testRunWithDisabledGroups()
 	{
 		$groupA = $this->createGroup('structures');
-		$groupB = $this->createGroup('data', FALSE, ['structures']);
-		$groupC = $this->createGroup('test-data', FALSE, ['data']);
+		$groupB = $this->createGroup('data', false, ['structures']);
+		$groupC = $this->createGroup('test-data', false, ['data']);
 
 		$method = new \ReflectionMethod('Nextras\Migrations\Engine\OrderResolver', 'validateGroups');
-		$method->setAccessible(TRUE);
+		$method->setAccessible(true);
 		$method->invoke(new OrderResolver, [
 			'structures' => $groupA,
 			'data' => $groupB,
 			'test-data' => $groupC,
 		]);
-		Tester\Environment::$checkAssertions = FALSE;
+		Tester\Environment::$checkAssertions = false;
 	}
 
 
@@ -185,7 +185,7 @@ class OrderResolverTest extends Tester\TestCase
 		$resolver = new OrderResolver();
 
 		$groupA = $this->createGroup('structures');
-		$groupB = $this->createGroup('data', TRUE, ['structures']);
+		$groupB = $this->createGroup('data', true, ['structures']);
 
 		$fileA = $this->createFile('foo', $groupA);
 		$fileB = $this->createFile('foo', $groupB);
@@ -226,8 +226,8 @@ class OrderResolverTest extends Tester\TestCase
 		$resolver = new OrderResolver();
 
 		$groupA = $this->createGroup('a');
-		$groupB = $this->createGroup('b', TRUE, ['a']);
-		$groupC = $this->createGroup('c', TRUE, ['a']);
+		$groupB = $this->createGroup('b', true, ['a']);
+		$groupC = $this->createGroup('c', true, ['a']);
 
 		$migrationA = $this->createMigration($groupA->name, '1a');
 		$migrationC = $this->createMigration($groupC->name, '3c');
@@ -292,7 +292,7 @@ class OrderResolverTest extends Tester\TestCase
 		$resolver = new OrderResolver;
 
 		$groupA = $this->createGroup('structures');
-		$migrationA = $this->createMigration($groupA->name, '1s', NULL, FALSE);
+		$migrationA = $this->createMigration($groupA->name, '1s', null, false);
 		$fileA = $this->createFile('1s', $groupA);
 		$fileB = $this->createFile('2s', $groupA);
 
@@ -336,8 +336,8 @@ class OrderResolverTest extends Tester\TestCase
 		$resolver = new OrderResolver();
 
 		$groupA = $this->createGroup('a');
-		$groupB = $this->createGroup('b', TRUE, ['a']);
-		$groupC = $this->createGroup('c', TRUE, ['b']);
+		$groupB = $this->createGroup('b', true, ['a']);
+		$groupC = $this->createGroup('c', true, ['b']);
 
 		$migrationA = $this->createMigration($groupA->name, '1a');
 		$migrationC = $this->createMigration($groupC->name, '3c');
@@ -363,7 +363,7 @@ class OrderResolverTest extends Tester\TestCase
 		$resolver = new OrderResolver();
 
 		$groupA = $this->createGroup('a');
-		$groupB = $this->createGroup('b', TRUE, ['a']);
+		$groupB = $this->createGroup('b', true, ['a']);
 
 		$migrationA = $this->createMigration($groupB->name, '1b');
 		$migrationC = $this->createMigration($groupA->name, '3a');
@@ -405,7 +405,7 @@ class OrderResolverTest extends Tester\TestCase
 	{
 		$resolver = new OrderResolver;
 
-		$groupB = $this->createGroup('data', TRUE, ['structures']);
+		$groupB = $this->createGroup('data', true, ['structures']);
 
 		Assert::exception(function () use ($resolver, $groupB) {
 			$resolver->resolve(
@@ -422,8 +422,8 @@ class OrderResolverTest extends Tester\TestCase
 	{
 		$resolver = new OrderResolver;
 
-		$groupA = $this->createGroup('structures', FALSE);
-		$groupB = $this->createGroup('data', TRUE, ['structures']);
+		$groupA = $this->createGroup('structures', false);
+		$groupB = $this->createGroup('data', true, ['structures']);
 
 		Assert::exception(function () use ($resolver, $groupA, $groupB) {
 			$resolver->resolve(
@@ -461,8 +461,8 @@ class OrderResolverTest extends Tester\TestCase
 	{
 		$resolver = new OrderResolver();
 
-		$groupA = $this->createGroup('structures', TRUE, ['data']);
-		$groupB = $this->createGroup('data', TRUE, ['structures']);
+		$groupA = $this->createGroup('structures', true, ['data']);
+		$groupB = $this->createGroup('data', true, ['structures']);
 
 		$fileA = $this->createFile('foo', $groupA);
 		$fileB = $this->createFile('foo', $groupB);
@@ -478,7 +478,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	private function createMigration($groupName, $fileName, $checksum = NULL, $completed = TRUE)
+	private function createMigration($groupName, $fileName, $checksum = null, $completed = true)
 	{
 		$migration = new Migration;
 		$migration->group = $groupName;
@@ -489,7 +489,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	private function createFile($name, $group, $checksum = NULL)
+	private function createFile($name, $group, $checksum = null)
 	{
 		$file = new File;
 		$file->name = $name;
@@ -499,7 +499,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	private function createGroup($name, $enabled = TRUE, $deps = [])
+	private function createGroup($name, $enabled = true, $deps = [])
 	{
 		$group = new Group;
 		$group->name = $name;

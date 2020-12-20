@@ -70,5 +70,4 @@ class NetteAdapter implements IDbal
 	{
 		return $this->conn->getSupplementalDriver()->delimite($value);
 	}
-
 }

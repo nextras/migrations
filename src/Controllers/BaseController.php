@@ -32,20 +32,20 @@ abstract class BaseController
 		$printer = $this->createPrinter();
 		$this->runner = new Engine\Runner($driver, $printer);
 		$this->mode = Engine\Runner::MODE_CONTINUE;
-		$this->groups = array();
+		$this->groups = [];
 	}
 
 
 	abstract public function run();
 
 
-	public function addGroup($name, $dir, array $dependencies = array())
+	public function addGroup($name, $dir, array $dependencies = [])
 	{
 		$group = new Group;
 		$group->name = $name;
 		$group->directory = $dir;
 		$group->dependencies = $dependencies;
-		$group->enabled = FALSE;
+		$group->enabled = false;
 
 		$this->groups[$name] = $group;
 		return $this;
@@ -61,7 +61,7 @@ abstract class BaseController
 
 	protected function registerGroups()
 	{
-		$enabled = array();
+		$enabled = [];
 		foreach ($this->groups as $group) {
 			$this->runner->addGroup($group);
 			if ($group->enabled) {
@@ -80,5 +80,4 @@ abstract class BaseController
 
 
 	abstract protected function createPrinter();
-
 }

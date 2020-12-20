@@ -81,7 +81,7 @@ class HtmlDump implements IPrinter
 
 
 	/**
-	 * @param  string $s     HTML string
+	 * @param  string $s HTML string
 	 * @param  string $class
 	 * @return void
 	 */
@@ -89,5 +89,4 @@ class HtmlDump implements IPrinter
 	{
 		echo "<div class=\"$class\">$s</div>\n";
 	}
-
 }

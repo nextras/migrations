@@ -17,7 +17,7 @@ class TestPrinter extends Console
 	public function __construct()
 	{
 		parent::__construct();
-		$this->useColors = FALSE;
+		$this->useColors = false;
 	}
 
 

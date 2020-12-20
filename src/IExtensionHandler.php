@@ -23,5 +23,4 @@ interface IExtensionHandler
 	 * @return int number of queries
 	 */
 	function execute(File $file);
-
 }

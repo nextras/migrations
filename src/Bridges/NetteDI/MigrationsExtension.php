@@ -9,6 +9,7 @@
 
 namespace Nextras\Migrations\Bridges\NetteDI;
 
+use Doctrine;
 use Nette;
 use Nette\DI\ContainerBuilder;
 use Nette\Utils\Strings;
@@ -26,15 +27,15 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 	/** @var array */
 	public $defaults = [
-		'dir' => NULL,
+		'dir' => null,
 		'phpParams' => [],
-		'driver' => NULL,
-		'dbal' => NULL,
+		'driver' => null,
+		'dbal' => null,
 		'printer' => 'console',
-		'groups' => NULL,        // null|array
-		'diffGenerator' => TRUE, // false|doctrine
-		'withDummyData' => FALSE,
-		'ignoredQueriesFile' => NULL,
+		'groups' => null,        // null|array
+		'diffGenerator' => true, // false|doctrine
+		'withDummyData' => false,
+		'ignoredQueriesFile' => null,
 	];
 
 	/** @var array */
@@ -59,6 +60,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'psrLog' => 'Nextras\Migrations\Bridges\PsrLog\PsrLogPrinter',
 	];
 
+
 	public function loadConfiguration()
 	{
 		$config = $this->validateConfig($this->defaults);
@@ -82,7 +84,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		}
 
 		// groups
-		if ($config['groups'] === NULL) {
+		if ($config['groups'] === null) {
 			Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral');
 			Validators::assertField($config, 'withDummyData', 'bool');
 			$config['groups'] = $this->createDefaultGroupConfiguration($config['dir'], $config['withDummyData']);
@@ -126,7 +128,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		}
 
 		// diff generator
-		if ($config['diffGenerator'] === TRUE) {
+		if ($config['diffGenerator'] === true) {
 			if ($builder->findByType('Doctrine\ORM\EntityManagerInterface') && $builder->hasDefinition($this->prefix('group.structures'))) {
 				Validators::assertField($config, 'ignoredQueriesFile', 'null|string');
 				$diffGenerator = $this->createDoctrineStructureDiffGeneratorDefinition($config['ignoredQueriesFile']);
@@ -166,7 +168,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 				->setClass('Nextras\Migrations\IDbal')
 				->setFactory($factory);
 
-		} elseif ($dbal === NULL) {
+		} elseif ($dbal === null) {
 			return '@Nextras\Migrations\IDbal';
 
 		} else {
@@ -187,7 +189,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			return $dbal;
 
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 
@@ -202,7 +204,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 				->setClass('Nextras\Migrations\IDriver')
 				->setFactory($factory);
 
-		} elseif ($driver === NULL) {
+		} elseif ($driver === null) {
 			return '@Nextras\Migrations\IDriver';
 
 		} else {
@@ -220,7 +222,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			return new Nette\DI\Statement($this->drivers[$driver], [$dbal]);
 
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 
@@ -235,7 +237,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 				->setClass('Nextras\Migrations\IPrinter')
 				->setFactory($factory);
 
-		} elseif ($printer === NULL) {
+		} elseif ($printer === null) {
 			return '@Nextras\Migrations\IPrinter';
 
 		} else {
@@ -256,7 +258,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			return $printer;
 
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 
@@ -293,7 +295,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 		foreach ($groups as $groupName => $groupConfig) {
 			$serviceName = $this->prefix("diffGenerator.$groupName");
-			$diffGenerator = $builder->hasDefinition($serviceName) ? $builder->getDefinition($serviceName) : NULL;
+			$diffGenerator = $builder->hasDefinition($serviceName) ? $builder->getDefinition($serviceName) : null;
 			$groups[$groupName]['generator'] = $diffGenerator;
 		}
 
@@ -317,7 +319,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 			$serviceName = lcfirst(str_replace('-', '', ucwords($groupName, '-')));
 			$groupDefinitions[] = $builder->addDefinition($this->prefix("group.$serviceName"))
 				->addTag(self::TAG_GROUP, ['for' => [$this->name]])
-				->setAutowired(FALSE)
+				->setAutowired(false)
 				->setClass('Nextras\Migrations\Entities\Group')
 				->addSetup('$name', [$groupName])
 				->addSetup('$enabled', [$enabled])
@@ -336,14 +338,14 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 		$sqlHandler = $builder->addDefinition($this->prefix('extensionHandler.sql'))
 			->addTag(self::TAG_EXTENSION_HANDLER, ['for' => [$this->name], 'extension' => 'sql'])
-			->setAutowired(FALSE)
+			->setAutowired(false)
 			->setClass('Nextras\Migrations\Extensions\SqlHandler')
 			->setArguments([$driver]);
 
 		$phpHandler = $builder->addDefinition($this->prefix('extensionHandler.php'))
 			->addTag(self::TAG_EXTENSION_HANDLER, ['for' => [$this->name], 'extension' => 'php'])
 			->setClass('Nextras\Migrations\Extensions\PhpHandler')
-			->setAutowired(FALSE)
+			->setAutowired(false)
 			->setArguments([$phpParams]);
 
 		return [$sqlHandler, $phpHandler];
@@ -364,7 +366,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		return $builder->addDefinition($this->prefix('diffGenerator.structures'))
-			->setAutowired(FALSE)
+			->setAutowired(false)
 			->setClass('Nextras\Migrations\IDiffGenerator')
 			->setFactory('Nextras\Migrations\Bridges\DoctrineOrm\StructureDiffGenerator')
 			->setArguments(['@Doctrine\ORM\EntityManagerInterface', $ignoredQueriesFile]);

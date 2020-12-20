@@ -85,12 +85,13 @@ class Console implements IPrinter
 
 	/**
 	 * Prints text to a console, optionally in a specific color.
+	 *
 	 * @param  string      $s
 	 * @param  string|NULL $color self::COLOR_*
 	 */
-	protected function output($s, $color = NULL)
+	protected function output($s, $color = null)
 	{
-		if ($color === NULL || !$this->useColors) {
+		if ($color === null || !$this->useColors) {
 			echo "$s\n";
 		} else {
 			echo $this->color($s, $color) . "\n";
@@ -113,14 +114,13 @@ class Console implements IPrinter
 
 
 	/**
-	 * @author  David Grudl
-	 * @license New BSD License
 	 * @return  bool TRUE if terminal support colors, FALSE otherwise
+	 * @license New BSD License
+	 * @author  David Grudl
 	 */
 	protected function detectColorSupport()
 	{
-		return (getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE
+		return (getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== false
 			|| (defined('STDOUT') && function_exists('posix_isatty') && posix_isatty(STDOUT)));
 	}
-
 }

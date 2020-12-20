@@ -9,8 +9,8 @@
 
 namespace Nextras\Migrations;
 
-use Nextras\Migrations\Entities\Migration;
 use Nextras\Migrations\Entities\File;
+use Nextras\Migrations\Entities\Migration;
 
 
 /**
@@ -30,6 +30,7 @@ interface IDriver
 
 	/**
 	 * Drops the database / schema. Should removes all db objects (tables, views, procedures, sequences, ...)
+	 *
 	 * @return mixed
 	 */
 	function emptyDatabase();
@@ -37,6 +38,7 @@ interface IDriver
 
 	/**
 	 * Loads and executes SQL queries from given file.
+	 *
 	 * @param  string $path
 	 * @return int number of executed queries
 	 */
@@ -87,6 +89,7 @@ interface IDriver
 
 	/**
 	 * Inserts migration info into migration table.
+	 *
 	 * @param  Migration $migration
 	 */
 	function insertMigration(Migration $migration);
@@ -94,6 +97,7 @@ interface IDriver
 
 	/**
 	 * Updated migration as executed.
+	 *
 	 * @param  Migration $migration
 	 */
 	function markMigrationAsReady(Migration $migration);
@@ -101,6 +105,7 @@ interface IDriver
 
 	/**
 	 * Returns all migrations stored in migration table sorted by time.
+	 *
 	 * @return Migration[]
 	 */
 	function getAllMigrations();
@@ -108,6 +113,7 @@ interface IDriver
 
 	/**
 	 * Returns source code for migration table initialization.
+	 *
 	 * @return string
 	 */
 	function getInitTableSource();
@@ -115,9 +121,9 @@ interface IDriver
 
 	/**
 	 * Returns source code for migration table data initialization.
+	 *
 	 * @param  File[] $files
 	 * @return string
 	 */
 	function getInitMigrationsSource(array $files);
-
 }

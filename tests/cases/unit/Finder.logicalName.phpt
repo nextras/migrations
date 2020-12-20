@@ -37,7 +37,7 @@ class FinderLogicalNameTest extends Tester\TestCase
 		$group = new Group();
 		$group->dependencies = [];
 		$group->directory = './baseDir/structures';
-		$group->enabled = TRUE;
+		$group->enabled = true;
 		$group->name = 'structures';
 		$this->groups = [$group];
 	}

@@ -55,5 +55,4 @@ abstract class BaseCommand extends Command
 
 		return 0;
 	}
-
 }

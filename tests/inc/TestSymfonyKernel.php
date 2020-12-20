@@ -26,7 +26,7 @@ class TestSymfonyKernel extends Kernel
 	 */
 	public function __construct($configPath, array $parameters)
 	{
-		parent::__construct('dev', TRUE);
+		parent::__construct('dev', true);
 
 		$this->configPath = $configPath;
 		$this->parameters = $parameters;

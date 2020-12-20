@@ -39,7 +39,7 @@ class ConsoleController extends BaseController
 	{
 		$arguments = array_slice($_SERVER['argv'], 1);
 		$help = count($arguments) === 0;
-		$groups = $error = FALSE;
+		$groups = $error = false;
 
 		foreach ($arguments as $argument) {
 			if (strncmp($argument, '--', 2) === 0) {
@@ -48,25 +48,25 @@ class ConsoleController extends BaseController
 				} elseif ($argument === '--init-sql') {
 					$this->mode = Engine\Runner::MODE_INIT;
 				} elseif ($argument === '--help') {
-					$help = TRUE;
+					$help = true;
 				} else {
 					fprintf(STDERR, "Warning: Unknown option '%s'\n", $argument);
 					continue;
 				}
 			} else {
 				if (isset($this->groups[$argument])) {
-					$this->groups[$argument]->enabled = TRUE;
-					$groups = TRUE;
+					$this->groups[$argument]->enabled = true;
+					$groups = true;
 				} else {
 					fprintf(STDERR, "Error: Unknown group '%s'\n", $argument);
-					$error = TRUE;
+					$error = true;
 				}
 			}
 		}
 
 		if (!$groups && !$help) {
 			fprintf(STDERR, "Error: At least one group must be enabled.\n");
-			$error = TRUE;
+			$error = true;
 		}
 
 		if ($error) {

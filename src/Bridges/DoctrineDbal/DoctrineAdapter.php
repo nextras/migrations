@@ -70,5 +70,4 @@ class DoctrineAdapter implements IDbal
 	{
 		return $this->conn->quoteIdentifier($value);
 	}
-
 }

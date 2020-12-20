@@ -16,6 +16,7 @@ use Nextras\Migrations\IPrinter;
 
 /**
  * /dev/null printer
+ *
  * @author Petr Procházka
  */
 class DevNull implements IPrinter

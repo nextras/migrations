@@ -142,9 +142,9 @@ class OrderResolver
 
 
 	/**
-	 * Returns TRUE if groupA depends on groupB.
+	 * Returns true if groupA depends on groupB.
 	 *
-	 * @param  array  $groups (name => Group)
+	 * @param  array $groups (name => Group)
 	 * @param  Group $groupA
 	 * @param  Group $groupB
 	 * @return bool
@@ -160,21 +160,21 @@ class OrderResolver
 			}
 
 			if ($groupA->name === $node) {
-				return TRUE;
+				return true;
 			}
 
-			$visited[$node] = TRUE;
+			$visited[$node] = true;
 			foreach ($groups[$node]->dependencies as $dep) {
 				$queue[] = $dep;
 			}
 		}
-		return FALSE;
+		return false;
 	}
 
 
 	protected function getAssocMigrations(array $migrations)
 	{
-		$assoc = array();
+		$assoc = [];
 		foreach ($migrations as $migration) {
 			$assoc[$migration->group][$migration->filename] = $migration;
 		}
@@ -184,7 +184,7 @@ class OrderResolver
 
 	protected function getAssocGroups(array $groups)
 	{
-		$assoc = array();
+		$assoc = [];
 		foreach ($groups as $group) {
 			$assoc[$group->name] = $group;
 		}
@@ -194,7 +194,7 @@ class OrderResolver
 
 	protected function getAssocFiles(array $files)
 	{
-		$assoc = array();
+		$assoc = [];
 		foreach ($files as $file) {
 			$assoc[$file->group->name][$file->name] = $file;
 		}
@@ -204,7 +204,7 @@ class OrderResolver
 
 	protected function getFlatFiles(array $files)
 	{
-		$flat = array();
+		$flat = [];
 		foreach ($files as $tmp) {
 			foreach ($tmp as $file) {
 				$flat[] = $file;
@@ -254,5 +254,4 @@ class OrderResolver
 			}
 		}
 	}
-
 }

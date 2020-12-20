@@ -34,5 +34,4 @@ class ContinueCommand extends BaseCommand
 	{
 		return $this->runMigrations(Runner::MODE_CONTINUE, $this->config);
 	}
-
 }

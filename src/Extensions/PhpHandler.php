@@ -25,7 +25,7 @@ class PhpHandler implements IExtensionHandler
 
 
 	/**
-	 * @param array $params name => value
+	 * @param  array $params name => value
 	 */
 	public function __construct(array $params = [])
 	{
@@ -62,10 +62,9 @@ class PhpHandler implements IExtensionHandler
 	{
 		extract($this->params, EXTR_SKIP);
 		$count = @include $file->path;
-		if ($count === FALSE) {
+		if ($count === false) {
 			throw new IOException("Cannot include file '{$file->path}'.");
 		}
 		return $count;
 	}
-
 }

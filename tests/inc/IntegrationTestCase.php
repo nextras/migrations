@@ -45,7 +45,7 @@ abstract class IntegrationTestCase extends TestCase
 		parent::setUp();
 
 		$options = Environment::loadData();
-		$driversConfig = parse_ini_file(__DIR__ . '/../drivers.ini', TRUE);
+		$driversConfig = parse_ini_file(__DIR__ . '/../drivers.ini', true);
 		$dbalOptions = $driversConfig[$options['driver']] + $options;
 
 		$this->fixtureDir = __DIR__ . '/../fixtures/' . $options['driver'];
@@ -84,19 +84,19 @@ abstract class IntegrationTestCase extends TestCase
 	protected function getGroups($dir)
 	{
 		$structures = new Group();
-		$structures->enabled = TRUE;
+		$structures->enabled = true;
 		$structures->name = 'structures';
 		$structures->directory = $dir . '/structures';
 		$structures->dependencies = [];
 
 		$basicData = new Group();
-		$basicData->enabled = TRUE;
+		$basicData->enabled = true;
 		$basicData->name = 'basic-data';
 		$basicData->directory = $dir . '/basic-data';
 		$basicData->dependencies = ['structures'];
 
 		$dummyData = new Group();
-		$dummyData->enabled = TRUE;
+		$dummyData->enabled = true;
 		$dummyData->name = 'dummy-data';
 		$dummyData->directory = $dir . '/dummy-data';
 		$dummyData->dependencies = ['structures', 'basic-data'];

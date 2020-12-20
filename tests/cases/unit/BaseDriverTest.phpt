@@ -33,7 +33,7 @@ class BaseDriverTest extends Tester\TestCase
 		$driver->loadFile(Tester\FileMock::create($content));
 
 		Mockery::close();
-		Assert::true(TRUE);
+		Assert::true(true);
 	}
 
 
