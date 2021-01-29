@@ -9,6 +9,7 @@
 
 namespace Nextras\Migrations\Configurations;
 
+use Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand;
 use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\Extensions\PhpHandler;
 use Nextras\Migrations\Extensions\SqlHandler;
@@ -48,19 +49,24 @@ class DefaultConfiguration implements IConfiguration
 	/** @var IDiffGenerator|NULL */
 	protected $dummyDataDiffGenerator;
 
+	/** @var string */
+	protected $commandNamespace;
+
 
 	/**
 	 * @param  string  $dir
 	 * @param  IDriver $driver
 	 * @param  bool    $withDummyData
 	 * @param  array   $phpParams
+	 * @param  string  $commandNamespace
 	 */
-	public function __construct($dir, IDriver $driver, $withDummyData = TRUE, array $phpParams = [])
+	public function __construct($dir, IDriver $driver, $withDummyData = TRUE, array $phpParams = [], $commandNamespace = BaseCommand::DEFAULT_NAMESPACE)
 	{
 		$this->dir = $dir;
 		$this->driver = $driver;
 		$this->withDummyData = $withDummyData;
 		$this->phpParams = $phpParams;
+		$this->commandNamespace = $commandNamespace;
 	}
 
 
@@ -132,4 +138,11 @@ class DefaultConfiguration implements IConfiguration
 		$this->dummyDataDiffGenerator = $generator;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getCommandNamespace()
+	{
+		return $this->commandNamespace;
+	}
 }

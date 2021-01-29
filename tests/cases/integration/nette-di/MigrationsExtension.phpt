@@ -7,6 +7,7 @@
 namespace NextrasTests\Migrations;
 
 use Nette;
+use Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand;
 use Tester\Assert;
 use Tester\Environment;
 use Tester\TestCase;
@@ -97,6 +98,24 @@ class MigrationsExtensionTest extends TestCase
 		Assert::notSame($configA, $configB);
 		Assert::count(3, $configA->getGroups());
 		Assert::count(3, $configB->getGroups());
+	}
+
+
+	public function testCommandNamespace()
+	{
+		$container = $this->createContainer('commandNamespace');
+
+		$commands = $container->findByType('Symfony\Component\Console\Command\Command');
+		foreach ($commands as $name) {
+			/** @var BaseCommand $command */
+			$command = $container->getService($name);
+
+			if (Nette\Utils\Strings::contains($name, 'migrationsA.')) {
+				Assert::contains('migrations:', $command->getName(), 'Default command namespace failed.');
+			} else {
+				Assert::contains('fooCommandNamespace:', $command->getName());
+			}
+		}
 	}
 
 

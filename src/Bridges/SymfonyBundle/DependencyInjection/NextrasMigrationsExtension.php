@@ -73,7 +73,7 @@ class NextrasMigrationsExtension extends Extension
 		}
 
 		$configurationDefinition = new Definition('Nextras\Migrations\Configurations\DefaultConfiguration');
-		$configurationDefinition->setArguments([$config['dir'], $driverDefinition, $config['with_dummy_data'], $config['php_params']]);
+		$configurationDefinition->setArguments([$config['dir'], $driverDefinition, $config['with_dummy_data'], $config['php_params'], $config['command_namespace']]);
 		$configurationDefinition->addMethodCall('setStructureDiffGenerator', [$structureDiffGeneratorDefinition]);
 
 		$continueCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand');

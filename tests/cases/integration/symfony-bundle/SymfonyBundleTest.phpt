@@ -51,7 +51,7 @@ class SymfonyBundleTest extends TestCase
 	{
 		$application = new Application($this->symfonyKernel);
 
-		$command = $application->find('migrations:reset');
+		$command = $application->find('fooCommandNamespace:reset');
 		$commandTester = new CommandTester($command);
 		Assert::same(0, $commandTester->execute([]));
 	}
@@ -61,7 +61,7 @@ class SymfonyBundleTest extends TestCase
 	{
 		$application = new Application($this->symfonyKernel);
 
-		$command = $application->find('migrations:continue');
+		$command = $application->find('fooCommandNamespace:continue');
 		$commandTester = new CommandTester($command);
 		Assert::same(0, $commandTester->execute([]));
 	}
