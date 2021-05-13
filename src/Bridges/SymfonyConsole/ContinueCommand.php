@@ -19,11 +19,13 @@ class ContinueCommand extends BaseCommand
 	/** @var string */
 	protected static $defaultName = 'migrations:continue';
 
+	/** @var string */
+	protected static $defaultDescription = 'Updates database schema by running all new migrations';
 
 	protected function configure()
 	{
 		$this->setName(self::$defaultName);
-		$this->setDescription('Updates database schema by running all new migrations');
+		$this->setDescription(self::$defaultDescription);
 		$this->setHelp("If table 'migrations' does not exist in current database, it is created automatically.");
 	}
 
