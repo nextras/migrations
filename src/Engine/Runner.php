@@ -175,7 +175,7 @@ class Runner
 			$queriesCount = $this->getExtension($file->extension)->execute($file);
 		} catch (\Exception $e) {
 			$this->driver->rollbackTransaction();
-			throw new ExecutionException(sprintf('Executing migration "%s" has failed.', $file->path), NULL, $e);
+			throw new ExecutionException(sprintf('Executing migration "%s" has failed.', $file->path), 0, $e);
 		}
 
 		$this->driver->markMigrationAsReady($migration);

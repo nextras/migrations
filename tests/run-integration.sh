@@ -72,12 +72,12 @@ composer_prepare_dependencies()
 	COMPOSER_PREFER_LOWEST="$2"
 
 	cp "$PROJECT_DIR/composer.bridgeless.json" "$PROJECT_DIR/composer.json"
+	echo "Composer: installing $COMPOSER_REQUIRE"
 
 	if [[ ! -z "$COMPOSER_REQUIRE" ]]; then
 		composer require \
 			--no-interaction \
 			--no-update \
-			--quiet \
 			--dev \
 			$COMPOSER_REQUIRE
 	fi
@@ -85,7 +85,6 @@ composer_prepare_dependencies()
 	composer update \
 		--no-interaction \
 		--no-progress \
-		--quiet \
 		$COMPOSER_PREFER_LOWEST
 }
 
