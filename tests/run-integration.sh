@@ -79,12 +79,14 @@ composer_prepare_dependencies()
 			--no-interaction \
 			--no-update \
 			--dev \
+		  --with-all-dependencies \
 			$COMPOSER_REQUIRE
 	fi
 
 	composer update \
 		--no-interaction \
 		--no-progress \
+		--with-all-dependencies \
 		$COMPOSER_PREFER_LOWEST
 }
 
