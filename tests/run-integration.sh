@@ -16,22 +16,20 @@ run()
 	COMPOSER_REQUIRE=""
 	DBAL=""
 
-	echo
-	echo
-	echo "# $FILENAME"
-	echo
-
 	source "$FILENAME"
 
 	if [[ ! -z "$PHP_VERSION_MIN" ]] && [[ "$PHP_VERSION" -lt "$PHP_VERSION_MIN" ]]; then
-		echo "SKIPPED because current PHP version $PHP_VERSION < $PHP_VERSION_MIN"
 		return 0
 	fi
 
 	if [[ ! -z "$PHP_VERSION_MAX" ]] && [[ "$PHP_VERSION" -gt "$PHP_VERSION_MAX" ]]; then
-		echo "SKIPPED because current PHP version $PHP_VERSION > $PHP_VERSION_MAX"
 		return 0
 	fi
+
+	echo
+	echo
+	echo "# $FILENAME"
+	echo
 
 	create_dbals_ini "$DBAL"
 
@@ -79,13 +77,15 @@ composer_prepare_dependencies()
 			--no-interaction \
 			--no-update \
 			--dev \
-		  --with-all-dependencies \
+			--quiet \
+			--with-all-dependencies \
 			$COMPOSER_REQUIRE
 	fi
 
 	composer update \
 		--no-interaction \
 		--no-progress \
+		--quiet \
 		--with-all-dependencies \
 		$COMPOSER_PREFER_LOWEST
 }
