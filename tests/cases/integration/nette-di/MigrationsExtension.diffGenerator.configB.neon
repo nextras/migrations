@@ -7,6 +7,6 @@ migrations:
 	driver: mysql
 
 services:
-	- Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration([%doctrineDir%], true)
+	- Doctrine\ORM\Tools\Setup::createXMLMetadataConfiguration([%doctrineDir%], true)
 	- Doctrine\DBAL\DriverManager::getConnection(%doctrineConfig%, @Doctrine\ORM\Configuration)
 	- Doctrine\ORM\EntityManager::create(@Doctrine\DBAL\Connection, @Doctrine\ORM\Configuration)

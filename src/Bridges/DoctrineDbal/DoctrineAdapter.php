@@ -28,37 +28,41 @@ class DoctrineAdapter implements IDbal
 
 	public function query($sql)
 	{
-		return $this->conn->fetchAll($sql);
+		return method_exists($this->conn, 'fetchAllAssociative')
+			? $this->conn->fetchAllAssociative($sql)
+			: $this->conn->fetchAll($sql);
 	}
 
 
 	public function exec($sql)
 	{
-		return $this->conn->exec($sql);
+		return method_exists($this->conn, 'executeStatement')
+			? $this->conn->executeStatement($sql)
+			: $this->conn->exec($sql);
 	}
 
 
 	public function escapeString($value)
 	{
-		return $this->conn->quote($value, Doctrine\DBAL\Types\Type::STRING);
+		return $this->conn->quote($value, 'string');
 	}
 
 
 	public function escapeInt($value)
 	{
-		return $this->conn->quote($value, Doctrine\DBAL\Types\Type::INTEGER);
+		return $this->conn->quote($value, 'integer');
 	}
 
 
 	public function escapeBool($value)
 	{
-		return $this->conn->quote($value, Doctrine\DBAL\Types\Type::BOOLEAN);
+		return $this->conn->quote($value, 'boolean');
 	}
 
 
 	public function escapeDateTime(DateTime $value)
 	{
-		return $this->conn->quote($value, Doctrine\DBAL\Types\Type::DATETIME);
+		return $this->conn->quote($value, 'datetime');
 	}
 
 
