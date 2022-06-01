@@ -33,7 +33,7 @@ class NextrasAdapter implements IDbal
 		if (method_exists($connection->getDriver(), 'convertToSql')) {
 			$this->version = 1;
 
-		} elseif (method_exists($connection->getDriver(), 'convertIdentifierToSql')) {
+		} elseif (method_exists($connection->getDriver(), 'convertBoolToSql')) {
 			$this->version = 2;
 
 		} else {
