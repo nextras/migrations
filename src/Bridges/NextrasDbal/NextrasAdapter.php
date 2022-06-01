@@ -21,15 +21,24 @@ class NextrasAdapter implements IDbal
 	/** @var Connection */
 	private $conn;
 
-	/** @var bool */
-	private $oldDriver;
+	/** @var int */
+	private $version;
 
 
 	public function __construct(Connection $connection)
 	{
 		$this->conn = $connection;
 		$this->conn->connect();
-		$this->oldDriver = method_exists($connection->getDriver(), 'convertToSql');
+
+		if (method_exists($connection->getDriver(), 'convertToSql')) {
+			$this->version = 1;
+
+		} elseif (method_exists($connection->getDriver(), 'convertBoolToSql')) {
+			$this->version = 2;
+
+		} else {
+			$this->version = 5;
+		}
 	}
 
 
@@ -51,7 +60,7 @@ class NextrasAdapter implements IDbal
 
 	public function escapeString($value)
 	{
-		if (!$this->oldDriver) {
+		if ($this->version >= 2) {
 			return $this->conn->getDriver()->convertStringToSql($value);
 		} else {
 			return $this->conn->getDriver()->convertToSql($value, IDriver::TYPE_STRING);
@@ -67,7 +76,9 @@ class NextrasAdapter implements IDbal
 
 	public function escapeBool($value)
 	{
-		if (!$this->oldDriver) {
+		if ($this->version >= 5) {
+			return $this->conn->getPlatform()->formatBool($value);
+		} elseif ($this->version >= 2) {
 			return $this->conn->getDriver()->convertBoolToSql($value);
 		} else {
 			return $this->conn->getDriver()->convertToSql($value, IDriver::TYPE_BOOL);
@@ -77,7 +88,9 @@ class NextrasAdapter implements IDbal
 
 	public function escapeDateTime(DateTime $value)
 	{
-		if (!$this->oldDriver) {
+		if ($this->version >= 5) {
+			return $this->conn->getPlatform()->formatDateTime($value);
+		} elseif ($this->version >= 2) {
 			return $this->conn->getDriver()->convertDateTimeToSql($value);
 		} else {
 			return $this->conn->getDriver()->convertToSql($value, IDriver::TYPE_DATETIME);
@@ -87,7 +100,9 @@ class NextrasAdapter implements IDbal
 
 	public function escapeIdentifier($value)
 	{
-		if (!$this->oldDriver) {
+		if ($this->version >= 5) {
+			return $this->conn->getPlatform()->formatIdentifier($value);
+		} elseif ($this->version >= 2) {
 			return $this->conn->getDriver()->convertIdentifierToSql($value);
 		} else {
 			return $this->conn->getDriver()->convertToSql($value, IDriver::TYPE_IDENTIFIER);
