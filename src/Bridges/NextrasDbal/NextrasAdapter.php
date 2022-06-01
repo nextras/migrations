@@ -88,7 +88,7 @@ class NextrasAdapter implements IDbal
 	public function escapeIdentifier($value)
 	{
 		if (!$this->oldDriver) {
-			return $this->conn->getDriver()->convertIdentifierToSql($value);
+			return str_replace(['`', '.'], ['``', '`.`'], $value);
 		} else {
 			return $this->conn->getDriver()->convertToSql($value, IDriver::TYPE_IDENTIFIER);
 		}
