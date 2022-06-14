@@ -1,0 +1,48 @@
+x-php-service-base: &php-service-base
+    deploy:
+      replicas: 0
+
+    working_dir: /src
+    user: '1000:1000'
+    volumes:
+      - ./src:/src/src
+      - ./tests:/src/tests
+      - ./composer.bridgeless.json:/src/composer.bridgeless.json
+
+services:
+  php71:
+    <<: *php-service-base
+    image: thecodingmachine/php:7.1-v3-cli
+
+  php72:
+    <<: *php-service-base
+    image: thecodingmachine/php:7.2-v4-cli
+
+  php73:
+    <<: *php-service-base
+    image: thecodingmachine/php:7.3-v4-cli
+
+  php74:
+    <<: *php-service-base
+    image: thecodingmachine/php:7.4-v4-cli
+
+  php80:
+    <<: *php-service-base
+    image: thecodingmachine/php:8.0-v4-cli
+
+  php81:
+    <<: *php-service-base
+    image: thecodingmachine/php:8.1-v4-cli
+
+  postgres:
+    image: postgres:9.6
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nextras_migrations_test
+
+  mysql:
+    image: mysql:5.6
+    environment:
+      MYSQL_DATABASE: nextras_migrations_test
+      MYSQL_ROOT_PASSWORD: root
