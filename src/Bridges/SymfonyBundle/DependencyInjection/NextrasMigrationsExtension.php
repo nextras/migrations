@@ -33,6 +33,12 @@ class NextrasMigrationsExtension extends Extension
 		'pgsql' => 'Nextras\Migrations\Drivers\PgSqlDriver',
 	];
 
+	/** @var array */
+	protected $printers = [
+		'console' => 'Nextras\Migrations\Printers\Console',
+		'psrLog' => 'Nextras\Migrations\Bridges\PsrLog\PsrLogPrinter',
+	];
+
 
 	public function load(array $configs, ContainerBuilder $container)
 	{
@@ -46,14 +52,20 @@ class NextrasMigrationsExtension extends Extension
 		$driverDefinition = new Definition($this->drivers[$driverAlias]);
 		$driverDefinition->setArgument('$dbal', $dbalDefinition);
 
+		$printerAlias = $config['printer'];
+		$printerDefinition = new Definition($this->printers[$printerAlias]);
+		$printerDefinition->setAutowired(TRUE);
+
 		$container->addDefinitions([
 			'nextras_migrations.dbal' => $dbalDefinition,
 			'nextras_migrations.driver' => $driverDefinition,
+			'nextras_migrations.printer' => $printerDefinition,
 		]);
 
 		$container->addAliases([
 			'Nextras\Migrations\IDbal' => 'nextras_migrations.dbal',
 			'Nextras\Migrations\IDriver' => 'nextras_migrations.driver',
+			'Nextras\Migrations\IPrinter' => 'nextras_migrations.printer',
 		]);
 
 		if ($config['diff_generator'] === 'doctrine') {
@@ -77,15 +89,15 @@ class NextrasMigrationsExtension extends Extension
 		$configurationDefinition->addMethodCall('setStructureDiffGenerator', [$structureDiffGeneratorDefinition]);
 
 		$continueCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand');
-		$continueCommandDefinition->setArguments([$driverDefinition, $configurationDefinition]);
+		$continueCommandDefinition->setArguments([$driverDefinition, $configurationDefinition, $printerDefinition]);
 		$continueCommandDefinition->addTag('console.command');
 
 		$createCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand');
-		$createCommandDefinition->setArguments([$driverDefinition, $configurationDefinition]);
+		$createCommandDefinition->setArguments([$driverDefinition, $configurationDefinition, $printerDefinition]);
 		$createCommandDefinition->addTag('console.command');
 
 		$resetCommandDefinition = new Definition('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand');
-		$resetCommandDefinition->setArguments([$driverDefinition, $configurationDefinition]);
+		$resetCommandDefinition->setArguments([$driverDefinition, $configurationDefinition, $printerDefinition]);
 		$resetCommandDefinition->addTag('console.command');
 
 		$container->addDefinitions([
