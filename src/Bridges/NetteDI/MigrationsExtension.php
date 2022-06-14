@@ -30,6 +30,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'phpParams' => [],
 		'driver' => NULL,
 		'dbal' => NULL,
+		'printer' => 'console',
 		'groups' => NULL,        // null|array
 		'diffGenerator' => TRUE, // false|doctrine
 		'withDummyData' => FALSE,
@@ -53,6 +54,11 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		'pgsql' => 'Nextras\Migrations\Drivers\PgSqlDriver',
 	];
 
+	/** @var array */
+	protected $printers = [
+		'console' => 'Nextras\Migrations\Printers\Console',
+	];
+
 	public function loadConfiguration()
 	{
 		$config = $this->validateConfig($this->defaults);
@@ -64,6 +70,10 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		// driver
 		Validators::assertField($config, 'driver', 'null|string|Nette\DI\Statement');
 		$driver = $this->getDriverDefinition($config['driver'], $dbal);
+
+		// printer
+		Validators::assertField($config, 'printer', 'null|string|Nette\DI\Statement');
+		$printer = $this->getPrinterDefinition($config['printer']);
 
 		// diffGenerator
 		if ($config['diffGenerator'] === 'doctrine') {
@@ -90,7 +100,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 		// commands
 		if (class_exists('Symfony\Component\Console\Command\Command')) {
-			$this->createSymfonyCommandDefinitions($driver, $configuration);
+			$this->createSymfonyCommandDefinitions($driver, $configuration, $printer);
 		}
 	}
 
@@ -216,6 +226,42 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
+	private function getPrinterDefinition($printer)
+	{
+		$factory = $this->getPrinterFactory($printer);
+
+		if ($factory) {
+			return $this->getContainerBuilder()
+				->addDefinition($this->prefix('printer'))
+				->setClass('Nextras\Migrations\IPrinter')
+				->setFactory($factory);
+
+		} elseif ($printer === NULL) {
+			return '@Nextras\Migrations\IPrinter';
+
+		} else {
+			throw new Nextras\Migrations\LogicException('Invalid printer value');
+		}
+	}
+
+
+	private function getPrinterFactory($printer)
+	{
+		if ($printer instanceof Nette\DI\Statement) {
+			return $this->filterArguments([$printer])[0];
+
+		} elseif (is_string($printer) && isset($this->printers[$printer])) {
+			return $this->printers[$printer];
+
+		} elseif (is_string($printer) && Strings::startsWith($printer, '@')) {
+			return $printer;
+
+		} else {
+			return NULL;
+		}
+	}
+
+
 	private function createDefaultGroupConfiguration($dir, $withDummyData)
 	{
 		if ($dir instanceof Nette\PhpGenerator\PhpLiteral) {
@@ -326,24 +372,24 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	private function createSymfonyCommandDefinitions($driver, $configuration)
+	private function createSymfonyCommandDefinitions($driver, $configuration, $printer)
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addExcludedClasses(['Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand']);
 
 		$builder->addDefinition($this->prefix('continueCommand'))
 			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ContinueCommand')
-			->setArguments([$driver, $configuration])
+			->setArguments([$driver, $configuration, $printer])
 			->addTag('kdyby.console.command');
 
 		$builder->addDefinition($this->prefix('createCommand'))
 			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\CreateCommand')
-			->setArguments([$driver, $configuration])
+			->setArguments([$driver, $configuration, $printer])
 			->addTag('kdyby.console.command');
 
 		$builder->addDefinition($this->prefix('resetCommand'))
 			->setClass('Nextras\Migrations\Bridges\SymfonyConsole\ResetCommand')
-			->setArguments([$driver, $configuration])
+			->setArguments([$driver, $configuration, $printer])
 			->addTag('kdyby.console.command');
 	}
 
