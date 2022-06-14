@@ -9,7 +9,6 @@
 
 namespace Nextras\Migrations\Configurations;
 
-use Nette\Utils\Validators;
 use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\IConfiguration;
 use Nextras\Migrations\IExtensionHandler;
