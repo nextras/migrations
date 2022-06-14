@@ -35,7 +35,8 @@ class SymfonyBundleTest extends TestCase
 		$dbalOptions = $driversConfig[$options['driver']];
 
 		$doctrineDriver = $options['driver'] === 'mysql' ? 'pdo_mysql' : 'pdo_pgsql';
-		$this->symfonyKernel = new TestSymfonyKernel(__DIR__ . '/SymfonyBundleTest.yaml', [
+		$className = PHP_VERSION_ID >= 70100 ? 'NextrasTests\Migrations\TestSymfonyKernel6' : 'NextrasTests\Migrations\TestSymfonyKernel';
+		$this->symfonyKernel = new $className(__DIR__ . '/SymfonyBundleTest.yaml', [
 			'doctrine_dbal_driver' => $doctrineDriver,
 			'doctrine_dbal_host' => $dbalOptions['host'],
 			'doctrine_dbal_database' => $dbalOptions['database'],
