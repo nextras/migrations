@@ -18,6 +18,23 @@ For more information read **[documentation](https://nextras.org/migrations/docs)
 * [dibi](https://github.com/dg/dibi)
 
 
+Development & Running Integration Tests in Docker
+------------------------------------------------
+
+1. Create `./tests/*.ini` files
+   ```bash
+   cp tests/php.docker.ini tests/php.ini
+   cp tests/drivers.docker.ini tests/drivers.ini
+   ```
+2. Start containers
+    ```bash
+    docker-compose up --detach
+    ```
+3. Run tests
+    ```bash
+    tests/run-in-docker.sh php81 tests/run-integration.sh
+    ```
+
 License
 -------
 
