@@ -155,7 +155,10 @@ class CreateCommand extends BaseCommand
 		} elseif (class_exists('Nette\Utils\Strings')) {
 			$slug = Strings::webalize($label, '.');
 
-		} elseif (class_exists('Symfony\Component\String\Slugger\AsciiSlugger')) {
+		} elseif (
+			interface_exists('Symfony\Contracts\Translation\LocaleAwareInterface') &&
+			class_exists('Symfony\Component\String\Slugger\AsciiSlugger')
+		) {
 			$slugger = new AsciiSlugger('en');
 			$slug = $slugger->slug($label)->toString();
 
