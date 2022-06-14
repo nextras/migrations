@@ -57,6 +57,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	/** @var array */
 	protected $printers = [
 		'console' => 'Nextras\Migrations\Printers\Console',
+		'psrLog' => 'Nextras\Migrations\Bridges\PsrLog\PsrLogPrinter',
 	];
 
 	public function loadConfiguration()
