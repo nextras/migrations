@@ -16,6 +16,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 
 class CreateCommand extends BaseCommand
@@ -118,7 +119,7 @@ class CreateCommand extends BaseCommand
 
 		$matchedGroups = [];
 		foreach ($this->config->getGroups() as $group) {
-			if (Strings::match($group->name, $groupNamePattern)) {
+			if (preg_match($groupNamePattern, $group->name)) {
 				$matchedGroups[] = $group;
 			}
 		}
@@ -148,7 +149,21 @@ class CreateCommand extends BaseCommand
 	 */
 	protected function getFileName($label, $extension)
 	{
-		return date('Y-m-d-His-') . Strings::webalize($label, '.') . '.' . $extension;
+		if (preg_match('#^[a-z0-9.-]++$#i', $label)) {
+			$slug = strtolower($label);
+
+		} elseif (class_exists('Nette\Utils\Strings')) {
+			$slug = Strings::webalize($label, '.');
+
+		} elseif (class_exists('Symfony\Component\String\Slugger\AsciiSlugger')) {
+			$slugger = new AsciiSlugger('en');
+			$slug = $slugger->slug($label)->toString();
+
+		} else {
+			throw new Nextras\Migrations\LogicException("Provided label '$label' contains invalid characters.");
+		}
+
+		return date('Y-m-d-His-') . $slug . '.' . $extension;
 	}
 
 
