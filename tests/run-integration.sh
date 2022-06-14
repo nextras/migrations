@@ -103,6 +103,9 @@ tester_run_integration_group()
 }
 
 
+sudo composer self-update --2
+
+
 if [[ "$#" -eq 0 ]]; then
 	for FILENAME in "$PROJECT_DIR/tests/matrix"/**/*.sh; do
 		run "$FILENAME"
