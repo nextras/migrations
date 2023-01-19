@@ -24,7 +24,7 @@ class NetteDbSql extends SqlHandler
 	{
 		trigger_error(sprintf('Class %s is deprecated, use class SqlHandler instead.', __CLASS__), E_USER_DEPRECATED);
 		$connection = $context->getConnection();
-		$driver = $connection->getSupplementalDriver();
+		$driver = $connection->getDriver();
 		$dbal = new NetteAdapter($connection);
 
 		if ($driver instanceof Nette\Database\Drivers\PgSqlDriver) {

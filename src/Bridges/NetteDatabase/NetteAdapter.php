@@ -62,13 +62,13 @@ class NetteAdapter implements IDbal
 
 	public function escapeDateTime(DateTime $value)
 	{
-		return $this->conn->getSupplementalDriver()->formatDateTime($value);
+		return $this->conn->getDriver()->formatDateTime($value);
 	}
 
 
 	public function escapeIdentifier($value)
 	{
-		return $this->conn->getSupplementalDriver()->delimite($value);
+		return $this->conn->getDriver()->delimite($value);
 	}
 
 }
