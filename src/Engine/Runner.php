@@ -98,6 +98,9 @@ class Runner
 			}
 		}
 
+		$plan = new Plan($config->getPlanFile());
+		$plan->validate();
+
 		if ($mode === self::MODE_INIT) {
 			$this->driver->setupConnection();
 			$this->printer->printSource($this->driver->getInitTableSource() . "\n");

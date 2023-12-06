@@ -28,4 +28,10 @@ interface IConfiguration
 	 */
 	public function getExtensionHandlers();
 
+
+	/**
+	 * @return NULL|string
+	 */
+	public function getPlanFile();
+
 }

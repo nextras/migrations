@@ -27,6 +27,14 @@ class LogicException extends \LogicException implements Exception
 
 
 /**
+ * Execution plan violation.
+ */
+class PlanException extends LogicException
+{
+}
+
+
+/**
  * Error during runtime.
  */
 abstract class RuntimeException extends \RuntimeException implements Exception

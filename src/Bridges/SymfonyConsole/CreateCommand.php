@@ -11,6 +11,7 @@ namespace Nextras\Migrations\Bridges\SymfonyConsole;
 
 use Nette\Utils\Strings;
 use Nextras;
+use Nextras\Migrations\Engine\Plan;
 use Nextras\Migrations\Entities\Group;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -74,6 +75,10 @@ class CreateCommand extends BaseCommand
 		$group = $this->getGroup($input->getArgument('type'));
 		$path = $this->getPath($group, $input->getArgument('label'));
 		$content = $this->getFileContent($group, $this->getFileContentSource($input));
+
+		$planFile = $this->config->getPlanFile();
+		$plan = new Plan($planFile);
+		$plan->append($group, basename($path));
 
 		$this->createFile($path, $content, $output);
 		$output->writeln($path);
