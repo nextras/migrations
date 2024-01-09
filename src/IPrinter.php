@@ -18,51 +18,42 @@ use Nextras\Migrations\Entities\File;
 interface IPrinter
 {
 	/**
-	 * Print general info about mode.
-	 * - reset = Database has been wiped.
-	 * - continue = Running new migrations.
-	 *
-	 * @param  string $mode
+	 * Prints general info about mode.
 	 */
-	function printIntro($mode);
+	public function printIntro(string $mode): void;
 
 
 	/**
 	 * List of migrations which should be executed has been completed.
 	 *
-	 * @param  File[] $toExecute
+	 * @param  list<File> $toExecute
 	 */
-	function printToExecute(array $toExecute);
+	public function printToExecute(array $toExecute): void;
 
 
 	/**
 	 * A migration has been successfully executed.
 	 *
-	 * @param  File  $file
 	 * @param  int   $count number of executed queries
-	 * @param  float $time  elapsed time in milliseconds
+	 * @param  float $time  elapsed time in seconds
 	 */
-	function printExecute(File $file, $count, $time);
+	public function printExecute(File $file, int $count, float $time): void;
 
 
 	/**
 	 * All migrations have been successfully executed.
 	 */
-	function printDone();
+	public function printDone(): void;
 
 
 	/**
 	 * An error has occurred during execution of a migration.
-	 *
-	 * @param  Exception $e
 	 */
-	function printError(Exception $e);
+	public function printError(Exception $e): void;
 
 
 	/**
 	 * Prints init source code.
-	 *
-	 * @param  string $code
 	 */
-	function printSource($code);
+	public function printSource(string $code): void;
 }

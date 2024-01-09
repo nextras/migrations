@@ -40,7 +40,7 @@ abstract class IntegrationTestCase extends TestCase
 	protected $fixtureDir;
 
 
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -72,7 +72,7 @@ abstract class IntegrationTestCase extends TestCase
 	}
 
 
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		parent::tearDown();
 		$cleanupDb = require $this->fixtureDir . '/cleanup.php';
@@ -81,7 +81,10 @@ abstract class IntegrationTestCase extends TestCase
 	}
 
 
-	protected function getGroups($dir)
+	/**
+	 * @return list<Group>
+	 */
+	protected function getGroups(string $dir): array
 	{
 		$structures = new Group();
 		$structures->enabled = true;
@@ -106,9 +109,9 @@ abstract class IntegrationTestCase extends TestCase
 
 
 	/**
-	 * @return array (extension => IExtensionHandler)
+	 * @return array<string, Nextras\Migrations\IExtensionHandler> (extension => IExtensionHandler)
 	 */
-	protected function getExtensionHandlers()
+	protected function getExtensionHandlers(): array
 	{
 		return [
 			'sql' => new Nextras\Migrations\Extensions\SqlHandler($this->driver),
@@ -117,11 +120,9 @@ abstract class IntegrationTestCase extends TestCase
 
 
 	/**
-	 * @param  array $options
-	 * @return IDbal
 	 * @throws \Exception
 	 */
-	protected function createDbal($options)
+	protected function createDbal(array $options): IDbal
 	{
 		switch ($options['dbal']) {
 			case 'dibi':
@@ -178,12 +179,7 @@ abstract class IntegrationTestCase extends TestCase
 	}
 
 
-	/**
-	 * @param  array $name
-	 * @param  IDbal $dbal
-	 * @return IDriver
-	 */
-	protected function createDriver($name, IDbal $dbal)
+	protected function createDriver(string $name, IDbal $dbal): IDriver
 	{
 		switch ($name) {
 			case 'mysql':
@@ -191,14 +187,14 @@ abstract class IntegrationTestCase extends TestCase
 
 			case 'pgsql':
 				return new Nextras\Migrations\Drivers\PgSqlDriver($dbal, 'm', $this->dbName);
+
+			default:
+				throw new \Exception("Unknown driver '$name'.");
 		}
 	}
 
 
-	/**
-	 * @return IPrinter
-	 */
-	protected function createPrinter()
+	protected function createPrinter(): IPrinter
 	{
 		return new TestPrinter();
 	}

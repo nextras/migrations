@@ -20,12 +20,12 @@ use Nextras\Migrations\IOException;
  */
 class PhpHandler implements IExtensionHandler
 {
-	/** @var array name => value */
+	/** @var array<string, mixed> name => value */
 	private $params;
 
 
 	/**
-	 * @param  array $params name => value
+	 * @param  array<string, mixed> $params (name => value)
 	 */
 	public function __construct(array $params = [])
 	{
@@ -34,11 +34,9 @@ class PhpHandler implements IExtensionHandler
 
 
 	/**
-	 * @param  string $name
 	 * @param  mixed  $value
-	 * @return self
 	 */
-	public function addParameter($name, $value)
+	public function addParameter(string $name, $value): self
 	{
 		$this->params[$name] = $value;
 		return $this;
@@ -46,25 +44,23 @@ class PhpHandler implements IExtensionHandler
 
 
 	/**
-	 * @return array (name => value)
+	 * @return array<string, mixed> (name => value)
 	 */
-	public function getParameters()
+	public function getParameters(): array
 	{
 		return $this->params;
 	}
 
 
-	/**
-	 * @param  File $file
-	 * @return int number of queries
-	 */
-	public function execute(File $file)
+	public function execute(File $file): int
 	{
 		extract($this->params, EXTR_SKIP);
 		$count = @include $file->path;
+
 		if ($count === false) {
 			throw new IOException("Cannot include file '{$file->path}'.");
 		}
+
 		return $count;
 	}
 }

@@ -23,7 +23,7 @@ class ResetCommand extends BaseCommand
 	protected static $defaultDescription = 'Drops current database and recreates it from scratch';
 
 
-	protected function configure()
+	protected function configure(): void
 	{
 		$this->setName(self::$defaultName);
 		$this->setDescription(self::$defaultDescription);
@@ -31,7 +31,7 @@ class ResetCommand extends BaseCommand
 	}
 
 
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		return $this->runMigrations(Runner::MODE_RESET, $this->config);
 	}

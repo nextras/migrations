@@ -30,51 +30,46 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	protected $schemaQuoted;
 
 
-	/**
-	 * @param  IDbal  $dbal
-	 * @param  string $tableName
-	 * @param  string $schema
-	 */
-	public function __construct(IDbal $dbal, $tableName = 'migrations', $schema = 'public')
+	public function __construct(IDbal $dbal, string $tableName = 'migrations', string $schema = 'public')
 	{
 		parent::__construct($dbal, $tableName);
 		$this->schema = $schema;
 	}
 
 
-	public function setupConnection()
+	public function setupConnection(): void
 	{
 		parent::setupConnection();
 		$this->schemaQuoted = $this->dbal->escapeIdentifier($this->schema);
 	}
 
 
-	public function emptyDatabase()
+	public function emptyDatabase(): void
 	{
 		$this->dbal->exec("DROP SCHEMA IF EXISTS {$this->schemaQuoted} CASCADE");
 		$this->dbal->exec("CREATE SCHEMA {$this->schemaQuoted}");
 	}
 
 
-	public function beginTransaction()
+	public function beginTransaction(): void
 	{
 		$this->dbal->exec('START TRANSACTION');
 	}
 
 
-	public function commitTransaction()
+	public function commitTransaction(): void
 	{
 		$this->dbal->exec('COMMIT');
 	}
 
 
-	public function rollbackTransaction()
+	public function rollbackTransaction(): void
 	{
 		$this->dbal->exec('ROLLBACK');
 	}
 
 
-	public function lock()
+	public function lock(): void
 	{
 		try {
 			$this->dbal->exec('SELECT pg_advisory_lock(-2099128779216184107)');
@@ -85,7 +80,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function unlock()
+	public function unlock(): void
 	{
 		try {
 			$this->dbal->exec('SELECT pg_advisory_unlock(-2099128779216184107)');
@@ -96,19 +91,19 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function createTable()
+	public function createTable(): void
 	{
 		$this->dbal->exec($this->getInitTableSource());
 	}
 
 
-	public function dropTable()
+	public function dropTable(): void
 	{
 		$this->dbal->exec("DROP TABLE {$this->schemaQuoted}.{$this->tableNameQuoted}");
 	}
 
 
-	public function insertMigration(Migration $migration)
+	public function insertMigration(Migration $migration): void
 	{
 		$rows = $this->dbal->query("
 			INSERT INTO {$this->schemaQuoted}.{$this->tableNameQuoted}" . '
@@ -126,7 +121,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function markMigrationAsReady(Migration $migration)
+	public function markMigrationAsReady(Migration $migration): void
 	{
 		$this->dbal->exec("
 			UPDATE {$this->schemaQuoted}.{$this->tableNameQuoted}" . '
@@ -136,7 +131,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function getAllMigrations()
+	public function getAllMigrations(): array
 	{
 		$migrations = [];
 		$result = $this->dbal->query("SELECT * FROM {$this->schemaQuoted}.{$this->tableNameQuoted} ORDER BY \"executed\"");
@@ -166,7 +161,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function getInitTableSource()
+	public function getInitTableSource(): string
 	{
 		return preg_replace('#^\t{3}#m', '', trim("
 			CREATE TABLE IF NOT EXISTS {$this->schemaQuoted}.{$this->tableNameQuoted} (" . '
@@ -183,7 +178,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function getInitMigrationsSource(array $files)
+	public function getInitMigrationsSource(array $files): string
 	{
 		$out = '';
 		foreach ($files as $file) {

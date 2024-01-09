@@ -19,8 +19,7 @@ use Nextras\Migrations\Entities\File;
 interface IExtensionHandler
 {
 	/**
-	 * @param  File $file
 	 * @return int number of queries
 	 */
-	function execute(File $file);
+	public function execute(File $file): int;
 }

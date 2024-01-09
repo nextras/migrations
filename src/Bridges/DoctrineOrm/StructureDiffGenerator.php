@@ -25,30 +25,20 @@ class StructureDiffGenerator implements IDiffGenerator
 	private $ignoredQueriesFile;
 
 
-	/**
-	 * @param  EntityManagerInterface $entityManager
-	 * @param  string|NULL            $ignoredQueriesFile
-	 */
-	public function __construct(EntityManagerInterface $entityManager, $ignoredQueriesFile = null)
+	public function __construct(EntityManagerInterface $entityManager, ?string $ignoredQueriesFile = null)
 	{
 		$this->entityManager = $entityManager;
 		$this->ignoredQueriesFile = $ignoredQueriesFile;
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getExtension()
+	public function getExtension(): string
 	{
 		return 'sql';
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function generateContent()
+	public function generateContent(): string
 	{
 		$queries = array_diff($this->getUpdateQueries(), $this->getIgnoredQueries());
 		$content = $queries ? (implode(";\n", $queries) . ";\n") : '';
@@ -58,9 +48,9 @@ class StructureDiffGenerator implements IDiffGenerator
 
 
 	/**
-	 * @return string[]
+	 * @return list<string>
 	 */
-	protected function getUpdateQueries()
+	protected function getUpdateQueries(): array
 	{
 		$cache = $this->entityManager->getConfiguration()->getMetadataCacheImpl();
 		if ($cache instanceof ClearableCache) {
@@ -76,9 +66,9 @@ class StructureDiffGenerator implements IDiffGenerator
 
 
 	/**
-	 * @return string[]
+	 * @return list<string>
 	 */
-	protected function getIgnoredQueries()
+	protected function getIgnoredQueries(): array
 	{
 		if ($this->ignoredQueriesFile === null) {
 			return [];

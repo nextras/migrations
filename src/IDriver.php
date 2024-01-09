@@ -18,112 +18,98 @@ use Nextras\Migrations\Entities\Migration;
  */
 interface IDriver
 {
-	/** @const shared lock identifier */
-	const LOCK_NAME = 'Nextras.Migrations';
-
-
 	/**
 	 * Setups the connection, such as encoding, default schema, etc.
 	 */
-	function setupConnection();
+	public function setupConnection(): void;
 
 
 	/**
-	 * Drops the database / schema. Should removes all db objects (tables, views, procedures, sequences, ...)
-	 *
-	 * @return mixed
+	 * Drops the database / schema. Should remove all db objects (tables, views, procedures, sequences, ...)
 	 */
-	function emptyDatabase();
+	public function emptyDatabase(): void;
 
 
 	/**
 	 * Loads and executes SQL queries from given file.
 	 *
-	 * @param  string $path
 	 * @return int number of executed queries
 	 */
-	function loadFile($path);
+	public function loadFile(string $path): int;
 
 
 	/**
 	 * Starts transaction.
 	 */
-	function beginTransaction();
+	public function beginTransaction(): void;
 
 
 	/**
 	 * Commit transaction.
 	 */
-	function commitTransaction();
+	public function commitTransaction(): void;
 
 
 	/**
 	 * Rollback transaction.
 	 */
-	function rollbackTransaction();
+	public function rollbackTransaction(): void;
 
 
 	/**
 	 * Locks database for running migrations.
 	 */
-	function lock();
+	public function lock(): void;
 
 
 	/**
 	 * Unlocks database.
 	 */
-	function unlock();
+	public function unlock(): void;
 
 
 	/**
 	 * Creates migration table.
 	 */
-	function createTable();
+	public function createTable(): void;
 
 
 	/**
 	 * Drop migration table.
 	 */
-	function dropTable();
+	public function dropTable(): void;
 
 
 	/**
 	 * Inserts migration info into migration table.
-	 *
-	 * @param  Migration $migration
 	 */
-	function insertMigration(Migration $migration);
+	public function insertMigration(Migration $migration): void;
 
 
 	/**
 	 * Updated migration as executed.
-	 *
-	 * @param  Migration $migration
 	 */
-	function markMigrationAsReady(Migration $migration);
+	public function markMigrationAsReady(Migration $migration): void;
 
 
 	/**
 	 * Returns all migrations stored in migration table sorted by time.
 	 *
-	 * @return Migration[]
+	 * @return list<Migration>
 	 */
-	function getAllMigrations();
+	public function getAllMigrations(): array;
 
 
 	/**
 	 * Returns source code for migration table initialization.
-	 *
-	 * @return string
 	 */
-	function getInitTableSource();
+	public function getInitTableSource(): string;
 
 
 	/**
 	 * Returns source code for migration table data initialization.
 	 *
-	 * @param  File[] $files
-	 * @return string
+	 * @param  list<File> $files
 	 */
-	function getInitMigrationsSource(array $files);
+	public function getInitMigrationsSource(array $files): string;
 }

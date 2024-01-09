@@ -18,13 +18,13 @@ use Nextras\Migrations\Entities\Group;
 interface IConfiguration
 {
 	/**
-	 * @return Group[]
+	 * @return list<Group>
 	 */
-	public function getGroups();
+	public function getGroups(): array;
 
 
 	/**
-	 * @return array (extension => IExtensionHandler)
+	 * @return array<string, IExtensionHandler> (extension => IExtensionHandler)
 	 */
-	public function getExtensionHandlers();
+	public function getExtensionHandlers(): array;
 }

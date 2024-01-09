@@ -29,26 +29,19 @@ abstract class BaseCommand extends Command
 	protected $printer;
 
 
-	/**
-	 * @param  IDriver        $driver
-	 * @param  IConfiguration $config
-	 * @param  IPrinter|NULL  $printer
-	 */
-	public function __construct(IDriver $driver, IConfiguration $config, IPrinter $printer = NULL)
+	public function __construct(IDriver $driver, IConfiguration $config, ?IPrinter $printer = null)
 	{
 		$this->driver = $driver;
 		$this->config = $config;
-		$this->printer = $printer ?: new Console();
+		$this->printer = $printer ?? new Console();
 		parent::__construct();
 	}
 
 
 	/**
-	 * @param  string         $mode Runner::MODE_*
-	 * @param  IConfiguration $config
-	 * @return int
+	 * @param  Runner::MODE_* $mode
 	 */
-	protected function runMigrations($mode, $config)
+	protected function runMigrations(string $mode, IConfiguration $config): int
 	{
 		$runner = new Runner($this->driver, $this->printer);
 		$runner->run($mode, $config);

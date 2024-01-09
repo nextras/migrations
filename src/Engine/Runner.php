@@ -33,10 +33,10 @@ class Runner
 	/** @var IPrinter */
 	private $printer;
 
-	/** @var array (extension => IExtensionHandler) */
+	/** @var array<string, IExtensionHandler> (extension => IExtensionHandler) */
 	private $extensionsHandlers = [];
 
-	/** @var Group[] */
+	/** @var list<Group> */
 	private $groups = [];
 
 	/** @var IDriver */
@@ -58,19 +58,14 @@ class Runner
 	}
 
 
-	public function addGroup(Group $group)
+	public function addGroup(Group $group): self
 	{
 		$this->groups[] = $group;
 		return $this;
 	}
 
 
-	/**
-	 * @param  string            $extension
-	 * @param  IExtensionHandler $handler
-	 * @return self
-	 */
-	public function addExtensionHandler($extension, IExtensionHandler $handler)
+	public function addExtensionHandler(string $extension, IExtensionHandler $handler): self
 	{
 		if (isset($this->extensionsHandlers[$extension])) {
 			throw new LogicException("Extension '$extension' has already been defined.");
@@ -82,11 +77,9 @@ class Runner
 
 
 	/**
-	 * @param  string         $mode self::MODE_CONTINUE|self::MODE_RESET|self::MODE_INIT
-	 * @param  IConfiguration $config
-	 * @return void
+	 * @param  self::MODE_*   $mode
 	 */
-	public function run($mode = self::MODE_CONTINUE, IConfiguration $config = null)
+	public function run(string $mode = self::MODE_CONTINUE, ?IConfiguration $config = null): void
 	{
 		if ($config) {
 			foreach ($config->getGroups() as $group) {
@@ -142,24 +135,20 @@ class Runner
 	}
 
 
-	/**
-	 * @param  string $name
-	 * @return IExtensionHandler
-	 */
-	public function getExtension($name)
+	public function getExtension(string $name): IExtensionHandler
 	{
 		if (!isset($this->extensionsHandlers[$name])) {
 			throw new LogicException("Extension '$name' not found.");
 		}
+
 		return $this->extensionsHandlers[$name];
 	}
 
 
 	/**
-	 * @param  File $file
 	 * @return int  number of executed queries
 	 */
-	protected function execute(File $file)
+	protected function execute(File $file): int
 	{
 		$this->driver->beginTransaction();
 
@@ -173,6 +162,7 @@ class Runner
 
 		try {
 			$queriesCount = $this->getExtension($file->extension)->execute($file);
+
 		} catch (\Exception $e) {
 			$this->driver->rollbackTransaction();
 			throw new ExecutionException(sprintf('Executing migration "%s" has failed.', $file->path), 0, $e);

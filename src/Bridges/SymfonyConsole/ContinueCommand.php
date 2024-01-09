@@ -22,7 +22,8 @@ class ContinueCommand extends BaseCommand
 	/** @var string */
 	protected static $defaultDescription = 'Updates database schema by running all new migrations';
 
-	protected function configure()
+
+	protected function configure(): void
 	{
 		$this->setName(self::$defaultName);
 		$this->setDescription(self::$defaultDescription);
@@ -30,7 +31,7 @@ class ContinueCommand extends BaseCommand
 	}
 
 
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		return $this->runMigrations(Runner::MODE_CONTINUE, $this->config);
 	}

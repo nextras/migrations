@@ -19,7 +19,7 @@ class BaseDriverTest extends Tester\TestCase
 	/**
 	 * @dataProvider provideLoadFileData
 	 */
-	public function testLoadFile($content, array $expectedQueries)
+	public function testLoadFile(string $content, array $expectedQueries): void
 	{
 		$dbal = Mockery::mock(Nextras\Migrations\IDbal::class);
 		$dbal->shouldReceive('escapeIdentifier')->with('migrations')->andReturn('migrations');
@@ -38,7 +38,7 @@ class BaseDriverTest extends Tester\TestCase
 	}
 
 
-	protected function provideLoadFileData()
+	protected function provideLoadFileData(): array
 	{
 		return [
 			[

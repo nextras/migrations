@@ -9,7 +9,7 @@
 
 namespace Nextras\Migrations\Bridges\Dibi;
 
-use DateTime;
+use DateTimeInterface;
 use Dibi;
 use Nextras\Migrations\IDbal;
 
@@ -26,7 +26,7 @@ class Dibi3Adapter implements IDbal
 	}
 
 
-	public function query($sql)
+	public function query(string $sql): array
 	{
 		$result = $this->conn->nativeQuery($sql);
 		$result->setRowClass(null);
@@ -34,37 +34,38 @@ class Dibi3Adapter implements IDbal
 	}
 
 
-	public function exec($sql)
+	public function exec(string $sql): int
 	{
-		return $this->conn->nativeQuery($sql);
+		$this->conn->nativeQuery($sql);
+		return $this->conn->getAffectedRows();
 	}
 
 
-	public function escapeString($value)
+	public function escapeString(string $value): string
 	{
 		return $this->conn->getDriver()->escapeText($value);
 	}
 
 
-	public function escapeInt($value)
+	public function escapeInt(int $value): string
 	{
-		return (string) (int) $value;
+		return (string) $value;
 	}
 
 
-	public function escapeBool($value)
+	public function escapeBool(bool $value): string
 	{
-		return $this->conn->getDriver()->escapeBool($value);
+		return (string) $this->conn->getDriver()->escapeBool($value);
 	}
 
 
-	public function escapeDateTime(DateTime $value)
+	public function escapeDateTime(DateTimeInterface $value): string
 	{
 		return $this->conn->getDriver()->escapeDateTime($value);
 	}
 
 
-	public function escapeIdentifier($value)
+	public function escapeIdentifier(string $value): string
 	{
 		return $this->conn->getDriver()->escapeIdentifier($value);
 	}

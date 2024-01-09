@@ -9,7 +9,7 @@
 
 namespace Nextras\Migrations;
 
-use DateTime;
+use DateTimeInterface;
 
 
 /**
@@ -18,51 +18,28 @@ use DateTime;
 interface IDbal
 {
 	/**
-	 * @param  string $sql
-	 * @return array list of rows represented by assoc. arrays
+	 * @return array<int, array<string, mixed>> list of rows represented by assoc. arrays
 	 */
-	function query($sql);
+	public function query(string $sql): array;
 
 
 	/**
-	 * @param  string $sql
 	 * @return int number of affected rows
 	 */
-	function exec($sql);
+	public function exec(string $sql): int;
 
 
-	/**
-	 * @param  string $value
-	 * @return string escaped string wrapped in quotes
-	 */
-	function escapeString($value);
+	public function escapeString(string $value): string;
 
 
-	/**
-	 * @param  int $value
-	 * @return string
-	 */
-	function escapeInt($value);
+	public function escapeInt(int $value): string;
 
 
-	/**
-	 * @param  bool $value
-	 * @return string
-	 */
-	function escapeBool($value);
+	public function escapeBool(bool $value): string;
 
 
-	/**
-	 * @param  DateTime $value
-	 * @return string
-	 */
-	function escapeDateTime(DateTime $value);
+	public function escapeDateTime(DateTimeInterface $value): string;
 
 
-	/**
-	 * @param  string $value
-	 * @return string
-	 */
-	function escapeIdentifier($value);
-
+	public function escapeIdentifier(string $value): string;
 }

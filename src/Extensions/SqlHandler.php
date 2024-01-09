@@ -24,25 +24,20 @@ class SqlHandler implements IExtensionHandler
 	private $driver;
 
 
-	/**
-	 * @param  IDriver $driver
-	 */
 	public function __construct(IDriver $driver)
 	{
 		$this->driver = $driver;
 	}
 
 
-	/**
-	 * @param  File $file
-	 * @return int number of queries
-	 */
-	public function execute(File $file)
+	public function execute(File $file): int
 	{
 		$count = $this->driver->loadFile($file->path);
+
 		if ($count === 0) {
 			throw new LogicException("{$file->path} is empty");
 		}
+
 		return $count;
 	}
 }

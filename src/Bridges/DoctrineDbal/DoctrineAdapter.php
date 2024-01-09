@@ -9,7 +9,7 @@
 
 namespace Nextras\Migrations\Bridges\DoctrineDbal;
 
-use DateTime;
+use DateTimeInterface;
 use Doctrine;
 use Nextras\Migrations\IDbal;
 
@@ -26,7 +26,7 @@ class DoctrineAdapter implements IDbal
 	}
 
 
-	public function query($sql)
+	public function query(string $sql): array
 	{
 		return method_exists($this->conn, 'fetchAllAssociative')
 			? $this->conn->fetchAllAssociative($sql)
@@ -34,7 +34,7 @@ class DoctrineAdapter implements IDbal
 	}
 
 
-	public function exec($sql)
+	public function exec(string $sql): int
 	{
 		return method_exists($this->conn, 'executeStatement')
 			? $this->conn->executeStatement($sql)
@@ -42,31 +42,31 @@ class DoctrineAdapter implements IDbal
 	}
 
 
-	public function escapeString($value)
+	public function escapeString(string $value): string
 	{
 		return $this->conn->quote($value, 'string');
 	}
 
 
-	public function escapeInt($value)
+	public function escapeInt(int $value): string
 	{
 		return $this->conn->quote($value, 'integer');
 	}
 
 
-	public function escapeBool($value)
+	public function escapeBool(bool $value): string
 	{
 		return $this->conn->quote($value, 'boolean');
 	}
 
 
-	public function escapeDateTime(DateTime $value)
+	public function escapeDateTime(DateTimeInterface $value): string
 	{
 		return $this->conn->quote($value, 'datetime');
 	}
 
 
-	public function escapeIdentifier($value)
+	public function escapeIdentifier(string $value): string
 	{
 		return $this->conn->quoteIdentifier($value);
 	}

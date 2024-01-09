@@ -27,13 +27,13 @@ class PsrLogPrinter implements IPrinter
 	}
 
 
-	public function printIntro($mode)
+	public function printIntro(string $mode): void
 	{
 		$this->logger->info("Nextras Migrations: started in $mode mode");
 	}
 
 
-	public function printToExecute(array $toExecute)
+	public function printToExecute(array $toExecute): void
 	{
 		$count = count($toExecute);
 
@@ -46,7 +46,7 @@ class PsrLogPrinter implements IPrinter
 	}
 
 
-	public function printExecute(File $file, $count, $time)
+	public function printExecute(File $file, int $count, float $time): void
 	{
 		$this->logger->info("Nextras Migrations: {$file->group->name}/{$file->name} successfully executed", [
 			'queryCount' => $count,
@@ -55,19 +55,19 @@ class PsrLogPrinter implements IPrinter
 	}
 
 
-	public function printDone()
+	public function printDone(): void
 	{
 		$this->logger->info('Nextras Migrations: done');
 	}
 
 
-	public function printError(Exception $e)
+	public function printError(Exception $e): void
 	{
 		throw $e;
 	}
 
 
-	public function printSource($code)
+	public function printSource(string $code): void
 	{
 		$this->logger->debug("Nextras Migrations: init source:\n\n$code");
 	}

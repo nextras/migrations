@@ -16,7 +16,7 @@ require __DIR__ . '/../../../bootstrap.php';
 
 class FirstRunTest extends IntegrationTestCase
 {
-	public function testReset()
+	public function testReset(): void
 	{
 		$this->runner->run(Runner::MODE_RESET);
 		Assert::same([
@@ -54,7 +54,7 @@ class FirstRunTest extends IntegrationTestCase
 	}
 
 
-	public function testContinue()
+	public function testContinue(): void
 	{
 		$this->runner->run(Runner::MODE_CONTINUE);
 		Assert::same([
@@ -92,7 +92,7 @@ class FirstRunTest extends IntegrationTestCase
 	}
 
 
-	public function testInit()
+	public function testInit(): void
 	{
 		$options = Tester\Environment::loadData();
 		$this->runner->run(Runner::MODE_INIT);

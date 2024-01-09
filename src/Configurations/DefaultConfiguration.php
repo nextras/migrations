@@ -33,29 +33,26 @@ class DefaultConfiguration implements IConfiguration
 	/** @var bool */
 	protected $withDummyData;
 
-	/** @var array */
+	/** @var array<string, mixed> */
 	protected $phpParams;
 
-	/** @var Group[] */
+	/** @var list<Group> */
 	protected $groups;
 
-	/** @var IExtensionHandler[] */
+	/** @var array<string, IExtensionHandler> */
 	protected $handlers;
 
-	/** @var IDiffGenerator|NULL */
+	/** @var ?IDiffGenerator */
 	protected $structureDiffGenerator;
 
-	/** @var IDiffGenerator|NULL */
+	/** @var ?IDiffGenerator */
 	protected $dummyDataDiffGenerator;
 
 
 	/**
-	 * @param  string  $dir
-	 * @param  IDriver $driver
-	 * @param  bool    $withDummyData
-	 * @param  array   $phpParams
+	 * @param  array<string, mixed> $phpParams
 	 */
-	public function __construct($dir, IDriver $driver, $withDummyData = true, array $phpParams = [])
+	public function __construct(string $dir, IDriver $driver, bool $withDummyData = true, array $phpParams = [])
 	{
 		$this->dir = $dir;
 		$this->driver = $driver;
@@ -64,10 +61,7 @@ class DefaultConfiguration implements IConfiguration
 	}
 
 
-	/**
-	 * @return Group[]
-	 */
-	public function getGroups()
+	public function getGroups(): array
 	{
 		if ($this->groups === null) {
 			$structures = new Group();
@@ -97,10 +91,7 @@ class DefaultConfiguration implements IConfiguration
 	}
 
 
-	/**
-	 * @return array|IExtensionHandler[] (extension => IExtensionHandler)
-	 */
-	public function getExtensionHandlers()
+	public function getExtensionHandlers(): array
 	{
 		if ($this->handlers === null) {
 			$this->handlers = [
@@ -113,21 +104,13 @@ class DefaultConfiguration implements IConfiguration
 	}
 
 
-	/**
-	 * @param  IDiffGenerator|NULL $generator
-	 * @return void
-	 */
-	public function setStructureDiffGenerator(IDiffGenerator $generator = null)
+	public function setStructureDiffGenerator(?IDiffGenerator $generator = null): void
 	{
 		$this->structureDiffGenerator = $generator;
 	}
 
 
-	/**
-	 * @param  IDiffGenerator|NULL $generator
-	 * @return void
-	 */
-	public function setDummyDataDiffGenerator(IDiffGenerator $generator = null)
+	public function setDummyDataDiffGenerator(?IDiffGenerator $generator = null): void
 	{
 		$this->dummyDataDiffGenerator = $generator;
 	}

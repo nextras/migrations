@@ -18,7 +18,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 class CreateCommandTest extends Tester\TestCase
 {
-	public function testTypeArgDescription()
+	public function testTypeArgDescription(): void
 	{
 		$driver = Mockery::mock(Nextras\Migrations\IDriver::class);
 		$config = new DefaultConfiguration('migrations', $driver);

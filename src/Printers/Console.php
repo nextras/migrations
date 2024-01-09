@@ -36,14 +36,14 @@ class Console implements IPrinter
 	}
 
 
-	public function printIntro($mode)
+	public function printIntro(string $mode): void
 	{
 		$this->output('Nextras Migrations');
 		$this->output(strtoupper($mode), self::COLOR_INTRO);
 	}
 
 
-	public function printToExecute(array $toExecute)
+	public function printToExecute(array $toExecute): void
 	{
 		if ($toExecute) {
 			$count = count($toExecute);
@@ -54,30 +54,30 @@ class Console implements IPrinter
 	}
 
 
-	public function printExecute(File $file, $count, $time)
+	public function printExecute(File $file, int $count, float $time): void
 	{
 		$this->output(
 			'- ' . $file->group->name . '/' . $file->name . '; '
-			. $this->color($count, self::COLOR_INFO) . ' queries; '
-			. $this->color(sprintf('%0.3f', $time), self::COLOR_INFO) . ' s'
+			. $this->colorize((string) $count, self::COLOR_INFO) . ' queries; '
+			. $this->colorize(sprintf('%0.3f', $time), self::COLOR_INFO) . ' s'
 		);
 	}
 
 
-	public function printDone()
+	public function printDone(): void
 	{
 		$this->output('OK', self::COLOR_SUCCESS);
 	}
 
 
-	public function printError(Exception $e)
+	public function printError(Exception $e): void
 	{
 		$this->output('ERROR: ' . $e->getMessage(), self::COLOR_ERROR);
 		throw $e;
 	}
 
 
-	public function printSource($code)
+	public function printSource(string $code): void
 	{
 		$this->output($code);
 	}
@@ -86,41 +86,27 @@ class Console implements IPrinter
 	/**
 	 * Prints text to a console, optionally in a specific color.
 	 *
-	 * @param  string      $s
-	 * @param  string|NULL $color self::COLOR_*
+	 * @param  string|null $color self::COLOR_*
 	 */
-	protected function output($s, $color = null)
+	protected function output(string $s, ?string $color = null): void
 	{
-		if ($color === null || !$this->useColors) {
-			echo "$s\n";
-		} else {
-			echo $this->color($s, $color) . "\n";
-		}
+		echo $this->colorize($s, $color) . "\n";
+	}
+
+
+	protected function colorize(string $s, ?string $color): string
+	{
+		return $this->useColors && $color !== null ? "\033[{$color}m$s\033[22;39m" : $s;
 	}
 
 
 	/**
-	 * @param  string $s
-	 * @param  string $color
-	 * @return string
+	 * @return  bool true if terminal support colors, false otherwise
 	 */
-	protected function color($s, $color)
+	protected function detectColorSupport(): bool
 	{
-		if (!$this->useColors) {
-			return $s;
-		}
-		return "\033[{$color}m$s\033[22;39m";
-	}
-
-
-	/**
-	 * @return  bool TRUE if terminal support colors, FALSE otherwise
-	 * @license New BSD License
-	 * @author  David Grudl
-	 */
-	protected function detectColorSupport()
-	{
-		return (getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== false
-			|| (defined('STDOUT') && function_exists('posix_isatty') && posix_isatty(STDOUT)));
+		return (function_exists('posix_isatty') && posix_isatty(STDOUT))
+			|| (function_exists('stream_isatty') && stream_isatty(STDOUT))
+			|| (function_exists('sapi_windows_vt100_support') && sapi_windows_vt100_support(STDOUT));
 	}
 }

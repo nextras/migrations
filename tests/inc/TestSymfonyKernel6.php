@@ -21,10 +21,9 @@ class TestSymfonyKernel6 extends Kernel
 
 
 	/**
-	 * @param string $configPath
 	 * @param array  $parameters
 	 */
-	public function __construct($configPath, array $parameters)
+	public function __construct(string $configPath, array $parameters)
 	{
 		parent::__construct('dev', true);
 
@@ -33,7 +32,7 @@ class TestSymfonyKernel6 extends Kernel
 	}
 
 
-	public function getRootDir()
+	public function getRootDir(): string
 	{
 		return TEMP_DIR . '/symfony-bundle';
 	}
@@ -49,9 +48,9 @@ class TestSymfonyKernel6 extends Kernel
 	}
 
 
-	public function registerContainerConfiguration(LoaderInterface $loader)
+	public function registerContainerConfiguration(LoaderInterface $loader): void
 	{
-		$loader->load(function (ContainerBuilder $container) {
+		$loader->load(function (ContainerBuilder $container): void {
 			$container->addResource(new ContainerParametersResource($this->parameters));
 			foreach ($this->parameters as $key => $value) {
 				$container->setParameter($key, $value);

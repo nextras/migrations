@@ -21,7 +21,7 @@ class MigrationsExtensionTest extends TestCase
 	/**
 	 * @dataProvider provideCommandsData
 	 */
-	public function testCommands($config)
+	public function testCommands(string $config): void
 	{
 		$dic = $this->createContainer($config);
 
@@ -31,7 +31,7 @@ class MigrationsExtensionTest extends TestCase
 	}
 
 
-	public function provideCommandsData()
+	public function provideCommandsData(): array
 	{
 		return [
 			['configA'],
@@ -47,7 +47,7 @@ class MigrationsExtensionTest extends TestCase
 	/**
 	 * @dataProvider provideDiffGeneratorData
 	 */
-	public function testDoctrineDiffGenerator($config)
+	public function testDoctrineDiffGenerator(string $config): void
 	{
 		$dic = $this->createContainer($config);
 
@@ -62,7 +62,7 @@ class MigrationsExtensionTest extends TestCase
 	}
 
 
-	public function provideDiffGeneratorData()
+	public function provideDiffGeneratorData(): array
 	{
 		return [
 			['diffGenerator.configA'],
@@ -71,7 +71,7 @@ class MigrationsExtensionTest extends TestCase
 	}
 
 
-	public function testDynamicContainerParameters()
+	public function testDynamicContainerParameters(): void
 	{
 		if (!method_exists(Nette\DI\Compiler::class, 'setDynamicParameterNames')) {
 			Environment::skip('Required Nette >= 2.4.7');
@@ -89,7 +89,7 @@ class MigrationsExtensionTest extends TestCase
 	}
 
 
-	public function testOptionsAsService()
+	public function testOptionsAsService(): void
 	{
 		$container = $this->createContainer('optionsAsService');
 
@@ -100,7 +100,7 @@ class MigrationsExtensionTest extends TestCase
 	}
 
 
-	public function testMultipleRegistrations()
+	public function testMultipleRegistrations(): void
 	{
 		$container = $this->createContainer('multipleRegistrations');
 
@@ -113,11 +113,7 @@ class MigrationsExtensionTest extends TestCase
 	}
 
 
-	/**
-	 * @param  string $config
-	 * @return Nette\DI\Container
-	 */
-	protected function createContainer($config, array $dynamicParameters = null)
+	protected function createContainer(string $config, array $dynamicParameters = null): Nette\DI\Container
 	{
 		$options = parse_ini_file(__DIR__ . '/../../../drivers.ini', true)['mysql'];
 
