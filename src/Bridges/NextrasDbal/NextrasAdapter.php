@@ -9,7 +9,7 @@
 
 namespace Nextras\Migrations\Bridges\NextrasDbal;
 
-use DateTime;
+use DateTimeInterface;
 use Nextras\Dbal\Connection;
 use Nextras\Dbal\Drivers\IDriver;
 use Nextras\Dbal\Result\Row;
@@ -42,7 +42,7 @@ class NextrasAdapter implements IDbal
 	}
 
 
-	public function query($sql)
+	public function query(string $sql): array
 	{
 		return array_map(
 			function (Row $row) { return $row->toArray(); },
@@ -51,14 +51,14 @@ class NextrasAdapter implements IDbal
 	}
 
 
-	public function exec($sql)
+	public function exec(string $sql): int
 	{
 		$this->conn->query('%raw', $sql);
 		return $this->conn->getAffectedRows();
 	}
 
 
-	public function escapeString($value)
+	public function escapeString(string $value): string
 	{
 		if ($this->version >= 2) {
 			return $this->conn->getDriver()->convertStringToSql($value);
@@ -68,13 +68,13 @@ class NextrasAdapter implements IDbal
 	}
 
 
-	public function escapeInt($value)
+	public function escapeInt(int $value): string
 	{
 		return (string) (int) $value;
 	}
 
 
-	public function escapeBool($value)
+	public function escapeBool(bool $value): string
 	{
 		if ($this->version >= 5) {
 			return $this->conn->getPlatform()->formatBool($value);
@@ -86,7 +86,7 @@ class NextrasAdapter implements IDbal
 	}
 
 
-	public function escapeDateTime(DateTime $value)
+	public function escapeDateTime(DateTimeInterface $value): string
 	{
 		if ($this->version >= 5) {
 			return $this->conn->getPlatform()->formatDateTime($value);
@@ -98,7 +98,7 @@ class NextrasAdapter implements IDbal
 	}
 
 
-	public function escapeIdentifier($value)
+	public function escapeIdentifier(string $value): string
 	{
 		if ($this->version >= 5) {
 			return $this->conn->getPlatform()->formatIdentifier($value);

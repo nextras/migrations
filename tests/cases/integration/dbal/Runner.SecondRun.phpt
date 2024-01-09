@@ -17,7 +17,7 @@ require __DIR__ . '/../../../bootstrap.php';
 
 class SecondRunTest extends IntegrationTestCase
 {
-	public function testReset()
+	public function testReset(): void
 	{
 		$this->driver->loadFile($this->fixtureDir . '/3ok.sql');
 		Assert::count(3, $this->driver->getAllMigrations());
@@ -39,7 +39,7 @@ class SecondRunTest extends IntegrationTestCase
 	}
 
 
-	public function testContinueOk()
+	public function testContinueOk(): void
 	{
 		$this->driver->loadFile($this->fixtureDir . '/3ok.sql');
 		Assert::count(3, $this->driver->getAllMigrations());
@@ -58,7 +58,7 @@ class SecondRunTest extends IntegrationTestCase
 	}
 
 
-	public function testContinueError()
+	public function testContinueError(): void
 	{
 		$this->driver->loadFile($this->fixtureDir . '/2ok, 1ko.sql');
 		Assert::count(3, $this->driver->getAllMigrations());
@@ -77,7 +77,7 @@ class SecondRunTest extends IntegrationTestCase
 	}
 
 
-	public function testInit()
+	public function testInit(): void
 	{
 		$options = Tester\Environment::loadData();
 		$this->driver->loadFile($this->fixtureDir . '/3ok.sql');

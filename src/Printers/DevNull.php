@@ -21,32 +21,32 @@ use Nextras\Migrations\IPrinter;
  */
 class DevNull implements IPrinter
 {
-	public function printIntro($mode)
+	public function printIntro(string $mode): void
 	{
 	}
 
 
-	public function printToExecute(array $toExecute)
+	public function printToExecute(array $toExecute): void
 	{
 	}
 
 
-	public function printExecute(File $file, $count, $time)
+	public function printExecute(File $file, int $count, float $time): void
 	{
 	}
 
 
-	public function printDone()
+	public function printDone(): void
 	{
 	}
 
 
-	public function printError(Exception $e)
+	public function printError(Exception $e): void
 	{
 	}
 
 
-	public function printSource($code)
+	public function printSource(string $code): void
 	{
 	}
 }

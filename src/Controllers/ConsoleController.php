@@ -10,12 +10,13 @@
 namespace Nextras\Migrations\Controllers;
 
 use Nextras\Migrations\Engine;
+use Nextras\Migrations\IPrinter;
 use Nextras\Migrations\Printers;
 
 
 class ConsoleController extends BaseController
 {
-	public function run()
+	public function run(): void
 	{
 		$this->processArguments();
 		$this->printHeader();
@@ -24,7 +25,7 @@ class ConsoleController extends BaseController
 	}
 
 
-	private function printHeader()
+	private function printHeader(): void
 	{
 		if ($this->mode === Engine\Runner::MODE_INIT) {
 			printf("-- Migrations init\n");
@@ -35,7 +36,7 @@ class ConsoleController extends BaseController
 	}
 
 
-	private function processArguments()
+	private function processArguments(): void
 	{
 		$arguments = array_slice($_SERVER['argv'], 1);
 		$help = count($arguments) === 0;
@@ -88,7 +89,7 @@ class ConsoleController extends BaseController
 	}
 
 
-	protected function createPrinter()
+	protected function createPrinter(): IPrinter
 	{
 		return new Printers\Console();
 	}

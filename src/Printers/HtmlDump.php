@@ -27,7 +27,7 @@ class HtmlDump implements IPrinter
 	private $index;
 
 
-	public function printIntro($mode)
+	public function printIntro(string $mode): void
 	{
 		if ($mode === Runner::MODE_RESET) {
 			$this->output('     RESET: All tables, views and data has been destroyed!');
@@ -37,7 +37,7 @@ class HtmlDump implements IPrinter
 	}
 
 
-	public function printToExecute(array $toExecute)
+	public function printToExecute(array $toExecute): void
 	{
 		if ($toExecute) {
 			$this->output('     ' . count($toExecute) . ' migrations need to be executed.');
@@ -50,9 +50,9 @@ class HtmlDump implements IPrinter
 	}
 
 
-	public function printExecute(File $file, $count, $time)
+	public function printExecute(File $file, int $count, float $time): void
 	{
-		$format = '%0' . strlen($this->count) . 'd';
+		$format = '%0' . strlen((string) $this->count) . 'd';
 		$name = htmlspecialchars($file->group->name . '/' . $file->name);
 		$this->output(sprintf(
 			$format . '/' . $format . ': <strong>%s</strong> (%d %s, %0.3f s)',
@@ -61,31 +61,26 @@ class HtmlDump implements IPrinter
 	}
 
 
-	public function printDone()
+	public function printDone(): void
 	{
 		$this->output('OK', 'success');
 	}
 
 
-	public function printError(Exception $e)
+	public function printError(Exception $e): void
 	{
 		$this->output('ERROR: ' . htmlspecialchars($e->getMessage()), 'error');
 		throw $e;
 	}
 
 
-	public function printSource($code)
+	public function printSource(string $code): void
 	{
 		$this->output($code);
 	}
 
 
-	/**
-	 * @param  string $s HTML string
-	 * @param  string $class
-	 * @return void
-	 */
-	protected function output($s, $class = 'info')
+	protected function output(string $s, string $class = 'info'): void
 	{
 		echo "<div class=\"$class\">$s</div>\n";
 	}

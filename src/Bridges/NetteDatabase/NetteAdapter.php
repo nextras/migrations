@@ -9,7 +9,7 @@
 
 namespace Nextras\Migrations\Bridges\NetteDatabase;
 
-use DateTime;
+use DateTimeInterface;
 use Nette;
 use Nextras\Migrations\IDbal;
 use PDO;
@@ -27,7 +27,7 @@ class NetteAdapter implements IDbal
 	}
 
 
-	public function query($sql)
+	public function query(string $sql): array
 	{
 		return array_map(
 			function ($row) { return (array) $row; },
@@ -36,37 +36,37 @@ class NetteAdapter implements IDbal
 	}
 
 
-	public function exec($sql)
+	public function exec(string $sql): int
 	{
 		return $this->conn->query($sql)->getRowCount();
 	}
 
 
-	public function escapeString($value)
+	public function escapeString(string $value): string
 	{
 		return $this->conn->quote($value, PDO::PARAM_STR);
 	}
 
 
-	public function escapeInt($value)
+	public function escapeInt(int $value): string
 	{
 		return $this->conn->quote((string) $value, PDO::PARAM_INT);
 	}
 
 
-	public function escapeBool($value)
+	public function escapeBool(bool $value): string
 	{
 		return $this->escapeString((string) (int) $value);
 	}
 
 
-	public function escapeDateTime(DateTime $value)
+	public function escapeDateTime(DateTimeInterface $value): string
 	{
 		return $this->conn->getSupplementalDriver()->formatDateTime($value);
 	}
 
 
-	public function escapeIdentifier($value)
+	public function escapeIdentifier(string $value): string
 	{
 		return $this->conn->getSupplementalDriver()->delimite($value);
 	}

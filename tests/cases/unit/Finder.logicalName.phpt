@@ -22,11 +22,11 @@ class FinderLogicalNameTest extends Tester\TestCase
 	/** @var Finder|Mockery\MockInterface */
 	private $finder;
 
-	/** @var Group[] */
+	/** @var list<Group> */
 	private $groups;
 
 
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 		$this->finder = Mockery::mock(Nextras\Migrations\Engine\Finder::class)
@@ -44,7 +44,7 @@ class FinderLogicalNameTest extends Tester\TestCase
 	}
 
 
-	public function testSimple()
+	public function testSimple(): void
 	{
 		$this->finder->shouldReceive('getItems')
 			->with('./baseDir/structures')
@@ -62,7 +62,7 @@ class FinderLogicalNameTest extends Tester\TestCase
 	}
 
 
-	public function testComplex()
+	public function testComplex(): void
 	{
 		$this->finder->shouldReceive('getItems')
 			->with('./baseDir/structures')

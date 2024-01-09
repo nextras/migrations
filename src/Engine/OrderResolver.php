@@ -18,14 +18,13 @@ use Nextras\Migrations\LogicException;
 class OrderResolver
 {
 	/**
-	 * @param  Migration[] $migrations
-	 * @param  Group[]     $groups
-	 * @param  File[]      $files
-	 * @param  string      $mode
-	 * @return File[]
+	 * @param  list<Migration> $migrations
+	 * @param  list<Group>     $groups
+	 * @param  list<File>      $files
+	 * @return list<File>
 	 * @throws LogicException
 	 */
-	public function resolve(array $migrations, array $groups, array $files, $mode)
+	public function resolve(array $migrations, array $groups, array $files, string $mode): array
 	{
 		$groups = $this->getAssocGroups($groups);
 		$this->validateGroups($groups);
@@ -107,13 +106,13 @@ class OrderResolver
 
 
 	/**
-	 * @param  File[] $files
-	 * @param  array  $groups (name => Group)
-	 * @return File[] sorted
+	 * @param  list<File> $files
+	 * @param  array<string, Group>  $groups (name => Group)
+	 * @return list<File> sorted
 	 */
-	protected function sortFiles(array $files, array $groups)
+	protected function sortFiles(array $files, array $groups): array
 	{
-		usort($files, function (File $a, File $b) use ($groups) {
+		usort($files, function (File $a, File $b) use ($groups): int {
 			$cmp = strcmp($a->name, $b->name);
 			if ($cmp === 0 && $a !== $b) {
 				$cmpA = $this->isGroupDependentOn($groups, $a->group, $b->group);
@@ -144,16 +143,14 @@ class OrderResolver
 	/**
 	 * Returns true if groupA depends on groupB.
 	 *
-	 * @param  array $groups (name => Group)
-	 * @param  Group $groupA
-	 * @param  Group $groupB
-	 * @return bool
+	 * @param  array<string, Group> $groups (name => Group)
 	 */
-	protected function isGroupDependentOn(array $groups, Group $groupA, Group $groupB)
+	protected function isGroupDependentOn(array $groups, Group $groupA, Group $groupB): bool
 	{
 		$visited = [];
 		$queue = $groupB->dependencies;
 		$queue[] = $groupB->name;
+
 		while ($node = array_shift($queue)) {
 			if (isset($visited[$node])) {
 				continue;
@@ -168,74 +165,100 @@ class OrderResolver
 				$queue[] = $dep;
 			}
 		}
+
 		return false;
 	}
 
 
-	protected function getAssocMigrations(array $migrations)
+    /**
+     * @param  list<Migration> $migrations
+     * @return array<string, array<string, Migration>> (group => (filename => Migration))
+     */
+	protected function getAssocMigrations(array $migrations): array
 	{
 		$assoc = [];
+
 		foreach ($migrations as $migration) {
 			$assoc[$migration->group][$migration->filename] = $migration;
 		}
+
 		return $assoc;
 	}
 
 
-	protected function getAssocGroups(array $groups)
+    /**
+     * @param  list<Group> $groups
+     * @return array<string, Group> (name => Group)
+     */
+	protected function getAssocGroups(array $groups): array
 	{
 		$assoc = [];
+
 		foreach ($groups as $group) {
 			$assoc[$group->name] = $group;
 		}
+
 		return $assoc;
 	}
 
 
-	protected function getAssocFiles(array $files)
+    /**
+     * @param  list<File> $files
+     * @return array<string, array<string, File>> (group => (filename => File))
+     */
+	protected function getAssocFiles(array $files): array
 	{
 		$assoc = [];
+
 		foreach ($files as $file) {
 			$assoc[$file->group->name][$file->name] = $file;
 		}
+
 		return $assoc;
 	}
 
 
-	protected function getFlatFiles(array $files)
+    /**
+     * @param  array<string, array<string, File>> $files
+     * @return list<File>
+     */
+	protected function getFlatFiles(array $files): array
 	{
 		$flat = [];
+
 		foreach ($files as $tmp) {
 			foreach ($tmp as $file) {
 				$flat[] = $file;
 			}
 		}
+
 		return $flat;
 	}
 
 
 	/**
-	 * @param  File[] $files
-	 * @return File[] first file for each group
+	 * @param  list<File> $files
+	 * @return array<string, File> (group => File)
 	 */
-	protected function getFirstFiles(array $files)
+	protected function getFirstFiles(array $files): array
 	{
 		$firstFiles = [];
+
 		foreach ($files as $file) {
 			if (!isset($firstFiles[$file->group->name])) {
 				$firstFiles[$file->group->name] = $file;
 			}
 		}
+
 		return $firstFiles;
 	}
 
 
 	/**
-	 * @param  Group[] $groups
-	 * @return void
+	 * @param  array<Group> $groups
 	 * @throws LogicException
 	 */
-	private function validateGroups(array $groups)
+	private function validateGroups(array $groups): void
 	{
 		foreach ($groups as $group) {
 			foreach ($group->dependencies as $dependency) {

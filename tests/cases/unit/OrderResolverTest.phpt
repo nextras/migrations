@@ -21,7 +21,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 class OrderResolverTest extends Tester\TestCase
 {
-	public function testFirstRun()
+	public function testFirstRun(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -39,7 +39,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testFirstRunTwoGroups()
+	public function testFirstRunTwoGroups(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -59,7 +59,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testSecondRunContinue()
+	public function testSecondRunContinue(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -78,7 +78,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testSecondRunContinueNothingToDo()
+	public function testSecondRunContinueNothingToDo(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -98,7 +98,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testSecondRunContinueTwoGroups()
+	public function testSecondRunContinueTwoGroups(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -123,7 +123,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testSecondRunContinueDisabledGroup()
+	public function testSecondRunContinueDisabledGroup(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -146,7 +146,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testSecondRunReset()
+	public function testSecondRunReset(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -164,7 +164,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testRunWithDisabledGroups()
+	public function testRunWithDisabledGroups(): void
 	{
 		$groupA = $this->createGroup('structures');
 		$groupB = $this->createGroup('data', false, ['structures']);
@@ -181,7 +181,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testTopologicalOrder()
+	public function testTopologicalOrder(): void
 	{
 		$resolver = new OrderResolver();
 
@@ -200,7 +200,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testIndependentGroupsOrder1()
+	public function testIndependentGroupsOrder1(): void
 	{
 		$resolver = new OrderResolver();
 
@@ -222,7 +222,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testIndependentGroupsOrder2()
+	public function testIndependentGroupsOrder2(): void
 	{
 		$resolver = new OrderResolver();
 
@@ -247,7 +247,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testErrorRemovedFile()
+	public function testErrorRemovedFile(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -267,7 +267,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testErrorChangedChecksum()
+	public function testErrorChangedChecksum(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -288,7 +288,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testErrorIncompleteMigration()
+	public function testErrorIncompleteMigration(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -309,7 +309,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testErrorNewMigrationInTheMiddleOfExistingOnes()
+	public function testErrorNewMigrationInTheMiddleOfExistingOnes(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -332,7 +332,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testErrorNewMigrationInTheMiddleOfExistingOnes2()
+	public function testErrorNewMigrationInTheMiddleOfExistingOnes2(): void
 	{
 		$resolver = new OrderResolver();
 
@@ -359,7 +359,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testErrorNewMigrationInTheMiddleOfExistingOnes3()
+	public function testErrorNewMigrationInTheMiddleOfExistingOnes3(): void
 	{
 		$resolver = new OrderResolver();
 
@@ -385,7 +385,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testErrorMigrationDependingOnUnknownGroup()
+	public function testErrorMigrationDependingOnUnknownGroup(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -402,7 +402,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testErrorGroupDependingOnUnknownGroup()
+	public function testErrorGroupDependingOnUnknownGroup(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -419,7 +419,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testErrorDisablingRequiredGroup()
+	public function testErrorDisablingRequiredGroup(): void
 	{
 		$resolver = new OrderResolver;
 
@@ -437,7 +437,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testErrorAmbiguousLogicalName()
+	public function testErrorAmbiguousLogicalName(): void
 	{
 		$resolver = new OrderResolver();
 
@@ -458,7 +458,7 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	public function testErrorAmbiguousLogicalNameCyclic()
+	public function testErrorAmbiguousLogicalNameCyclic(): void
 	{
 		$resolver = new OrderResolver();
 
@@ -479,28 +479,31 @@ class OrderResolverTest extends Tester\TestCase
 	}
 
 
-	private function createMigration($groupName, $fileName, $checksum = null, $completed = true)
+	private function createMigration(string $groupName, string $fileName, ?string $checksum = null, bool $completed = true): Migration
 	{
 		$migration = new Migration;
 		$migration->group = $groupName;
 		$migration->filename = $fileName;
-		$migration->checksum = $checksum ?: "$fileName.md5";
+		$migration->checksum = $checksum ?? "$fileName.md5";
 		$migration->completed = $completed;
 		return $migration;
 	}
 
 
-	private function createFile($name, $group, $checksum = null)
+	private function createFile(string $name, Group $group, ?string $checksum = null): File
 	{
 		$file = new File;
 		$file->name = $name;
 		$file->group = $group;
-		$file->checksum = $checksum ?: "$name.md5";
+		$file->checksum = $checksum ?? "$name.md5";
 		return $file;
 	}
 
 
-	private function createGroup($name, $enabled = true, $deps = [])
+	/**
+	 * @param  list<string> $deps
+	 */
+	private function createGroup(string $name, bool $enabled = true, array $deps = []): Group
 	{
 		$group = new Group;
 		$group->name = $name;

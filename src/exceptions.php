@@ -9,11 +9,13 @@
 
 namespace Nextras\Migrations;
 
+use Throwable;
+
 
 /**
  * Marker interface.
  */
-interface Exception
+interface Exception extends Throwable
 {
 }
 

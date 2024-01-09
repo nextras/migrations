@@ -7,7 +7,7 @@ use Nextras\Migrations\Printers\Console;
 
 class TestPrinter extends Console
 {
-	/** @var string[] output lines */
+	/** @var list<string> output lines */
 	public $lines = [];
 
 	/** @var string whole output */
@@ -21,7 +21,7 @@ class TestPrinter extends Console
 	}
 
 
-	protected function output($s, $color = NULL)
+	protected function output(string $s, string $color = null): void
 	{
 		$this->lines[] = preg_replace('#; \d+\.\d+ s#', '; XX s', $s);
 		$this->out .= "$s\n";

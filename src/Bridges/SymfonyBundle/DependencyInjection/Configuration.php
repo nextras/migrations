@@ -15,7 +15,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-	public function getConfigTreeBuilder()
+	public function getConfigTreeBuilder(): TreeBuilder
 	{
 		if (!method_exists(TreeBuilder::class, '__construct')) { // Symfony < 4.2.0
 			$treeBuilder = new TreeBuilder();

@@ -37,20 +37,13 @@ class CreateCommand extends BaseCommand
 	protected $defaultContentSource = self::CONTENT_SOURCE_DIFF;
 
 
-	/**
-	 * @param  string $defaultContentSource
-	 * @return void
-	 */
-	public function setDefaultContentSource($defaultContentSource)
+	public function setDefaultContentSource(string $defaultContentSource): void
 	{
 		$this->defaultContentSource = $defaultContentSource;
 	}
 
 
-	/**
-	 * @return void
-	 */
-	protected function configure()
+	protected function configure(): void
 	{
 		$this->setName(self::$defaultName);
 		$this->setDescription(self::$defaultDescription);
@@ -65,12 +58,7 @@ class CreateCommand extends BaseCommand
 	}
 
 
-	/**
-	 * @param  InputInterface  $input
-	 * @param  OutputInterface $output
-	 * @return int
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		$group = $this->getGroup($input->getArgument('type'));
 		$path = $this->getPath($group, $input->getArgument('label'));
@@ -83,12 +71,7 @@ class CreateCommand extends BaseCommand
 	}
 
 
-	/**
-	 * @param  Group  $group
-	 * @param  string $label
-	 * @return string
-	 */
-	protected function getPath(Group $group, $label)
+	protected function getPath(Group $group, string $label): string
 	{
 		$dir = $group->directory;
 		$extension = $group->generator ? $group->generator->getExtension() : 'sql';
@@ -108,11 +91,7 @@ class CreateCommand extends BaseCommand
 	}
 
 
-	/**
-	 * @param  string $type
-	 * @return Group
-	 */
-	protected function getGroup($type)
+	protected function getGroup(string $type): Group
 	{
 		$groupNamePattern = preg_quote($type, '~');
 		$groupNamePattern = str_replace('\\-', '\\w*+\\-', $groupNamePattern);
@@ -143,12 +122,7 @@ class CreateCommand extends BaseCommand
 	}
 
 
-	/**
-	 * @param  string $label
-	 * @param  string $extension
-	 * @return string
-	 */
-	protected function getFileName($label, $extension)
+	protected function getFileName(string $label, string $extension): string
 	{
 		if (preg_match('#^[a-z0-9.-]++$#i', $label)) {
 			$slug = strtolower($label);
@@ -171,12 +145,7 @@ class CreateCommand extends BaseCommand
 	}
 
 
-	/**
-	 * @param  string      $dir
-	 * @param  string|NULL $found
-	 * @return bool
-	 */
-	protected function hasNumericSubdirectory($dir, &$found)
+	protected function hasNumericSubdirectory(string $dir, ?string &$found): bool
 	{
 		$items = @scandir($dir); // directory may not exist
 
@@ -193,10 +162,7 @@ class CreateCommand extends BaseCommand
 	}
 
 
-	/**
-	 * @return string
-	 */
-	protected function getTypeArgDescription()
+	protected function getTypeArgDescription(): string
 	{
 		$options = [];
 		$groups = $this->config->getGroups();
@@ -222,11 +188,7 @@ class CreateCommand extends BaseCommand
 	}
 
 
-	/**
-	 * @param  InputInterface $input
-	 * @return string
-	 */
-	protected function getFileContentSource(InputInterface $input)
+	protected function getFileContentSource(InputInterface $input): string
 	{
 		if ($input->getOption('diff')) {
 			return self::CONTENT_SOURCE_DIFF;
@@ -243,12 +205,7 @@ class CreateCommand extends BaseCommand
 	}
 
 
-	/**
-	 * @param  Group  $group
-	 * @param  string $source
-	 * @return string
-	 */
-	protected function getFileContent(Group $group, $source)
+	protected function getFileContent(Group $group, string $source): string
 	{
 		if ($source === self::CONTENT_SOURCE_DIFF && $group->generator !== null) {
 			return $group->generator->generateContent();
@@ -262,13 +219,7 @@ class CreateCommand extends BaseCommand
 	}
 
 
-	/**
-	 * @param  string          $path
-	 * @param  string          $content
-	 * @param  OutputInterface $output
-	 * @return void
-	 */
-	protected function createFile($path, $content, OutputInterface $output)
+	protected function createFile(string $path, string $content, OutputInterface $output): void
 	{
 		@mkdir(dirname($path), 0777, true); // directory may already exist
 

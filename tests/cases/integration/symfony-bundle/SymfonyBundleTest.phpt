@@ -24,7 +24,7 @@ class SymfonyBundleTest extends TestCase
 	private $symfonyKernel;
 
 
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -48,7 +48,7 @@ class SymfonyBundleTest extends TestCase
 	}
 
 
-	public function testMigrationsReset()
+	public function testMigrationsReset(): void
 	{
 		$application = new Application($this->symfonyKernel);
 
@@ -58,7 +58,7 @@ class SymfonyBundleTest extends TestCase
 	}
 
 
-	public function testMigrationsContinue()
+	public function testMigrationsContinue(): void
 	{
 		$application = new Application($this->symfonyKernel);
 

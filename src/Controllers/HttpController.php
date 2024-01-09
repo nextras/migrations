@@ -10,6 +10,7 @@
 namespace Nextras\Migrations\Controllers;
 
 use Nextras\Migrations\Engine;
+use Nextras\Migrations\IPrinter;
 use Nextras\Migrations\Printers;
 
 
@@ -22,14 +23,14 @@ class HttpController extends BaseController
 	private $error;
 
 
-	public function run()
+	public function run(): void
 	{
 		$this->processArguments();
 		$this->executeAction();
 	}
 
 
-	private function processArguments()
+	private function processArguments(): void
 	{
 		if (isset($_GET['action'])) {
 			if ($_GET['action'] === 'run' || $_GET['action'] === 'css') {
@@ -87,14 +88,14 @@ class HttpController extends BaseController
 	}
 
 
-	private function executeAction()
+	private function executeAction(): void
 	{
 		$method = 'action' . ucfirst($this->action);
 		$this->$method();
 	}
 
 
-	private function actionIndex()
+	private function actionIndex(): void
 	{
 		$combinations = $this->getGroupsCombinations();
 		$this->printHeader();
@@ -122,7 +123,7 @@ class HttpController extends BaseController
 	}
 
 
-	private function actionRun()
+	private function actionRun(): void
 	{
 		$groups = $this->registerGroups();
 		$groups = implode(' + ', $groups);
@@ -135,14 +136,14 @@ class HttpController extends BaseController
 	}
 
 
-	private function actionCss()
+	private function actionCss(): void
 	{
 		header('Content-Type: text/css', true);
 		readfile(__DIR__ . '/templates/main.css');
 	}
 
 
-	private function actionError()
+	private function actionError(): void
 	{
 		$this->printHeader();
 		echo "<h1>Migrations – error</h1>\n";
@@ -150,7 +151,10 @@ class HttpController extends BaseController
 	}
 
 
-	private function getGroupsCombinations()
+    /**
+     * @return list<list<string>>
+     */
+	private function getGroupsCombinations(): array
 	{
 		$groups = [];
 		$index = 1;
@@ -183,13 +187,13 @@ class HttpController extends BaseController
 	}
 
 
-	private function printHeader()
+	private function printHeader(): void
 	{
 		readfile(__DIR__ . '/templates/header.phtml');
 	}
 
 
-	protected function createPrinter()
+	protected function createPrinter(): IPrinter
 	{
 		return new Printers\HtmlDump();
 	}

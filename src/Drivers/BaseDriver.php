@@ -31,18 +31,14 @@ abstract class BaseDriver implements IDriver
 	protected $tableNameQuoted;
 
 
-	/**
-	 * @param  IDbal  $dbal
-	 * @param  string $tableName
-	 */
-	public function __construct(IDbal $dbal, $tableName = 'migrations')
+	public function __construct(IDbal $dbal, string $tableName = 'migrations')
 	{
 		$this->dbal = $dbal;
 		$this->tableName = $tableName;
 	}
 
 
-	public function setupConnection()
+	public function setupConnection(): void
 	{
 		$this->tableNameQuoted = $this->dbal->escapeIdentifier($this->tableName);
 	}
@@ -56,11 +52,8 @@ abstract class BaseDriver implements IDriver
 	 * @author   Michael Moravec
 	 * @author   Jan Skrasek
 	 * @license  Apache License
-	 *
-	 * @param  string $path
-	 * @return int number of executed queries
 	 */
-	public function loadFile($path)
+	public function loadFile(string $path): int
 	{
 		$content = @file_get_contents($path);
 		if ($content === false) {
@@ -103,7 +96,7 @@ abstract class BaseDriver implements IDriver
 					break;
 
 				} elseif ($found) { // find matching quote or comment end
-					$endRe = isset($endReTable[$found]) ? $endReTable[$found] : '(' . (preg_match('~^-- |^#~', $found) ? "\n" : preg_quote($found) . "|\\\\.") . '|\z)s';
+					$endRe = $endReTable[$found] ?? '(' . (preg_match('~^-- |^#~', $found) ? "\n" : preg_quote($found) . "|\\\\.") . '|\z)s';
 					while (preg_match($endRe, $content, $match, PREG_OFFSET_CAPTURE, $parseOffset)) { //! respect sql_mode NO_BACKSLASH_ESCAPES
 						$s = $match[0][0];
 						if (strlen($s) === 0) {

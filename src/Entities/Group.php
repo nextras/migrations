@@ -26,7 +26,7 @@ class Group
 	/** @var string absolute path do directory */
 	public $directory;
 
-	/** @var string[] */
+	/** @var list<string> */
 	public $dependencies;
 
 	/** @var IDiffGenerator|null */

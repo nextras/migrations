@@ -13,6 +13,7 @@ use Nextras\Migrations\Engine;
 use Nextras\Migrations\Entities\Group;
 use Nextras\Migrations\IDriver;
 use Nextras\Migrations\IExtensionHandler;
+use Nextras\Migrations\IPrinter;
 
 
 abstract class BaseController
@@ -23,7 +24,7 @@ abstract class BaseController
 	/** @var string */
 	protected $mode;
 
-	/** @var array (name => Group) */
+	/** @var array<string, Group> (name => Group) */
 	protected $groups;
 
 
@@ -36,10 +37,13 @@ abstract class BaseController
 	}
 
 
-	abstract public function run();
+	abstract public function run(): void;
 
 
-	public function addGroup($name, $dir, array $dependencies = [])
+    /**
+     * @param  list<string>  $dependencies
+     */
+	public function addGroup(string $name, string $dir, array $dependencies = []): self
 	{
 		$group = new Group;
 		$group->name = $name;
@@ -52,32 +56,38 @@ abstract class BaseController
 	}
 
 
-	public function addExtension($extension, IExtensionHandler $handler)
+	public function addExtension(string $extension, IExtensionHandler $handler): self
 	{
 		$this->runner->addExtensionHandler($extension, $handler);
 		return $this;
 	}
 
 
-	protected function registerGroups()
+    /**
+     * @return list<string>
+     */
+	protected function registerGroups(): array
 	{
 		$enabled = [];
+
 		foreach ($this->groups as $group) {
 			$this->runner->addGroup($group);
+
 			if ($group->enabled) {
 				$enabled[] = $group->name;
 			}
 		}
+
 		return $enabled;
 	}
 
 
-	protected function setupPhp()
+	protected function setupPhp(): void
 	{
 		@set_time_limit(0);
 		@ini_set('memory_limit', '1G');
 	}
 
 
-	abstract protected function createPrinter();
+	abstract protected function createPrinter(): IPrinter;
 }

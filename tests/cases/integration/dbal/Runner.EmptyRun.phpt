@@ -15,7 +15,7 @@ require __DIR__ . '/../../../bootstrap.php';
 
 class EmptyRunTest extends IntegrationTestCase
 {
-	public function testReset()
+	public function testReset(): void
 	{
 		$this->runner->run(Runner::MODE_RESET);
 		Assert::same([
@@ -29,7 +29,7 @@ class EmptyRunTest extends IntegrationTestCase
 	}
 
 
-	protected function getGroups($dir)
+	protected function getGroups(string $dir): array
 	{
 		return [];
 	}

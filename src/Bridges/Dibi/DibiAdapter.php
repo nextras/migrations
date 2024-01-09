@@ -9,8 +9,9 @@
 
 namespace Nextras\Migrations\Bridges\Dibi;
 
-use DateTime;
+use DateTimeInterface;
 use dibi;
+use Dibi\Connection;
 use LogicException;
 use Nextras\Migrations\IDbal;
 
@@ -21,7 +22,7 @@ class DibiAdapter implements IDbal
 	private $innerAdapter;
 
 
-	public function __construct($conn)
+	public function __construct(Connection $conn)
 	{
 		if (version_compare(dibi::VERSION, '3.0.0', '>=')) {
 			$this->innerAdapter = new Dibi3Adapter($conn);
@@ -32,43 +33,43 @@ class DibiAdapter implements IDbal
 	}
 
 
-	public function query($sql)
+	public function query(string $sql): array
 	{
 		return $this->innerAdapter->query($sql);
 	}
 
 
-	public function exec($sql)
+	public function exec(string $sql): int
 	{
 		return $this->innerAdapter->exec($sql);
 	}
 
 
-	public function escapeString($value)
+	public function escapeString(string $value): string
 	{
 		return $this->innerAdapter->escapeString($value);
 	}
 
 
-	public function escapeInt($value)
+	public function escapeInt(int $value): string
 	{
 		return $this->innerAdapter->escapeInt($value);
 	}
 
 
-	public function escapeBool($value)
+	public function escapeBool(bool $value): string
 	{
 		return $this->innerAdapter->escapeBool($value);
 	}
 
 
-	public function escapeDateTime(DateTime $value)
+	public function escapeDateTime(DateTimeInterface $value): string
 	{
 		return $this->innerAdapter->escapeDateTime($value);
 	}
 
 
-	public function escapeIdentifier($value)
+	public function escapeIdentifier(string $value): string
 	{
 		return $this->innerAdapter->escapeIdentifier($value);
 	}

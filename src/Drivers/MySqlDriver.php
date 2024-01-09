@@ -22,7 +22,10 @@ use Nextras\Migrations\LockException;
  */
 class MySqlDriver extends BaseDriver implements IDriver
 {
-	public function setupConnection()
+	private const LOCK_NAME = 'Nextras.Migrations';
+
+
+	public function setupConnection(): void
 	{
 		parent::setupConnection();
 		$this->dbal->exec('SET NAMES "utf8mb4"');
@@ -32,7 +35,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function emptyDatabase()
+	public function emptyDatabase(): void
 	{
 		$rows = $this->dbal->query('SELECT DATABASE() AS `name`');
 		$dbName = $this->dbal->escapeIdentifier($rows[0]['name']);
@@ -46,25 +49,25 @@ class MySqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function beginTransaction()
+	public function beginTransaction(): void
 	{
 		$this->dbal->exec('START TRANSACTION');
 	}
 
 
-	public function commitTransaction()
+	public function commitTransaction(): void
 	{
 		$this->dbal->exec('COMMIT');
 	}
 
 
-	public function rollbackTransaction()
+	public function rollbackTransaction(): void
 	{
 		$this->dbal->exec('ROLLBACK');
 	}
 
 
-	public function lock()
+	public function lock(): void
 	{
 		$lock = $this->dbal->escapeString(self::LOCK_NAME);
 		$result = (int) $this->dbal->query("SELECT GET_LOCK(SHA1(CONCAT($lock, '-', DATABASE())), 3) AS `result`")[0]['result'];
@@ -74,7 +77,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function unlock()
+	public function unlock(): void
 	{
 		$lock = $this->dbal->escapeString(self::LOCK_NAME);
 		$result = (int) $this->dbal->query("SELECT RELEASE_LOCK(SHA1(CONCAT($lock, '-', DATABASE()))) AS `result`")[0]['result'];
@@ -84,19 +87,19 @@ class MySqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function createTable()
+	public function createTable(): void
 	{
 		$this->dbal->exec($this->getInitTableSource());
 	}
 
 
-	public function dropTable()
+	public function dropTable(): void
 	{
 		$this->dbal->exec("DROP TABLE {$this->tableNameQuoted}");
 	}
 
 
-	public function insertMigration(Migration $migration)
+	public function insertMigration(Migration $migration): void
 	{
 		$this->dbal->exec("
 			INSERT INTO {$this->tableNameQuoted}
@@ -113,7 +116,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function markMigrationAsReady(Migration $migration)
+	public function markMigrationAsReady(Migration $migration): void
 	{
 		$this->dbal->exec("
 			UPDATE {$this->tableNameQuoted}
@@ -123,7 +126,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function getAllMigrations()
+	public function getAllMigrations(): array
 	{
 		$migrations = [];
 		$result = $this->dbal->query("SELECT * FROM {$this->tableNameQuoted} ORDER BY `executed`");
@@ -153,7 +156,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function getInitTableSource()
+	public function getInitTableSource(): string
 	{
 		return preg_replace('#^\t{3}#m', '', trim("
 			CREATE TABLE IF NOT EXISTS {$this->tableNameQuoted} (
@@ -170,7 +173,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 	}
 
 
-	public function getInitMigrationsSource(array $files)
+	public function getInitMigrationsSource(array $files): string
 	{
 		$out = '';
 		foreach ($files as $file) {

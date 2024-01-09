@@ -12,15 +12,14 @@ namespace Nextras\Migrations;
 
 interface IDiffGenerator
 {
-
 	/**
-	 * @return string
+	 * @return string file extension
 	 */
-	function getExtension();
+	public function getExtension(): string;
 
 
 	/**
 	 * @return string SQL (semicolon-separated queries)
 	 */
-	function generateContent();
+	public function generateContent(): string;
 }

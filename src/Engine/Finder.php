@@ -21,12 +21,12 @@ class Finder
 	/**
 	 * Finds files.
 	 *
-	 * @param  Group[]  $groups
-	 * @param  string[] $extensions
-	 * @return File[]
+	 * @param  list<Group>  $groups
+	 * @param  list<string> $extensions
+	 * @return list<File>
 	 * @throws Exception
 	 */
-	public function find(array $groups, array $extensions)
+	public function find(array $groups, array $extensions): array
 	{
 		$files = [];
 		foreach ($groups as $group) {
@@ -53,9 +53,8 @@ class Finder
 	 * Returns logical name of migration file.
 	 *
 	 * @param  string $path relative path to group directory
-	 * @return string
 	 */
-	protected function getName($path)
+	protected function getName(string $path): string
 	{
 		$parts = explode('/', $path);
 		$dirName = implode('-', array_slice($parts, 0, -1));
@@ -68,12 +67,10 @@ class Finder
 	/**
 	 * Returns file extension.
 	 *
-	 * @param  File     $file
-	 * @param  string[] $extensions
-	 * @return string
+	 * @param  list<string> $extensions
 	 * @throws Exception
 	 */
-	protected function getExtension(File $file, array $extensions)
+	protected function getExtension(File $file, array $extensions): string
 	{
 		$fileExt = null;
 
@@ -102,11 +99,7 @@ class Finder
 	}
 
 
-	/**
-	 * @param  File $file
-	 * @return string
-	 */
-	protected function getChecksum(File $file)
+	protected function getChecksum(File $file): string
 	{
 		$content = @file_get_contents($file->path);
 		if ($content === false) {
@@ -118,11 +111,10 @@ class Finder
 
 
 	/**
-	 * @param  string $dir
-	 * @return string[]
+	 * @return list<string>
 	 * @throws IOException
 	 */
-	protected function getFilesRecursive($dir)
+	protected function getFilesRecursive(string $dir): array
 	{
 		$items = $this->getItems($dir);
 		foreach ($items as $i => $item) {
@@ -144,10 +136,9 @@ class Finder
 
 
 	/**
-	 * @param  string $dir
-	 * @return array
+	 * @return list<string>
 	 */
-	protected function getItems($dir)
+	protected function getItems(string $dir): array
 	{
 		return @scandir($dir) ?: []; // directory may not exist
 	}
