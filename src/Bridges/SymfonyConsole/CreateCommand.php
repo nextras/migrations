@@ -69,7 +69,7 @@ class CreateCommand extends BaseCommand
 	 * @param  OutputInterface $output
 	 * @return int
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		$group = $this->getGroup($input->getArgument('type'));
 		$path = $this->getPath($group, $input->getArgument('label'));

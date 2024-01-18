@@ -30,7 +30,7 @@ class ContinueCommand extends BaseCommand
 	}
 
 
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		return $this->runMigrations(Runner::MODE_CONTINUE, $this->config);
 	}
