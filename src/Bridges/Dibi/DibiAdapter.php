@@ -26,9 +26,6 @@ class DibiAdapter implements IDbal
 		if (version_compare(dibi::VERSION, '3.0.0', '>=')) {
 			$this->innerAdapter = new Dibi3Adapter($conn);
 
-		} elseif (version_compare(dibi::VERSION, '2.0.0', '>=')) {
-			$this->innerAdapter = new Dibi2Adapter($conn);
-
 		} else {
 			throw new LogicException('Unsupported dibi version');
 		}

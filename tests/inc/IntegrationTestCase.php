@@ -3,7 +3,6 @@
 namespace NextrasTests\Migrations;
 
 use Dibi;
-use DibiConnection;
 use Doctrine;
 use Nette;
 use Nextras;
@@ -131,8 +130,7 @@ abstract class IntegrationTestCase extends TestCase
 					'pgsql' => 'postgre',
 				];
 
-				$dibiConnectionClass = class_exists('Dibi\Connection') ? 'Dibi\Connection' : 'DibiConnection';
-				return new DibiAdapter(new $dibiConnectionClass([
+				return new DibiAdapter(new Dibi\Connection([
 					'host' => $options['host'],
 					'username' => $options['username'],
 					'password' => $options['password'],

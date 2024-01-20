@@ -40,7 +40,6 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	/** @var array */
 	protected $dbals = [
 		'dibi' => 'Nextras\Migrations\Bridges\Dibi\DibiAdapter',
-		'dibi2' => 'Nextras\Migrations\Bridges\Dibi\Dibi2Adapter',
 		'dibi3' => 'Nextras\Migrations\Bridges\Dibi\Dibi3Adapter',
 		'dibi4' => 'Nextras\Migrations\Bridges\Dibi\Dibi3Adapter',
 		'doctrine' => 'Nextras\Migrations\Bridges\DoctrineDbal\DoctrineAdapter',
@@ -118,8 +117,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 				continue;
 			}
 
-			$dibiClassName = version_compare(\dibi::VERSION, '3.0.0', '<') ? 'DibiConnection' : 'Dibi\Connection';
-			$conn = $builder->getByType($dibiClassName);
+			$conn = $builder->getByType('Dibi\Connection');
 			if (!$conn) {
 				continue;
 			}

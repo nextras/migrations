@@ -32,7 +32,7 @@ class Configuration implements ConfigurationInterface
 				->cannotBeEmpty()
 				->end()
 			->enumNode('dbal')
-				->values(['dibi', 'dibi2', 'dibi3', 'dibi4', 'doctrine', 'nette', 'nextras'])
+				->values(['dibi', 'dibi3', 'dibi4', 'doctrine', 'nette', 'nextras'])
 				->defaultValue('doctrine')
 				->cannotBeEmpty()
 				->end()
