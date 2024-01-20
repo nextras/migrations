@@ -4,7 +4,7 @@
 	"type": "library",
 	"license": "BSD-3-Clause",
 	"require": {
-		"php": ">=5.4"
+		"php": ">=7.1"
 	},
 	"require-dev": {
 		"dibi/dibi": "~3.0 | ~4.0",
