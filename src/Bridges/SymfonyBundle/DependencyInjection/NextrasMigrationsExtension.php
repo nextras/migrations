@@ -19,7 +19,6 @@ class NextrasMigrationsExtension extends Extension
 	/** @var array */
 	protected $dbals = [
 		'dibi' => 'Nextras\Migrations\Bridges\Dibi\DibiAdapter',
-		'dibi2' => 'Nextras\Migrations\Bridges\Dibi\Dibi2Adapter',
 		'dibi3' => 'Nextras\Migrations\Bridges\Dibi\Dibi3Adapter',
 		'dibi4' => 'Nextras\Migrations\Bridges\Dibi\Dibi3Adapter',
 		'doctrine' => 'Nextras\Migrations\Bridges\DoctrineDbal\DoctrineAdapter',
