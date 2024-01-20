@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-PHP_VERSION_MIN="50400"
-PHP_VERSION_MAX="70199"
-COMPOSER_REQUIRE="$COMPOSER_REQUIRE nette/database:~2.2"
-COMPOSER_REQUIRE="$COMPOSER_REQUIRE nette/caching:~2.2"
-DBAL="nette"
