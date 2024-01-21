@@ -2,12 +2,10 @@ x-php-service-base: &php-service-base
     deploy:
       replicas: 0
 
-    working_dir: /src
-    user: '1000:1000'
     volumes:
-      - ./src:/src/src
-      - ./tests:/src/tests
-      - ./composer.bridgeless.json:/src/composer.bridgeless.json
+      - ./src:/usr/src/app/src
+      - ./tests:/usr/src/app/tests
+      - ./composer.bridgeless.json:/usr/src/app/composer.bridgeless.json
 
 services:
   php71:
