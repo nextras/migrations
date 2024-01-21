@@ -1,7 +1,7 @@
 Nextras Migrations
 ==================
 
-[![Build Status](https://github.com/nextras/migrations/workflows/QA/badge.svg?branch=master)](https://github.com/nextras/migrations/actions?query=workflow%3AQA+branch%3Amaster)
+[![Build Status](https://github.com/nextras/migrations/actions/workflows/qa.yaml/badge.svg)](https://github.com/nextras/migrations/actions/workflows/qa.yaml)
 [![Downloads this Month](https://img.shields.io/packagist/dm/nextras/migrations.svg?style=flat)](https://packagist.org/packages/nextras/migrations)
 [![Stable Version](https://img.shields.io/packagist/v/nextras/migrations.svg?style=flat)](https://packagist.org/packages/nextras/migrations)
 
