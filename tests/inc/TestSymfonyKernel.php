@@ -35,7 +35,13 @@ class TestSymfonyKernel extends Kernel
 	}
 
 
-	public function registerBundles(): array
+	public function getProjectDir(): string
+	{
+		return TEMP_DIR . '/symfony-bundle';
+	}
+
+
+	public function registerBundles(): iterable
 	{
 		return [
 			new FrameworkBundle(),
