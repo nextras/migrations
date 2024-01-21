@@ -16,17 +16,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ContinueCommand extends BaseCommand
 {
-	/** @var string */
-	protected static $defaultName = 'migrations:continue';
+	public static function getDefaultName(): string
+	{
+		return 'migrations:continue';
+	}
 
-	/** @var string */
-	protected static $defaultDescription = 'Updates database schema by running all new migrations';
+
+	public static function getDefaultDescription(): string
+	{
+		return 'Updates database schema by running all new migrations';
+	}
 
 
 	protected function configure(): void
 	{
-		$this->setName(self::$defaultName);
-		$this->setDescription(self::$defaultDescription);
 		$this->setHelp("If table 'migrations' does not exist in current database, it is created automatically.");
 	}
 
