@@ -7,6 +7,10 @@ x-php-service-base: &php-service-base
       - ./tests:/usr/src/app/tests
       - ./composer.bridgeless.json:/usr/src/app/composer.bridgeless.json
 
+    environment:
+      PHP_EXTENSION_PGSQL: 1
+      PHP_EXTENSION_PDO_PGSQL: 1
+
 services:
   php71:
     <<: *php-service-base
