@@ -105,8 +105,8 @@ class Console implements IPrinter
 	 */
 	protected function detectColorSupport(): bool
 	{
-		return (function_exists('posix_isatty') && posix_isatty(STDOUT))
+		return defined('STDOUT') && ((function_exists('posix_isatty') && posix_isatty(STDOUT))
 			|| (function_exists('stream_isatty') && stream_isatty(STDOUT))
-			|| (function_exists('sapi_windows_vt100_support') && sapi_windows_vt100_support(STDOUT));
+			|| (function_exists('sapi_windows_vt100_support') && sapi_windows_vt100_support(STDOUT)));
 	}
 }
