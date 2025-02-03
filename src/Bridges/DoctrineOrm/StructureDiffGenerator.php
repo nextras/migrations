@@ -52,9 +52,9 @@ class StructureDiffGenerator implements IDiffGenerator
 	 */
 	protected function getUpdateQueries(): array
 	{
-		$cache = $this->entityManager->getConfiguration()->getMetadataCacheImpl();
-		if ($cache instanceof ClearableCache) {
-			$cache->deleteAll();
+		$cache = $this->entityManager->getConfiguration()->getMetadataCache();
+		if ($cache !== null) {
+			$cache->clear();
 		}
 
 		$schemaTool = new SchemaTool($this->entityManager);
