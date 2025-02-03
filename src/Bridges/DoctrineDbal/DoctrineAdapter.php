@@ -44,30 +44,30 @@ class DoctrineAdapter implements IDbal
 
 	public function escapeString(string $value): string
 	{
-		return $this->conn->quote($value, 'string');
+		return $this->conn->getDatabasePlatform()->quoteStringLiteral($value);
 	}
 
 
 	public function escapeInt(int $value): string
 	{
-		return $this->conn->quote($value, 'integer');
+		return (string) $value;
 	}
 
 
 	public function escapeBool(bool $value): string
 	{
-		return $this->conn->quote($value, 'boolean');
+		return (string) $this->conn->getDatabasePlatform()->convertBooleans($value);
 	}
 
 
 	public function escapeDateTime(DateTimeInterface $value): string
 	{
-		return $this->conn->quote($value, 'datetime');
+		return $this->escapeString($value->format($this->conn->getDatabasePlatform()->getDateTimeFormatString()));
 	}
 
 
 	public function escapeIdentifier(string $value): string
 	{
-		return $this->conn->quoteIdentifier($value);
+		return $this->conn->getDatabasePlatform()->quoteIdentifier($value);
 	}
 }
