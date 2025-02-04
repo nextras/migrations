@@ -56,7 +56,7 @@ class DoctrineAdapter implements IDbal
 
 	public function escapeBool(bool $value): string
 	{
-		return (string) $this->conn->getDatabasePlatform()->convertBooleans($value);
+		return $this->escapeString((string) (int) $value);
 	}
 
 
