@@ -48,16 +48,32 @@ class DefaultConfiguration implements IConfiguration
 	/** @var ?IDiffGenerator */
 	protected $dummyDataDiffGenerator;
 
+	/** @var bool */
+	protected $checkChecksum;
+
+	/** @var bool */
+	protected $checkMissingPreviousExecuted;
 
 	/**
 	 * @param  array<string, mixed> $phpParams
 	 */
-	public function __construct(string $dir, IDriver $driver, bool $withDummyData = true, array $phpParams = [])
+	public function __construct(
+		string $dir,
+		IDriver $driver,
+		bool $withDummyData = true,
+		array $phpParams = [],
+		bool $checkChecksum,
+		bool $checkDependMigration,
+		bool $checkMissingPreviousExecuted,
+	)
 	{
 		$this->dir = $dir;
 		$this->driver = $driver;
 		$this->withDummyData = $withDummyData;
 		$this->phpParams = $phpParams;
+		$this->checkChecksum = $checkChecksum;
+		$this->checkDependMigration = $checkDependMigration;
+		$this->checkMissingPreviousExecuted = $checkMissingPreviousExecuted;
 	}
 
 
@@ -66,6 +82,9 @@ class DefaultConfiguration implements IConfiguration
 		if ($this->groups === null) {
 			$structures = new Group();
 			$structures->enabled = true;
+			$structures->checkChecksum = $this->checkChecksum;
+			$structures->checkDependMigration = $this->checkDependMigration;
+			$structures->checkMissingPreviousExecuted = $this->checkMissingPreviousExecuted;
 			$structures->name = 'structures';
 			$structures->directory = $this->dir . '/structures';
 			$structures->dependencies = [];
@@ -73,12 +92,18 @@ class DefaultConfiguration implements IConfiguration
 
 			$basicData = new Group();
 			$basicData->enabled = true;
+			$basicData->checkChecksum = $this->checkChecksum;
+			$basicData->checkDependMigration = $this->checkDependMigration;
+			$basicData->checkMissingPreviousExecuted = $this->checkMissingPreviousExecuted;
 			$basicData->name = 'basic-data';
 			$basicData->directory = $this->dir . '/basic-data';
 			$basicData->dependencies = ['structures'];
 
 			$dummyData = new Group();
 			$dummyData->enabled = $this->withDummyData;
+			$dummyData->checkChecksum = $this->checkChecksum;
+			$basicData->checkDependMigration = $this->checkDependMigration;
+			$dummyData->checkMissingPreviousExecuted = $this->checkMissingPreviousExecuted;
 			$dummyData->name = 'dummy-data';
 			$dummyData->directory = $this->dir . '/dummy-data';
 			$dummyData->dependencies = ['structures', 'basic-data'];

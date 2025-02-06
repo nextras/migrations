@@ -40,16 +40,26 @@ abstract class BaseController
 	abstract public function run(): void;
 
 
-    /**
-     * @param  list<string>  $dependencies
-     */
-	public function addGroup(string $name, string $dir, array $dependencies = []): self
+	/**
+	 * @param  list<string>  $dependencies
+	 */
+	public function addGroup(
+		string $name,
+		string $dir,
+		array $dependencies = [],
+		bool $checkChecksum = true,
+		bool $checkMissingPreviousExecuted = true,
+		bool $checkDependMigration = true,
+	): self
 	{
 		$group = new Group;
 		$group->name = $name;
 		$group->directory = $dir;
 		$group->dependencies = $dependencies;
 		$group->enabled = false;
+		$group->checkChecksum = $checkChecksum;
+		$group->checkMissingPreviousExecuted = $checkMissingPreviousExecuted;
+		$group->checkDependMigration = $checkDependMigration;
 
 		$this->groups[$name] = $group;
 		return $this;
