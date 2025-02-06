@@ -32,7 +32,7 @@ Development & Running Integration Tests in Docker
     ```
 3. Run tests
     ```bash
-    tests/run-in-docker.sh php81 tests/run-integration.sh
+    tests/run-in-docker.sh php84 tests/run-integration.sh
     ```
 
 License

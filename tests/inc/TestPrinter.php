@@ -21,7 +21,7 @@ class TestPrinter extends Console
 	}
 
 
-	protected function output(string $s, string $color = null): void
+	protected function output(string $s, ?string $color = null): void
 	{
 		$this->lines[] = preg_replace('#; \d+\.\d+ s#', '; XX s', $s);
 		$this->out .= "$s\n";

@@ -44,6 +44,10 @@ services:
     <<: *php-service-base
     image: thecodingmachine/php:8.3-v4-cli
 
+  php84:
+    <<: *php-service-base
+    image: thecodingmachine/php:8.4-v4-cli
+
   postgres:
     image: postgres:9.6
     environment:
