@@ -1,0 +1,16 @@
+FROM php:8.5-cli
+
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    git \
+    unzip \
+    sudo \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql mysqli pgsql \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /usr/src/app
+
+# Suppress deprecation warnings for nette/tester compatibility with PHP 8.5
+RUN echo "error_reporting = E_ALL & ~E_DEPRECATED" > /usr/local/etc/php/conf.d/php85-compat.ini

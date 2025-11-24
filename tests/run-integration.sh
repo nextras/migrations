@@ -97,7 +97,7 @@ tester_run_integration_group()
 
 	"$PROJECT_DIR/vendor/bin/tester" \
 		-C \
-		-o console \
+		-o console: \
 		"$PROJECT_DIR/tests/cases/integration/$INTEGRATION_GROUP"
 }
 

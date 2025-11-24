@@ -48,6 +48,12 @@ services:
     <<: *php-service-base
     image: thecodingmachine/php:8.4-v4-cli
 
+  php85:
+    <<: *php-service-base
+    build:
+      context: .
+      dockerfile: Dockerfile.php85
+
   postgres:
     image: postgres:9.6
     environment:
