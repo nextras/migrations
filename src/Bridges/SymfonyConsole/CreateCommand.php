@@ -12,6 +12,7 @@ namespace Nextras\Migrations\Bridges\SymfonyConsole;
 use Nette\Utils\Strings;
 use Nextras;
 use Nextras\Migrations\Entities\Group;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -20,6 +21,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 
+#[AsCommand(name: 'migrations:create', description: 'Creates new migration file with proper name (e.g. 2015-03-14-130836-label.sql)')]
 class CreateCommand extends BaseCommand
 {
 	/** content source options */

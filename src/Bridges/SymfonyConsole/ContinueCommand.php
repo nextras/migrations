@@ -10,10 +10,12 @@
 namespace Nextras\Migrations\Bridges\SymfonyConsole;
 
 use Nextras\Migrations\Engine\Runner;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
+#[AsCommand(name: 'migrations:continue', description: 'Updates database schema by running all new migrations')]
 class ContinueCommand extends BaseCommand
 {
 	public static function getDefaultName(): string

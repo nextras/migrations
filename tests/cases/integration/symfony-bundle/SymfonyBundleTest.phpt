@@ -35,6 +35,7 @@ class SymfonyBundleTest extends TestCase
 		$dbalOptions = $driversConfig[$options['driver']];
 
 		$doctrineDriver = $options['driver'] === 'mysql' ? 'pdo_mysql' : 'pdo_pgsql';
+		$serverVersion = $options['driver'] === 'mysql' ? '5.6' : '9.6';
 
 		$this->symfonyKernel = new TestSymfonyKernel(__DIR__ . '/SymfonyBundleTest.yaml', [
 			'doctrine_dbal_driver' => $doctrineDriver,
@@ -42,6 +43,7 @@ class SymfonyBundleTest extends TestCase
 			'doctrine_dbal_database' => $dbalOptions['database'],
 			'doctrine_dbal_username' => $dbalOptions['username'],
 			'doctrine_dbal_password' => $dbalOptions['password'],
+			'doctrine_dbal_server_version' => $serverVersion,
 			'nextras_migrations_driver' => $options['driver'],
 			'nextras_migrations_dir' => __DIR__ . "/../../../fixtures/$options[driver]",
 		]);
