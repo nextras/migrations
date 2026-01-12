@@ -9,6 +9,7 @@ doctrine:
     dbname: '%doctrine_dbal_database%'
     user: '%doctrine_dbal_username%'
     password: '%doctrine_dbal_password%'
+    server_version: '%doctrine_dbal_server_version%'
     logging: false
 
   orm: ~
