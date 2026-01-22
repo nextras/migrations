@@ -23,6 +23,15 @@ class Group
 	/** @var bool */
 	public $enabled;
 
+	/** @var bool */
+	public $checkChecksum = true;
+
+	/** @var bool */
+	public $checkDependMigration = true;
+
+	/** @var bool */
+	public $checkMissingPreviousExecuted = true;
+
 	/** @var string absolute path do directory */
 	public $directory;
 

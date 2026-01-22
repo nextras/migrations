@@ -17,6 +17,7 @@ use Nextras\Migrations\LogicException;
 
 class OrderResolver
 {
+
 	/**
 	 * @param  list<Migration> $migrations
 	 * @param  list<Group>     $groups
@@ -58,7 +59,7 @@ class OrderResolver
 
 				if (isset($files[$groupName][$filename])) {
 					$file = $files[$groupName][$filename];
-					if ($migration->checksum !== $file->checksum) {
+					if ($group->checkChecksum && $migration->checksum !== $file->checksum) {
 						throw new LogicException(sprintf(
 							'Previously executed migration "%s/%s" has been changed. File checksum is "%s", but executed migration had checksum "%s".',
 							$groupName, $filename, $file->checksum, $migration->checksum
@@ -66,7 +67,7 @@ class OrderResolver
 					}
 					unset($files[$groupName][$filename]);
 
-				} elseif ($group->enabled) {
+				} elseif ($group->checkMissingPreviousExecuted && $group->enabled) {
 					throw new LogicException(sprintf(
 						'Previously executed migration "%s/%s" is missing.',
 						$groupName, $filename
@@ -84,6 +85,10 @@ class OrderResolver
 
 		foreach ($groups as $group) {
 			if (!isset($lastMigrations[$group->name])) {
+				continue;
+			}
+
+			if (!$group->checkDependMigration) {
 				continue;
 			}
 
