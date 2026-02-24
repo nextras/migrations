@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+PHP_VERSION_MIN="70300"
+PHP_VERSION_MAX="80199"
+COMPOSER_REQUIRE="$COMPOSER_REQUIRE doctrine/dbal:3.2.*"
+DBAL="doctrine"
