@@ -113,7 +113,7 @@ class MigrationsExtensionTest extends TestCase
 	}
 
 
-	protected function createContainer(string $config, array $dynamicParameters = null): Nette\DI\Container
+	protected function createContainer(string $config, ?array $dynamicParameters = null): Nette\DI\Container
 	{
 		$options = parse_ini_file(__DIR__ . '/../../../drivers.ini', true)['mysql'];
 

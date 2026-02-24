@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+PHP_VERSION_MIN="70200"
+PHP_VERSION_MAX="80499"
+COMPOSER_REQUIRE="$COMPOSER_REQUIRE dibi/dibi:4.2.*"
+DBAL="dibi"
