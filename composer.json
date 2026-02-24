@@ -4,7 +4,8 @@
 	"type": "library",
 	"license": "BSD-3-Clause",
 	"require": {
-		"php": ">=8.0"
+		"php": ">=8.0",
+		"nextras/multi-query-parser": "^2.0"
 	},
 	"require-dev": {
 		"dibi/dibi": "^4.0 || ^5.0",

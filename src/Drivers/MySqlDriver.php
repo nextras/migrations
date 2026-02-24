@@ -13,6 +13,8 @@ use DateTime;
 use Nextras\Migrations\Entities\Migration;
 use Nextras\Migrations\IDriver;
 use Nextras\Migrations\LockException;
+use Nextras\MultiQueryParser\IMultiQueryParser;
+use Nextras\MultiQueryParser\MySqlMultiQueryParser;
 
 
 /**
@@ -23,6 +25,12 @@ use Nextras\Migrations\LockException;
 class MySqlDriver extends BaseDriver implements IDriver
 {
 	private const LOCK_NAME = 'Nextras.Migrations';
+
+
+	protected function createMultiQueryParser(): IMultiQueryParser
+	{
+		return new MySqlMultiQueryParser();
+	}
 
 
 	public function setupConnection(): void

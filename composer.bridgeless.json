@@ -1,4 +1,7 @@
 {
+	"require": {
+		"nextras/multi-query-parser": "^2.0"
+	},
 	"require-dev": {
 		"nette/tester": "^2.3",
 		"mockery/mockery": "^1.3"

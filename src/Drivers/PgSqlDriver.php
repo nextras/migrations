@@ -14,6 +14,8 @@ use Nextras\Migrations\Entities\Migration;
 use Nextras\Migrations\IDbal;
 use Nextras\Migrations\IDriver;
 use Nextras\Migrations\LockException;
+use Nextras\MultiQueryParser\IMultiQueryParser;
+use Nextras\MultiQueryParser\PostgreSqlMultiQueryParser;
 
 
 /**
@@ -29,6 +31,12 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	public function __construct(IDbal $dbal, string $tableName = 'migrations', protected string $schema = 'public')
 	{
 		parent::__construct($dbal, $tableName);
+	}
+
+
+	protected function createMultiQueryParser(): IMultiQueryParser
+	{
+		return new PostgreSqlMultiQueryParser();
 	}
 
 
