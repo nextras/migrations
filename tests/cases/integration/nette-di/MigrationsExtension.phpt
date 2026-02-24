@@ -73,10 +73,6 @@ class MigrationsExtensionTest extends TestCase
 
 	public function testDynamicContainerParameters(): void
 	{
-		if (!method_exists(Nette\DI\Compiler::class, 'setDynamicParameterNames')) {
-			Environment::skip('Required Nette >= 2.4.7');
-		}
-
 		$container = $this->createContainer('dynamicParameters', [
 			'rootDir' => '__rootDir__',
 		]);
