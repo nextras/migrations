@@ -12,6 +12,7 @@ namespace Nextras\Migrations\Drivers;
 use Nextras\Migrations\IDbal;
 use Nextras\Migrations\IDriver;
 use Nextras\Migrations\IOException;
+use Nextras\MultiQueryParser\IMultiQueryParser;
 
 
 /**
@@ -38,89 +39,23 @@ abstract class BaseDriver implements IDriver
 	}
 
 
-	/**
-	 * Loads and executes SQL queries from given file. Taken from Adminer (Apache License), modified.
-	 *
-	 * @author   Jakub Vrána
-	 * @author   Jan Tvrdík
-	 * @author   Michael Moravec
-	 * @author   Jan Skrasek
-	 * @license  Apache License
-	 */
+	abstract protected function createMultiQueryParser(): IMultiQueryParser;
+
+
 	public function loadFile(string $path): int
 	{
-		$content = @file_get_contents($path);
-		if ($content === false) {
-			throw new IOException("Cannot open file '$path'.");
-		}
+		$parser = $this->createMultiQueryParser();
 
-		$queryOffset = 0;
-		$parseOffset = 0;
-		$queries = 0;
-
-		$space = "(?:\\s|/\\*.*\\*/|(?:#|-- )[^\\n]*(?:\\n|\\z)|--(?:\\n|\\z))";
-		$spacesRe = "~\\G{$space}*\\z~";
-		$delimiter = ';';
-		$delimiterRe = "~\\G{$space}*DELIMITER\\s+(\\S+)~i";
-
-		$openRe = $this instanceof PgSqlDriver ? '[\'"]|/\*|-- |\z|\$[^$]*\$' : '[\'"`#]|/\*|-- |\z';
-		$parseRe = "(;|$openRe)";
-		$endReTable = [
-			'\'' => '(\'|\\\\.|\z)s',
-			'"' => '("|\\\\.|\z)s',
-			'/*' => '(\*/|\z)',
-			'[' => '(]|\z)',
-		];
-
-		while (true) {
-			while (preg_match($delimiterRe, $content, $match, 0, $queryOffset)) {
-				$delimiter = $match[1];
-				$queryOffset += strlen($match[0]);
-				$parseOffset += strlen($match[0]);
-				$parseRe = '(' . preg_quote($delimiter) . "|$openRe)";
+		try {
+			$queries = 0;
+			foreach ($parser->parseFile($path) as $query) {
+				$this->dbal->exec($query);
+				$queries++;
 			}
+			return $queries;
 
-			while (true) {
-				preg_match($parseRe, $content, $match, PREG_OFFSET_CAPTURE, $parseOffset); // should always match
-				$found = $match[0][0];
-				$parseOffset = $match[0][1] + strlen($found);
-
-				if ($found === $delimiter) { // delimited query
-					$queryLength = $match[0][1] - $queryOffset;
-					break;
-
-				} elseif ($found) { // find matching quote or comment end
-					$endRe = $endReTable[$found] ?? '(' . (preg_match('~^-- |^#~', $found) ? "\n" : preg_quote($found) . "|\\\\.") . '|\z)s';
-					while (preg_match($endRe, $content, $match, PREG_OFFSET_CAPTURE, $parseOffset)) { //! respect sql_mode NO_BACKSLASH_ESCAPES
-						$s = $match[0][0];
-						if (strlen($s) === 0) {
-							break 3;
-						}
-
-						$parseOffset = $match[0][1] + strlen($s);
-						if ($s[0] !== '\\') {
-							continue 2;
-						}
-					}
-
-				} else { // last query or EOF
-					if (preg_match($spacesRe, $content, $_, 0, $queryOffset)) {
-						break 2;
-
-					} else {
-						$queryLength = $match[0][1] - $queryOffset;
-						break;
-					}
-				}
-			}
-
-			$q = substr($content, $queryOffset, $queryLength);
-
-			$queries++;
-			$this->dbal->exec($q);
-			$queryOffset = $parseOffset;
+		} catch (\Nextras\MultiQueryParser\Exception\RuntimeException $e) {
+			throw new IOException($e->getMessage(), 0, $e);
 		}
-
-		return $queries;
 	}
 }

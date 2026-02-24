@@ -8,6 +8,7 @@ namespace NextrasTests\Migrations;
 
 use Mockery;
 use Nextras;
+use Nextras\MultiQueryParser\MySqlMultiQueryParser;
 use Tester;
 use Tester\Assert;
 
@@ -25,7 +26,9 @@ class BaseDriverTest extends Tester\TestCase
 		$dbal->shouldReceive('escapeIdentifier')->with('migrations')->andReturn('migrations');
 
 		$driver = Mockery::mock(Nextras\Migrations\Drivers\BaseDriver::class, array($dbal));
+		$driver->shouldAllowMockingProtectedMethods();
 		$driver->shouldDeferMissing();
+		$driver->shouldReceive('createMultiQueryParser')->andReturn(new MySqlMultiQueryParser());
 
 		foreach ($expectedQueries as $expectedQuery) {
 			$dbal->shouldReceive('exec')->once()->ordered()->with($expectedQuery);
@@ -54,15 +57,8 @@ class BaseDriverTest extends Tester\TestCase
 			[
 				'SELECT 1; SELECT 2;    SELECT 3; ', [
 					'SELECT 1',
-					' SELECT 2',
-					'    SELECT 3',
-				],
-			],
-			[
-				'SELECT 1; SELECT 2;    SELECT 3; ', [
-					'SELECT 1',
-					' SELECT 2',
-					'    SELECT 3',
+					'SELECT 2',
+					'SELECT 3',
 				],
 			],
 			[
@@ -75,8 +71,8 @@ class BaseDriverTest extends Tester\TestCase
 				]),
 				[
 					'SELECT 1',
-					"\nCREATE TRIGGER `users_bu` BEFORE UPDATE ON `users` FOR EACH ROW BEGIN SELECT 1; END; ",
-					"\nSELECT 2",
+					'CREATE TRIGGER `users_bu` BEFORE UPDATE ON `users` FOR EACH ROW BEGIN SELECT 1; END; ',
+					'SELECT 2',
 				]
 			],
 			[
@@ -93,7 +89,7 @@ class BaseDriverTest extends Tester\TestCase
 			[
 				"SELECT 1;\n--\nSELECT 2;", [
 					'SELECT 1',
-					"\n--\nSELECT 2",
+					'SELECT 2',
 				],
 			],
 			[
@@ -106,8 +102,8 @@ class BaseDriverTest extends Tester\TestCase
 					'DELIMITER ;',
 				]),
 				[
-					"\nSELECT 1",
-					"\nSELECT 2",
+					'SELECT 1',
+					'SELECT 2',
 				]
 			],
 			[
