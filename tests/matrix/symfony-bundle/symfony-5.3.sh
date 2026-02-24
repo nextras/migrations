@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+PHP_VERSION_MIN="70200"
+PHP_VERSION_MAX="80399"
+COMPOSER_REQUIRE="$COMPOSER_REQUIRE symfony/framework-bundle:5.3.*"
+COMPOSER_REQUIRE="$COMPOSER_REQUIRE symfony/yaml:5.3.*"
+COMPOSER_REQUIRE="$COMPOSER_REQUIRE doctrine/doctrine-bundle:^2.6"
+COMPOSER_REQUIRE="$COMPOSER_REQUIRE doctrine/dbal:^2.13|^3.0"
+COMPOSER_REQUIRE="$COMPOSER_REQUIRE doctrine/orm:^2.7"
+DBAL='doctrine'
