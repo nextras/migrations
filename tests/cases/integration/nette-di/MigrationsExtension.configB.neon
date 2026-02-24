@@ -4,7 +4,7 @@ extensions:
 migrations:
 	dir: migrations
 	driver: mysql
-	dbal: Nextras\Migrations\Bridges\Dibi\DibiAdapter(...)
+	dbal: Nextras\Migrations\Bridges\Dibi\DibiAdapter(_)
 
 services:
 	- Dibi\Connection(%dibiConfig%)

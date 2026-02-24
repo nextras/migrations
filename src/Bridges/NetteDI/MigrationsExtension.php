@@ -89,7 +89,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 		// groups
 		if ($config['groups'] === null) {
-			Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral');
+			Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral|Nette\DI\Statement');
 			Validators::assertField($config, 'withDummyData', 'bool');
 			$config['groups'] = $this->createDefaultGroupConfiguration($config['dir'], $config['withDummyData']);
 		}
@@ -164,17 +164,18 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 	/**
 	 * @param  null|string|Statement $dbal
-	 * @return string|ServiceDefinition
 	 */
-	private function getDbalDefinition($dbal)
+	private function getDbalDefinition($dbal): string
 	{
 		$factory = $this->getDbalFactory($dbal);
 
 		if ($factory) {
-			return $this->getContainerBuilder()
+			$this->getContainerBuilder()
 				->addDefinition($this->prefix('dbal'))
 				->setType(Nextras\Migrations\IDbal::class)
 				->setFactory($factory);
+
+			return '@' . $this->prefix('dbal');
 
 		} elseif ($dbal === null) {
 			return '@Nextras\Migrations\IDbal';
@@ -207,19 +208,19 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param  null|string|Statement    $driver
-	 * @param  string|ServiceDefinition $dbal
-	 * @return string|ServiceDefinition
+	 * @param  null|string|Statement $driver
 	 */
-	private function getDriverDefinition($driver, $dbal)
+	private function getDriverDefinition($driver, string $dbal): string
 	{
 		$factory = $this->getDriverFactory($driver, $dbal);
 
 		if ($factory) {
-			return $this->getContainerBuilder()
+			$this->getContainerBuilder()
 				->addDefinition($this->prefix('driver'))
 				->setType(Nextras\Migrations\IDriver::class)
 				->setFactory($factory);
+
+			return '@' . $this->prefix('driver');
 
 		} elseif ($driver === null) {
 			return '@Nextras\Migrations\IDriver';
@@ -231,11 +232,10 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param  null|string|Statement    $driver
-	 * @param  string|ServiceDefinition $dbal
+	 * @param  null|string|Statement $driver
 	 * @return string|Statement|null
 	 */
-	private function getDriverFactory($driver, $dbal)
+	private function getDriverFactory($driver, string $dbal)
 	{
 		if ($driver instanceof Statement) {
 			return $this->filterArguments([$driver])[0];
@@ -251,17 +251,18 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 	/**
 	 * @param  null|string|Statement $printer
-	 * @return string|ServiceDefinition
 	 */
-	private function getPrinterDefinition($printer)
+	private function getPrinterDefinition($printer): string
 	{
 		$factory = $this->getPrinterFactory($printer);
 
 		if ($factory) {
-			return $this->getContainerBuilder()
+			$this->getContainerBuilder()
 				->addDefinition($this->prefix('printer'))
 				->setType(Nextras\Migrations\IPrinter::class)
 				->setFactory($factory);
+
+			return '@' . $this->prefix('printer');
 
 		} elseif ($printer === null) {
 			return '@Nextras\Migrations\IPrinter';
@@ -294,12 +295,17 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param  string|Nette\PhpGenerator\PhpLiteral $dir
+	 * @param  string|Nette\PhpGenerator\PhpLiteral|Statement $dir
 	 * @return array<string, array{enabled?: bool, directory: string, dependencies?: list<string>, generator?: ServiceDefinition|null}>
 	 */
 	private function createDefaultGroupConfiguration($dir, bool $withDummyData): array
 	{
-		if ($dir instanceof Nette\PhpGenerator\PhpLiteral) {
+		if ($dir instanceof Statement) {
+			$append = function (string $path) use ($dir): Statement {
+				return new Statement('? . ?', [$dir, $path]);
+			};
+
+		} elseif ($dir instanceof Nette\PhpGenerator\PhpLiteral) {
 			$append = function (string $path) use ($dir): Nette\PhpGenerator\PhpLiteral {
 				return ContainerBuilder::literal('? . ?', [$dir, $path]);
 			};
@@ -347,7 +353,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		$groupDefinitions = [];
 
 		foreach ($groups as $groupName => $groupConfig) {
-			Validators::assertField($groupConfig, 'directory', 'string|Nette\PhpGenerator\PhpLiteral');
+			Validators::assertField($groupConfig, 'directory', 'string|Nette\PhpGenerator\PhpLiteral|Nette\DI\Statement');
 
 			$enabled = isset($groupConfig['enabled']) ? $groupConfig['enabled'] : true;
 			$directory = $groupConfig['directory'];
@@ -371,11 +377,10 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param  string|ServiceDefinition $driver
-	 * @param  array<string, mixed>     $phpParams
+	 * @param  array<string, mixed> $phpParams
 	 * @return list<ServiceDefinition>
 	 */
-	private function createExtensionHandlerDefinitions($driver, array $phpParams): array
+	private function createExtensionHandlerDefinitions(string $driver, array $phpParams): array
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -395,12 +400,14 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	private function createConfigurationDefinition(): ServiceDefinition
+	private function createConfigurationDefinition(): string
 	{
-		return $this->getContainerBuilder()
+		$this->getContainerBuilder()
 			->addDefinition($this->prefix('configuration'))
 			->setType(Nextras\Migrations\IConfiguration::class)
 			->setFactory(Nextras\Migrations\Configurations\Configuration::class);
+
+		return '@' . $this->prefix('configuration');
 	}
 
 
@@ -416,12 +423,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	/**
-	 * @param  string|ServiceDefinition $driver
-	 * @param  string|ServiceDefinition $configuration
-	 * @param  string|ServiceDefinition $printer
-	 */
-	private function createSymfonyCommandDefinitions($driver, $configuration, $printer): void
+	private function createSymfonyCommandDefinitions(string $driver, string $configuration, string $printer): void
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addExcludedClasses([Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand::class]);
@@ -445,14 +447,6 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 	private function filterArguments(array $arguments): array
 	{
-		if (method_exists(Nette\DI\Helpers::class, 'filterArguments')) {
-			return Nette\DI\Helpers::filterArguments($arguments);
-
-		} elseif (method_exists(Nette\DI\Compiler::class, 'filterArguments')) {
-			return Nette\DI\Compiler::filterArguments($arguments);
-
-		} else {
-			throw new Nextras\Migrations\LogicException();
-		}
+		return Nette\DI\Helpers::filterArguments($arguments);
 	}
 }
