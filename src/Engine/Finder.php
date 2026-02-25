@@ -59,7 +59,7 @@ class Finder
 		$parts = explode('/', $path);
 		$dirName = implode('-', array_slice($parts, 0, -1));
 		$fileName = implode('-', array_slice($parts, -1));
-		$isPrefix = strncmp($fileName, $dirName, strlen($dirName)) === 0;
+		$isPrefix = str_starts_with($fileName, $dirName);
 		return ($isPrefix ? $fileName : "$dirName-$fileName");
 	}
 
@@ -75,7 +75,7 @@ class Finder
 		$fileExt = null;
 
 		foreach ($extensions as $extension) {
-			if (substr($file->name, -strlen($extension)) === $extension) {
+			if (str_ends_with($file->name, $extension)) {
 				if ($fileExt !== null) {
 					throw new LogicException(sprintf(
 						'Finder: Extension of "%s" is ambiguous, both "%s" and "%s" can be used.',
@@ -119,7 +119,7 @@ class Finder
 		$items = $this->getItems($dir);
 		foreach ($items as $i => $item) {
 			// skip '.', '..' and hidden files
-			if ($item[0] === '.') {
+			if (str_starts_with($item, '.')) {
 				unset($items[$i]);
 
 			// year or month

@@ -16,13 +16,10 @@ use Nextras\Migrations\IDbal;
 
 class DibiAdapter implements IDbal
 {
-	/** @var Dibi\Connection */
-	private $conn;
-
-
-	public function __construct(Dibi\Connection $conn)
+	public function __construct(
+		private Dibi\Connection $conn,
+	)
 	{
-		$this->conn = $conn;
 	}
 
 

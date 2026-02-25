@@ -20,13 +20,10 @@ use Nextras\Migrations\LogicException;
  */
 class SqlHandler implements IExtensionHandler
 {
-	/** @var IDriver */
-	private $driver;
-
-
-	public function __construct(IDriver $driver)
+	public function __construct(
+		private IDriver $driver,
+	)
 	{
-		$this->driver = $driver;
 	}
 
 

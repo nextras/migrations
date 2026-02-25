@@ -21,23 +21,17 @@ use Tester\TestCase;
 
 abstract class IntegrationTestCase extends TestCase
 {
-	/** @var IDbal */
-	protected $dbal;
+	protected IDbal $dbal;
 
-	/** @var IDriver */
-	protected $driver;
+	protected IDriver $driver;
 
-	/** @var IPrinter|TestPrinter */
-	protected $printer;
+	protected IPrinter|TestPrinter $printer;
 
-	/** @var Runner */
-	protected $runner;
+	protected Runner $runner;
 
-	/** @var string */
-	protected $dbName;
+	protected string $dbName;
 
-	/** @var string */
-	protected $fixtureDir;
+	protected string $fixtureDir;
 
 
 	protected function setUp(): void
@@ -124,73 +118,54 @@ abstract class IntegrationTestCase extends TestCase
 	 */
 	protected function createDbal(array $options): IDbal
 	{
-		switch ($options['dbal']) {
-			case 'dibi':
-				$drivers = [
+		return match ($options['dbal']) {
+			'dibi' => new DibiAdapter(new Dibi\Connection([
+				'host' => $options['host'],
+				'username' => $options['username'],
+				'password' => $options['password'],
+				'database' => $options['database'],
+				'driver' => match ($options['driver']) {
 					'mysql' => 'mysqli',
 					'pgsql' => 'postgre',
-				];
-
-				return new DibiAdapter(new Dibi\Connection([
-					'host' => $options['host'],
-					'username' => $options['username'],
-					'password' => $options['password'],
-					'database' => $options['database'],
-					'driver' => $drivers[$options['driver']],
-				]));
-
-
-			case 'doctrine':
-				$drivers = [
+				},
+			])),
+			'doctrine' => new DoctrineAdapter(Doctrine\DBAL\DriverManager::getConnection([
+				'host' => $options['host'],
+				'user' => $options['username'],
+				'password' => $options['password'],
+				'database' => $options['database'],
+				'driver' => match ($options['driver']) {
 					'mysql' => 'mysqli',
 					'pgsql' => 'pdo_pgsql',
-				];
-				return new DoctrineAdapter(Doctrine\DBAL\DriverManager::getConnection([
-					'host' => $options['host'],
-					'user' => $options['username'],
-					'password' => $options['password'],
-					'database' => $options['database'],
-					'driver' => $drivers[$options['driver']],
-				]));
-
-			case 'nette':
-				return new NetteAdapter(new Nette\Database\Connection(
-					"$options[driver]:host=$options[host];dbname=$options[database]",
-					$options['username'],
-					$options['password']
-				));
-
-			case 'nextras':
-				$drivers = [
+				},
+			])),
+			'nette' => new NetteAdapter(new Nette\Database\Connection(
+				"$options[driver]:host=$options[host];dbname=$options[database]",
+				$options['username'],
+				$options['password']
+			)),
+			'nextras' => new NextrasAdapter(new Nextras\Dbal\Connection([
+				'host' => $options['host'],
+				'username' => $options['username'],
+				'password' => $options['password'],
+				'database' => $options['database'],
+				'driver' => match ($options['driver']) {
 					'mysql' => 'mysqli',
 					'pgsql' => 'pgsql',
-				];
-				return new NextrasAdapter(new Nextras\Dbal\Connection([
-					'host' => $options['host'],
-					'username' => $options['username'],
-					'password' => $options['password'],
-					'database' => $options['database'],
-					'driver' => $drivers[$options['driver']],
-				]));
-
-			default:
-				throw new \Exception("Unknown DBAL '$options[dbal]'.");
-		}
+				},
+			])),
+			default => throw new \Exception("Unknown DBAL '$options[dbal]'."),
+		};
 	}
 
 
 	protected function createDriver(string $name, IDbal $dbal): IDriver
 	{
-		switch ($name) {
-			case 'mysql':
-				return new Nextras\Migrations\Drivers\MySqlDriver($dbal, 'm');
-
-			case 'pgsql':
-				return new Nextras\Migrations\Drivers\PgSqlDriver($dbal, 'm', $this->dbName);
-
-			default:
-				throw new \Exception("Unknown driver '$name'.");
-		}
+		return match ($name) {
+			'mysql' => new Nextras\Migrations\Drivers\MySqlDriver($dbal, 'm'),
+			'pgsql' => new Nextras\Migrations\Drivers\PgSqlDriver($dbal, 'm', $this->dbName),
+			default => throw new \Exception("Unknown driver '$name'."),
+		};
 	}
 
 

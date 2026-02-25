@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 class NextrasMigrationsExtension extends Extension
 {
 	/** @var array<string, class-string> */
-	protected $dbals = [
+	protected array $dbals = [
 		'dibi' => Nextras\Migrations\Bridges\Dibi\DibiAdapter::class,
 		'doctrine' => Nextras\Migrations\Bridges\DoctrineDbal\DoctrineAdapter::class,
 		'nette' => Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter::class,
@@ -26,13 +26,13 @@ class NextrasMigrationsExtension extends Extension
 	];
 
 	/** @var array<string, class-string> */
-	protected $drivers = [
+	protected array $drivers = [
 		'mysql' => Nextras\Migrations\Drivers\MySqlDriver::class,
 		'pgsql' => Nextras\Migrations\Drivers\PgSqlDriver::class,
 	];
 
 	/** @var array<string, class-string> */
-	protected $printers = [
+	protected array $printers = [
 		'console' => Nextras\Migrations\Printers\Console::class,
 		'psrLog' => Nextras\Migrations\Bridges\PsrLog\PsrLogPrinter::class,
 	];

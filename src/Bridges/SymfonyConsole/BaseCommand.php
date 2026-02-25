@@ -19,20 +19,15 @@ use Symfony\Component\Console\Command\Command;
 
 abstract class BaseCommand extends Command
 {
-	/** @var IDriver */
-	protected $driver;
-
-	/** @var IConfiguration */
-	protected $config;
-
-	/** @var IPrinter */
-	protected $printer;
+	protected IPrinter $printer;
 
 
-	public function __construct(IDriver $driver, IConfiguration $config, ?IPrinter $printer = null)
+	public function __construct(
+		protected IDriver $driver,
+		protected IConfiguration $config,
+		?IPrinter $printer = null,
+	)
 	{
-		$this->driver = $driver;
-		$this->config = $config;
 		$this->printer = $printer ?? new Console();
 		parent::__construct();
 	}

@@ -63,9 +63,7 @@ class SecondRunTest extends IntegrationTestCase
 		$this->driver->loadFile($this->fixtureDir . '/2ok, 1ko.sql');
 		Assert::count(3, $this->driver->getAllMigrations());
 
-		Assert::throws(function () {
-			$this->runner->run(Runner::MODE_CONTINUE);
-		}, Nextras\Migrations\LogicException::class);
+		Assert::throws(fn() => $this->runner->run(Runner::MODE_CONTINUE), Nextras\Migrations\LogicException::class);
 
 		Assert::same([
 			'Nextras Migrations',

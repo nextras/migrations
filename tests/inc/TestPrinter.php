@@ -8,10 +8,9 @@ use Nextras\Migrations\Printers\Console;
 class TestPrinter extends Console
 {
 	/** @var list<string> output lines */
-	public $lines = [];
+	public array $lines = [];
 
-	/** @var string whole output */
-	public $out = '';
+	public string $out = '';
 
 
 	public function __construct()

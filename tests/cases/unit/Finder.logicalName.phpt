@@ -19,11 +19,10 @@ require __DIR__ . '/../../bootstrap.php';
 
 class FinderLogicalNameTest extends Tester\TestCase
 {
-	/** @var Finder|Mockery\MockInterface */
-	private $finder;
+	private Finder|Mockery\MockInterface $finder;
 
 	/** @var list<Group> */
-	private $groups;
+	private array $groups;
 
 
 	protected function setUp(): void

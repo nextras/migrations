@@ -17,18 +17,15 @@ use Nextras\Migrations\IDiffGenerator;
  */
 class Group
 {
-	/** @var string */
-	public $name;
+	public string $name;
 
-	/** @var bool */
-	public $enabled;
+	public bool $enabled;
 
 	/** @var string absolute path do directory */
-	public $directory;
+	public string $directory;
 
 	/** @var list<string> */
-	public $dependencies;
+	public array $dependencies;
 
-	/** @var IDiffGenerator|null */
-	public $generator;
+	public ?IDiffGenerator $generator = null;
 }

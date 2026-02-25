@@ -15,7 +15,6 @@ use Nette;
 use Nette\DI\ContainerBuilder;
 use Nette\DI\ServiceDefinition;
 use Nette\DI\Statement;
-use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 use Nextras;
 use Symfony;
@@ -30,7 +29,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	const TAG_EXTENSION_HANDLER = 'nextras.migrations.extensionHandler';
 
 	/** @var array<string, mixed> */
-	public $defaults = [
+	public array $defaults = [
 		'dir' => null,
 		'phpParams' => [],
 		'driver' => null,
@@ -43,7 +42,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	];
 
 	/** @var array<string, class-string> */
-	protected $dbals = [
+	protected array $dbals = [
 		'dibi' => Nextras\Migrations\Bridges\Dibi\DibiAdapter::class,
 		'doctrine' => Nextras\Migrations\Bridges\DoctrineDbal\DoctrineAdapter::class,
 		'nette' => Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter::class,
@@ -51,13 +50,13 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	];
 
 	/** @var array<string, class-string> */
-	protected $drivers = [
+	protected array $drivers = [
 		'mysql' => Nextras\Migrations\Drivers\MySqlDriver::class,
 		'pgsql' => Nextras\Migrations\Drivers\PgSqlDriver::class,
 	];
 
 	/** @var array<string, class-string> */
-	protected $printers = [
+	protected array $printers = [
 		'console' => Nextras\Migrations\Printers\Console::class,
 		'psrLog' => Nextras\Migrations\Bridges\PsrLog\PsrLogPrinter::class,
 	];
@@ -160,11 +159,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	/**
-	 * @param  null|string|Statement $dbal
-	 * @return string|ServiceDefinition
-	 */
-	private function getDbalDefinition($dbal)
+	private function getDbalDefinition(null|string|Statement $dbal): string|ServiceDefinition
 	{
 		$factory = $this->getDbalFactory($dbal);
 
@@ -183,11 +178,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	/**
-	 * @param  null|string|Statement $dbal
-	 * @return string|Statement|null
-	 */
-	private function getDbalFactory($dbal)
+	private function getDbalFactory(null|string|Statement $dbal): string|Statement|null
 	{
 		if ($dbal instanceof Statement) {
 			return $this->filterArguments([$dbal])[0];
@@ -195,7 +186,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		} elseif (is_string($dbal) && isset($this->dbals[$dbal])) {
 			return $this->dbals[$dbal];
 
-		} elseif (is_string($dbal) && Strings::startsWith($dbal, '@')) {
+		} elseif (is_string($dbal) && str_starts_with($dbal, '@')) {
 			return $dbal;
 
 		} else {
@@ -204,12 +195,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	/**
-	 * @param  null|string|Statement    $driver
-	 * @param  string|ServiceDefinition $dbal
-	 * @return string|ServiceDefinition
-	 */
-	private function getDriverDefinition($driver, $dbal)
+	private function getDriverDefinition(null|string|Statement $driver, string|ServiceDefinition $dbal): string|ServiceDefinition
 	{
 		$factory = $this->getDriverFactory($driver, $dbal);
 
@@ -228,12 +214,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	/**
-	 * @param  null|string|Statement    $driver
-	 * @param  string|ServiceDefinition $dbal
-	 * @return string|Statement|null
-	 */
-	private function getDriverFactory($driver, $dbal)
+	private function getDriverFactory(null|string|Statement $driver, string|ServiceDefinition $dbal): string|Statement|null
 	{
 		if ($driver instanceof Statement) {
 			return $this->filterArguments([$driver])[0];
@@ -247,11 +228,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	/**
-	 * @param  null|string|Statement $printer
-	 * @return string|ServiceDefinition
-	 */
-	private function getPrinterDefinition($printer)
+	private function getPrinterDefinition(null|string|Statement $printer): string|ServiceDefinition
 	{
 		$factory = $this->getPrinterFactory($printer);
 
@@ -270,11 +247,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	/**
-	 * @param  null|string|Statement $printer
-	 * @return string|Statement|null
-	 */
-	private function getPrinterFactory($printer)
+	private function getPrinterFactory(null|string|Statement $printer): string|Statement|null
 	{
 		if ($printer instanceof Statement) {
 			return $this->filterArguments([$printer])[0];
@@ -282,7 +255,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		} elseif (is_string($printer) && isset($this->printers[$printer])) {
 			return $this->printers[$printer];
 
-		} elseif (is_string($printer) && Strings::startsWith($printer, '@')) {
+		} elseif (is_string($printer) && str_starts_with($printer, '@')) {
 			return $printer;
 
 		} else {
@@ -292,20 +265,15 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param  string|Nette\PhpGenerator\PhpLiteral $dir
 	 * @return array<string, array{enabled?: bool, directory: string, dependencies?: list<string>, generator?: ServiceDefinition|null}>
 	 */
-	private function createDefaultGroupConfiguration($dir, bool $withDummyData): array
+	private function createDefaultGroupConfiguration(string|Nette\PhpGenerator\PhpLiteral $dir, bool $withDummyData): array
 	{
 		if ($dir instanceof Nette\PhpGenerator\PhpLiteral) {
-			$append = function (string $path) use ($dir): Nette\PhpGenerator\PhpLiteral {
-				return ContainerBuilder::literal('? . ?', [$dir, $path]);
-			};
+			$append = fn(string $path): Nette\PhpGenerator\PhpLiteral => ContainerBuilder::literal('? . ?', [$dir, $path]);
 
 		} else {
-			$append = function (string $path) use ($dir): string {
-				return $dir . $path;
-			};
+			$append = fn(string $path): string => $dir . $path;
 		}
 
 		$builder = $this->getContainerBuilder();
@@ -347,10 +315,10 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		foreach ($groups as $groupName => $groupConfig) {
 			Validators::assertField($groupConfig, 'directory', 'string|Nette\PhpGenerator\PhpLiteral');
 
-			$enabled = isset($groupConfig['enabled']) ? $groupConfig['enabled'] : true;
+			$enabled = $groupConfig['enabled'] ?? true;
 			$directory = $groupConfig['directory'];
-			$dependencies = isset($groupConfig['dependencies']) ? $groupConfig['dependencies'] : [];
-			$generator = isset($groupConfig['generator']) ? $groupConfig['generator'] : null;
+			$dependencies = $groupConfig['dependencies'] ?? [];
+			$generator = $groupConfig['generator'] ?? null;
 
 			$serviceName = lcfirst(str_replace('-', '', ucwords($groupName, '-')));
 			$groupDefinitions[] = $builder->addDefinition($this->prefix("group.$serviceName"))
@@ -369,11 +337,10 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param  string|ServiceDefinition $driver
 	 * @param  array<string, mixed>     $phpParams
 	 * @return list<ServiceDefinition>
 	 */
-	private function createExtensionHandlerDefinitions($driver, array $phpParams): array
+	private function createExtensionHandlerDefinitions(string|ServiceDefinition $driver, array $phpParams): array
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -414,12 +381,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	/**
-	 * @param  string|ServiceDefinition $driver
-	 * @param  string|ServiceDefinition $configuration
-	 * @param  string|ServiceDefinition $printer
-	 */
-	private function createSymfonyCommandDefinitions($driver, $configuration, $printer): void
+	private function createSymfonyCommandDefinitions(string|ServiceDefinition $driver, string|ServiceDefinition $configuration, string|ServiceDefinition $printer): void
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addExcludedClasses([Nextras\Migrations\Bridges\SymfonyConsole\BaseCommand::class]);

@@ -17,20 +17,17 @@ use PDO;
 
 class NetteAdapter implements IDbal
 {
-	/** @var Nette\Database\Connection */
-	private $conn;
-
-
-	public function __construct(Nette\Database\Connection $ndb)
+	public function __construct(
+		private Nette\Database\Connection $conn,
+	)
 	{
-		$this->conn = $ndb;
 	}
 
 
 	public function query(string $sql): array
 	{
 		return array_map(
-			function ($row) { return (array) $row; },
+			fn($row) => (array) $row,
 			$this->conn->fetchAll($sql)
 		);
 	}

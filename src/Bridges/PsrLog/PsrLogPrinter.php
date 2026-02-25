@@ -17,13 +17,10 @@ use Psr\Log\LoggerInterface;
 
 class PsrLogPrinter implements IPrinter
 {
-	/** @var LoggerInterface */
-	private $logger;
-
-
-	public function __construct(LoggerInterface $logger)
+	public function __construct(
+		private LoggerInterface $logger,
+	)
 	{
-		$this->logger = $logger;
 	}
 
 
