@@ -12,22 +12,6 @@ x-php-service-base: &php-service-base
       PHP_EXTENSION_PDO_PGSQL: 1
 
 services:
-  php71:
-    <<: *php-service-base
-    image: thecodingmachine/php:7.1-v3-cli
-
-  php72:
-    <<: *php-service-base
-    image: thecodingmachine/php:7.2-v4-cli
-
-  php73:
-    <<: *php-service-base
-    image: thecodingmachine/php:7.3-v4-cli
-
-  php74:
-    <<: *php-service-base
-    image: thecodingmachine/php:7.4-v5-cli
-
   php80:
     <<: *php-service-base
     image: thecodingmachine/php:8.0-v5-cli

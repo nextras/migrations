@@ -28,17 +28,13 @@ class DoctrineAdapter implements IDbal
 
 	public function query(string $sql): array
 	{
-		return method_exists($this->conn, 'fetchAllAssociative')
-			? $this->conn->fetchAllAssociative($sql)
-			: $this->conn->fetchAll($sql);
+		return $this->conn->fetchAllAssociative($sql);
 	}
 
 
 	public function exec(string $sql): int
 	{
-		return method_exists($this->conn, 'executeStatement')
-			? $this->conn->executeStatement($sql)
-			: $this->conn->exec($sql);
+		return $this->conn->executeStatement($sql);
 	}
 
 

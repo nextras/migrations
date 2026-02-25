@@ -20,8 +20,6 @@ class NextrasMigrationsExtension extends Extension
 	/** @var array<string, class-string> */
 	protected $dbals = [
 		'dibi' => Nextras\Migrations\Bridges\Dibi\DibiAdapter::class,
-		'dibi3' => Nextras\Migrations\Bridges\Dibi\Dibi3Adapter::class,
-		'dibi4' => Nextras\Migrations\Bridges\Dibi\Dibi3Adapter::class,
 		'doctrine' => Nextras\Migrations\Bridges\DoctrineDbal\DoctrineAdapter::class,
 		'nette' => Nextras\Migrations\Bridges\NetteDatabase\NetteAdapter::class,
 		'nextras' => Nextras\Migrations\Bridges\NextrasDbal\NextrasAdapter::class,
