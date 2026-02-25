@@ -26,27 +26,31 @@ services:
 
   php74:
     <<: *php-service-base
-    image: thecodingmachine/php:7.4-v4-cli
+    image: thecodingmachine/php:7.4-v5-cli
 
   php80:
     <<: *php-service-base
-    image: thecodingmachine/php:8.0-v4-cli
+    image: thecodingmachine/php:8.0-v5-cli
 
   php81:
     <<: *php-service-base
-    image: thecodingmachine/php:8.1-v4-cli
+    image: thecodingmachine/php:8.1-v5-cli
 
   php82:
     <<: *php-service-base
-    image: thecodingmachine/php:8.2-v4-cli
+    image: thecodingmachine/php:8.2-v5-cli
 
   php83:
     <<: *php-service-base
-    image: thecodingmachine/php:8.3-v4-cli
+    image: thecodingmachine/php:8.3-v5-cli
 
   php84:
     <<: *php-service-base
-    image: thecodingmachine/php:8.4-v4-cli
+    image: thecodingmachine/php:8.4-v5-cli
+
+  php85:
+    <<: *php-service-base
+    image: thecodingmachine/php:8.5-v5-cli
 
   postgres:
     image: postgres:9.6

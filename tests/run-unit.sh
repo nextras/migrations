@@ -5,5 +5,4 @@ PROJECT_DIR="$(dirname "$DIR")"
 
 "$PROJECT_DIR/vendor/bin/tester" \
 	-C \
-	-o console \
 	"$PROJECT_DIR/tests/cases/unit"

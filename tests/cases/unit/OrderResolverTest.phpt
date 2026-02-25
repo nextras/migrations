@@ -171,7 +171,9 @@ class OrderResolverTest extends Tester\TestCase
 		$groupC = $this->createGroup('test-data', false, ['data']);
 
 		$method = new \ReflectionMethod(Nextras\Migrations\Engine\OrderResolver::class, 'validateGroups');
-		$method->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
 		$method->invoke(new OrderResolver, [
 			'structures' => $groupA,
 			'data' => $groupB,
