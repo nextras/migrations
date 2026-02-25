@@ -28,7 +28,6 @@ class NextrasAdapter implements IDbal
 	public function __construct(Connection $connection)
 	{
 		$this->conn = $connection;
-		$this->conn->connect();
 
 		if (method_exists($connection->getDriver(), 'convertToSql')) {
 			$this->version = 1;
