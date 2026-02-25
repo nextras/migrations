@@ -1,17 +1,15 @@
-Nextras Migrations
-##################
+# Nextras Migrations
 
 - **Supported databases:** PostgreSQL, MySQL
-- **Supported DBALs:** "Nextras DBAL":https://github.com/nextras/dbal, "Nette Database":https://github.com/nette/database, "Doctrine DBAL":https://github.com/doctrine/dbal and "dibi":https://github.com/dg/dibi
-- **Integrations:** [Nette Extension | nette-extension], [Symfony Bundle | symfony-bundle], [Symfony Console | symfony-console] and [plain PHP | plain-php]
+- **Supported DBALs:** [Nextras DBAL](https://github.com/nextras/dbal), [Nette Database](https://github.com/nette/database), [Doctrine DBAL](https://github.com/doctrine/dbal) and [dibi](https://github.com/dg/dibi)
+- **Integrations:** [Nette Extension](nette-extension.md), [Symfony Bundle](symfony-bundle.md), [Symfony Console](symfony-console.md) and [plain PHP](plain-php.md)
 
----------------
+---
 
 
-Organizing Migrations
-=====================
+## Organizing Migrations
 
-Migrations are located in one or more directories (called **groups**). Unless configured otherwise, Nextras Migrations define three groups.
+Migrations are located in one or more directories (called **groups**). Unless configured otherwise, Nextras Migrations defines three groups.
 
 1. `structures`
 	- used for queries altering database structure (`CREATE TABLE ...`, `ALTER TABLE ...`) and for data migrations queries required to support the structural changes
@@ -25,7 +23,7 @@ Migrations are located in one or more directories (called **groups**). Unless co
 Migrations are executed in alphabetical order (by filename), e.g. `structures/2015-03-17-aaa.sql` is executed before `dummy-data/2015-03-17-zzz.sql`.
 The following structure is recommended and used by Symfony Console Commands by default:
 
-/--
+```
 migrations
 ├── basic-data                           # for both development and production
 │   ├── 2015-03-16-170342-languages.sql  # YYYY-MM-DD-HHMMSS-label.extension
@@ -36,11 +34,11 @@ migrations
 └── structures                           # create, alter tables...
     ├── 2015-03-17-155419-users.sql
     └── ...
-\--
+```
 
-Optionally you can use **deep directory structure** which is suitable if you have a lot of migrations:
+Optionally, you can use a **deep directory structure** which is suitable if you have a lot of migrations:
 
-/--
+```
 migrations/
 ├── basic-data/
 │   └── 2015/
@@ -50,12 +48,11 @@ migrations/
 │       └── 04/
 │           └── ...
 └── ...
-\--
+```
 
-------------------
+---
 
 
-Writing Migrations
-==================
+## Writing Migrations
 
-Migrations can written as file with any extension that has defined extension handler. The two built-in extension handlers are SQL and PHP. Migrations can be written manually or generated through diff generator. The only built-in diff generator is a `structures` generator for Doctrine.
+Migrations can be written as a file with any extension that has a defined extension handler. The two built-in extension handlers are SQL and PHP. Migrations can be written manually or generated through a diff generator. The only built-in diff generator is a `structures` generator for Doctrine.
