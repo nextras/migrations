@@ -1,6 +1,6 @@
 # Integration with Plain PHP
 
-Create new PHP file (e.g. `./migrations/run.php`) with the following content:
+Create a new PHP file (e.g. `./migrations/run.php`) with the following content:
 
 ```php
 use Nextras\Migrations\Bridges;

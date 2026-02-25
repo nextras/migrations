@@ -9,7 +9,7 @@
 
 ## Organizing Migrations
 
-Migrations are located in one or more directories (called **groups**). Unless configured otherwise, Nextras Migrations define three groups.
+Migrations are located in one or more directories (called **groups**). Unless configured otherwise, Nextras Migrations defines three groups.
 
 1. `structures`
 	- used for queries altering database structure (`CREATE TABLE ...`, `ALTER TABLE ...`) and for data migrations queries required to support the structural changes
@@ -36,7 +36,7 @@ migrations
     └── ...
 ```
 
-Optionally you can use **deep directory structure** which is suitable if you have a lot of migrations:
+Optionally, you can use a **deep directory structure** which is suitable if you have a lot of migrations:
 
 ```
 migrations/
@@ -55,4 +55,4 @@ migrations/
 
 ## Writing Migrations
 
-Migrations can written as file with any extension that has defined extension handler. The two built-in extension handlers are SQL and PHP. Migrations can be written manually or generated through diff generator. The only built-in diff generator is a `structures` generator for Doctrine.
+Migrations can be written as a file with any extension that has a defined extension handler. The two built-in extension handlers are SQL and PHP. Migrations can be written manually or generated through a diff generator. The only built-in diff generator is a `structures` generator for Doctrine.

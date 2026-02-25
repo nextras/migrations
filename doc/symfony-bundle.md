@@ -1,6 +1,6 @@
 # Integration with Symfony
 
-Nextras Migrations ship with Symfony **Bundle** and with Symfony **Console commands**.
+Nextras Migrations ships with a Symfony **Bundle** and Symfony **Console commands**.
 
 
 ## Installation
