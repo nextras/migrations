@@ -20,23 +20,17 @@ use Nextras\Migrations\IOException;
  */
 class PhpHandler implements IExtensionHandler
 {
-	/** @var array<string, mixed> name => value */
-	private $params;
-
-
 	/**
 	 * @param  array<string, mixed> $params (name => value)
 	 */
-	public function __construct(array $params = [])
+	public function __construct(
+		private array $params = [],
+	)
 	{
-		$this->params = $params;
 	}
 
 
-	/**
-	 * @param  mixed  $value
-	 */
-	public function addParameter(string $name, $value): self
+	public function addParameter(string $name, mixed $value): self
 	{
 		$this->params[$name] = $value;
 		return $this;

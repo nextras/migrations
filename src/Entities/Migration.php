@@ -18,21 +18,15 @@ use DateTime;
  */
 class Migration
 {
-	/** @var int */
-	public $id;
+	public int $id;
 
-	/** @var string */
-	public $group;
+	public string $group;
 
-	/** @var string */
-	public $filename;
+	public string $filename;
 
-	/** @var string */
-	public $checksum;
+	public string $checksum;
 
-	/** @var DateTime */
-	public $executedAt;
+	public DateTime $executedAt;
 
-	/** @var bool */
-	public $completed;
+	public bool $completed;
 }

@@ -17,31 +17,23 @@ use Nextras\Migrations\IDbal;
 
 class NextrasAdapter implements IDbal
 {
-	/** @var Connection */
-	private $conn;
-
-	/** @var int */
-	private $version;
+	private int $version;
 
 
-	public function __construct(Connection $connection)
+	public function __construct(
+		private Connection $conn,
+	)
 	{
-		$this->conn = $connection;
 		$this->conn->connect();
 
-		if (method_exists($connection->getDriver(), 'convertBoolToSql')) {
-			$this->version = 2;
-
-		} else {
-			$this->version = 5;
-		}
+		$this->version = method_exists($conn->getDriver(), 'convertBoolToSql') ? 2 : 5;
 	}
 
 
 	public function query(string $sql): array
 	{
 		return array_map(
-			function (Row $row) { return $row->toArray(); },
+			fn(Row $row) => $row->toArray(),
 			iterator_to_array($this->conn->query('%raw', $sql))
 		);
 	}
@@ -68,30 +60,27 @@ class NextrasAdapter implements IDbal
 
 	public function escapeBool(bool $value): string
 	{
-		if ($this->version >= 5) {
-			return $this->conn->getPlatform()->formatBool($value);
-		} else {
-			return $this->conn->getDriver()->convertBoolToSql($value);
-		}
+		return match (true) {
+			$this->version >= 5 => $this->conn->getPlatform()->formatBool($value),
+			default => $this->conn->getDriver()->convertBoolToSql($value),
+		};
 	}
 
 
 	public function escapeDateTime(DateTimeInterface $value): string
 	{
-		if ($this->version >= 5) {
-			return $this->conn->getPlatform()->formatDateTime($value);
-		} else {
-			return $this->conn->getDriver()->convertDateTimeToSql($value);
-		}
+		return match (true) {
+			$this->version >= 5 => $this->conn->getPlatform()->formatDateTime($value),
+			default => $this->conn->getDriver()->convertDateTimeToSql($value),
+		};
 	}
 
 
 	public function escapeIdentifier(string $value): string
 	{
-		if ($this->version >= 5) {
-			return $this->conn->getPlatform()->formatIdentifier($value);
-		} else {
-			return $this->conn->getDriver()->convertIdentifierToSql($value);
-		}
+		return match (true) {
+			$this->version >= 5 => $this->conn->getPlatform()->formatIdentifier($value),
+			default => $this->conn->getDriver()->convertIdentifierToSql($value),
+		};
 	}
 }

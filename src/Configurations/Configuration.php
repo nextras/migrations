@@ -19,21 +19,15 @@ use Nextras\Migrations\IExtensionHandler;
  */
 class Configuration implements IConfiguration
 {
-	/** @var list<Group> */
-	private $groups;
-
-	/** @var array<string, IExtensionHandler> (extension => IExtensionHandler) */
-	private $extensionHandlers;
-
-
 	/**
 	 * @param  list<Group>                      $groups
 	 * @param  array<string, IExtensionHandler> $extensionHandlers (extension => IExtensionHandler)
 	 */
-	public function __construct(array $groups, array $extensionHandlers)
+	public function __construct(
+		private array $groups,
+		private array $extensionHandlers,
+	)
 	{
-		$this->groups = $groups;
-		$this->extensionHandlers = $extensionHandlers;
 	}
 
 

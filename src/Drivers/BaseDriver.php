@@ -21,20 +21,14 @@ use Nextras\Migrations\IOException;
  */
 abstract class BaseDriver implements IDriver
 {
-	/** @var IDbal */
-	protected $dbal;
-
-	/** @var string */
-	protected $tableName;
-
-	/** @var null|string */
-	protected $tableNameQuoted;
+	protected ?string $tableNameQuoted = null;
 
 
-	public function __construct(IDbal $dbal, string $tableName = 'migrations')
+	public function __construct(
+		protected IDbal $dbal,
+		protected string $tableName = 'migrations',
+	)
 	{
-		$this->dbal = $dbal;
-		$this->tableName = $tableName;
 	}
 
 

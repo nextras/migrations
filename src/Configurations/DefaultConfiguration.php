@@ -24,46 +24,33 @@ use Nextras\Migrations\IExtensionHandler;
  */
 class DefaultConfiguration implements IConfiguration
 {
-	/** @var string */
-	protected $dir;
-
-	/** @var IDriver */
-	protected $driver;
-
-	/** @var bool */
-	protected $withDummyData;
-
-	/** @var array<string, mixed> */
-	protected $phpParams;
-
 	/** @var list<Group> */
-	protected $groups;
+	protected array $groups;
 
 	/** @var array<string, IExtensionHandler> */
-	protected $handlers;
+	protected array $handlers;
 
-	/** @var ?IDiffGenerator */
-	protected $structureDiffGenerator;
+	protected ?IDiffGenerator $structureDiffGenerator = null;
 
-	/** @var ?IDiffGenerator */
-	protected $dummyDataDiffGenerator;
+	protected ?IDiffGenerator $dummyDataDiffGenerator = null;
 
 
 	/**
 	 * @param  array<string, mixed> $phpParams
 	 */
-	public function __construct(string $dir, IDriver $driver, bool $withDummyData = true, array $phpParams = [])
+	public function __construct(
+		protected string $dir,
+		protected IDriver $driver,
+		protected bool $withDummyData = true,
+		protected array $phpParams = [],
+	)
 	{
-		$this->dir = $dir;
-		$this->driver = $driver;
-		$this->withDummyData = $withDummyData;
-		$this->phpParams = $phpParams;
 	}
 
 
 	public function getGroups(): array
 	{
-		if ($this->groups === null) {
+		if (!isset($this->groups)) {
 			$structures = new Group();
 			$structures->enabled = true;
 			$structures->name = 'structures';
@@ -93,7 +80,7 @@ class DefaultConfiguration implements IConfiguration
 
 	public function getExtensionHandlers(): array
 	{
-		if ($this->handlers === null) {
+		if (!isset($this->handlers)) {
 			$this->handlers = [
 				'sql' => new SqlHandler($this->driver),
 				'php' => new PhpHandler($this->phpParams),

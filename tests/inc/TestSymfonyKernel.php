@@ -13,19 +13,12 @@ use Symfony\Component\HttpKernel\Kernel;
 
 class TestSymfonyKernel extends Kernel
 {
-	/** @var string */
-	private $configPath;
-
-	/** @var array */
-	private $parameters;
-
-
-	public function __construct(string $configPath, array $parameters)
+	public function __construct(
+		private string $configPath,
+		private array $parameters,
+	)
 	{
 		parent::__construct('dev', true);
-
-		$this->configPath = $configPath;
-		$this->parameters = $parameters;
 	}
 
 

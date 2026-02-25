@@ -29,8 +29,7 @@ class CreateCommand extends BaseCommand
 	const CONTENT_SOURCE_STDIN = 'stdin';
 	const CONTENT_SOURCE_EMPTY = 'empty';
 
-	/** @var string */
-	protected $defaultContentSource = self::CONTENT_SOURCE_DIFF;
+	protected string $defaultContentSource = self::CONTENT_SOURCE_DIFF;
 
 
 	public static function getDefaultName(): string
@@ -80,7 +79,7 @@ class CreateCommand extends BaseCommand
 	protected function getPath(Group $group, string $label): string
 	{
 		$dir = $group->directory;
-		$extension = $group->generator ? $group->generator->getExtension() : 'sql';
+		$extension = $group->generator?->getExtension() ?? 'sql';
 		$name = $this->getFileName($label, $extension);
 
 		if ($this->hasNumericSubdirectory($dir, $foundYear)) {
@@ -172,9 +171,7 @@ class CreateCommand extends BaseCommand
 	{
 		$options = [];
 		$groups = $this->config->getGroups();
-		usort($groups, function (Group $a, Group $b) {
-			return strcmp($a->name, $b->name);
-		});
+		usort($groups, fn(Group $a, Group $b) => strcmp($a->name, $b->name));
 
 		foreach ($groups as $i => $group) {
 			for ($j = 1; $j < strlen($group->name); $j++) {

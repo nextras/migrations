@@ -16,18 +16,15 @@ namespace Nextras\Migrations\Entities;
  */
 class File
 {
-	/** @var Group */
-	public $group;
+	public Group $group;
 
-	/** @var string */
-	public $extension;
+	public string $extension;
 
 	/** @var string logical name, may or may not correspond to filename */
-	public $name;
+	public string $name;
 
 	/** @var string absolute path */
-	public $path;
+	public string $path;
 
-	/** @var string */
-	public $checksum;
+	public string $checksum;
 }

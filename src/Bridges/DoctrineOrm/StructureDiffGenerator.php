@@ -18,17 +18,14 @@ use Nextras\Migrations\IDiffGenerator;
 
 class StructureDiffGenerator implements IDiffGenerator
 {
-	/** @var EntityManagerInterface */
-	private $entityManager;
-
-	/** @var string|null absolute path to a file */
-	private $ignoredQueriesFile;
-
-
-	public function __construct(EntityManagerInterface $entityManager, ?string $ignoredQueriesFile = null)
+	/**
+	 * @param string|null $ignoredQueriesFile absolute path to a file
+	 */
+	public function __construct(
+		private EntityManagerInterface $entityManager,
+		private ?string $ignoredQueriesFile = null,
+	)
 	{
-		$this->entityManager = $entityManager;
-		$this->ignoredQueriesFile = $ignoredQueriesFile;
 	}
 
 
@@ -52,10 +49,7 @@ class StructureDiffGenerator implements IDiffGenerator
 	 */
 	protected function getUpdateQueries(): array
 	{
-		$cache = $this->entityManager->getConfiguration()->getMetadataCache();
-		if ($cache !== null) {
-			$cache->clear();
-		}
+		$this->entityManager->getConfiguration()->getMetadataCache()?->clear();
 
 		$schemaTool = new SchemaTool($this->entityManager);
 		$metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();

@@ -30,29 +30,22 @@ class Runner
 	const MODE_RESET = 'reset';
 	const MODE_INIT = 'init';
 
-	/** @var IPrinter */
-	private $printer;
-
 	/** @var array<string, IExtensionHandler> (extension => IExtensionHandler) */
-	private $extensionsHandlers = [];
+	private array $extensionsHandlers = [];
 
 	/** @var list<Group> */
-	private $groups = [];
+	private array $groups = [];
 
-	/** @var IDriver */
-	private $driver;
+	private Finder $finder;
 
-	/** @var Finder */
-	private $finder;
-
-	/** @var OrderResolver */
-	private $orderResolver;
+	private OrderResolver $orderResolver;
 
 
-	public function __construct(IDriver $driver, IPrinter $printer)
+	public function __construct(
+		private IDriver $driver,
+		private IPrinter $printer,
+	)
 	{
-		$this->driver = $driver;
-		$this->printer = $printer;
 		$this->finder = new Finder;
 		$this->orderResolver = new OrderResolver;
 	}

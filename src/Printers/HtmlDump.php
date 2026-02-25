@@ -20,11 +20,9 @@ use Nextras\Migrations\IPrinter;
  */
 class HtmlDump implements IPrinter
 {
-	/** @var int number of migrations to be executed */
-	private $count;
+	private int $count;
 
-	/** @var int order of last executed migration */
-	private $index;
+	private int $index;
 
 
 	public function printIntro(string $mode): void

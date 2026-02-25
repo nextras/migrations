@@ -23,17 +23,12 @@ use Nextras\Migrations\LockException;
  */
 class PgSqlDriver extends BaseDriver implements IDriver
 {
-	/** @var string */
-	protected $schema;
-
-	/** @var null|string */
-	protected $schemaQuoted;
+	protected ?string $schemaQuoted = null;
 
 
-	public function __construct(IDbal $dbal, string $tableName = 'migrations', string $schema = 'public')
+	public function __construct(IDbal $dbal, string $tableName = 'migrations', protected string $schema = 'public')
 	{
 		parent::__construct($dbal, $tableName);
-		$this->schema = $schema;
 	}
 
 

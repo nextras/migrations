@@ -20,8 +20,7 @@ require __DIR__ . '/../../../bootstrap.php';
 
 class SymfonyBundleTest extends TestCase
 {
-	/** @var KernelInterface */
-	private $symfonyKernel;
+	private KernelInterface $symfonyKernel;
 
 
 	protected function setUp(): void

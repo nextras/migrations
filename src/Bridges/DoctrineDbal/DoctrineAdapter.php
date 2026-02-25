@@ -16,13 +16,10 @@ use Nextras\Migrations\IDbal;
 
 class DoctrineAdapter implements IDbal
 {
-	/** @var Doctrine\DBAL\Connection */
-	private $conn;
-
-
-	public function __construct(Doctrine\DBAL\Connection $conn)
+	public function __construct(
+		private Doctrine\DBAL\Connection $conn,
+	)
 	{
-		$this->conn = $conn;
 	}
 
 
