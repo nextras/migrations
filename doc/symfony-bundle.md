@@ -5,7 +5,7 @@ Nextras Migrations ship with Symfony **Bundle** and with Symfony **Console comma
 
 ## Installation
 
-Enable `NextrasMigrationsBundle` in `config/bundles.php` (or `app/AppKernel.php` in Symfony < 4)
+Enable `NextrasMigrationsBundle` in `config/bundles.php`
 
 ```php
 return [
