@@ -1,9 +1,8 @@
-Integration with Plain PHP
-##########################
+# Integration with Plain PHP
 
 Create new PHP file (e.g. `./migrations/run.php`) with the following content:
 
-/--php
+```php
 use Nextras\Migrations\Bridges;
 use Nextras\Migrations\Controllers;
 use Nextras\Migrations\Drivers;
@@ -36,9 +35,9 @@ $controller->addGroup('dummy-data', "$baseDir/dummy-data", ['basic-data']);
 $controller->addExtension('sql', new Extensions\SqlHandler($driver));
 
 $controller->run();
-\--
+```
 
 
 Open the script in your browser (`HttpController`) or in a terminal (`ConsoleController`).
 
-[* http-controller.png *]
+![HTTP Controller](http-controller.png)

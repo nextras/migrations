@@ -1,13 +1,11 @@
-Integration with Nette
-######################
+# Integration with Nette
 
-Nextras Migrations ship with Nette **DI extension** and Symfony **Console commands**. Usage of Symfony Console is optional but recommended and can be integrated with Nette through "Contributte Console":https://github.com/contributte/console.
+Nextras Migrations ship with Nette **DI extension** and Symfony **Console commands**. Usage of Symfony Console is optional but recommended and can be integrated with Nette through [Contributte Console](https://github.com/contributte/console).
 
 
-Basic Configuration
-===================
+## Basic Configuration
 
-/--
+```yaml
 extensions:
 	console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
 	migrations: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
@@ -17,11 +15,10 @@ migrations:
 	driver: pgsql               # pgsql or mysql
 	dbal: nextras               # nextras, nette, doctrine or dibi
 	withDummyData: %debugMode%
-\--
+```
 
 
-Configuration of Custom Groups
-==============================
+## Configuration of Custom Groups
 
 By default Nextras Migrations define 3 groups located in a directory specified by the `dir` option:
 
@@ -32,7 +29,7 @@ By default Nextras Migrations define 3 groups located in a directory specified b
 
 You can optionally overwrite these default groups with the `groups` options.
 
-/--
+```yaml
 migrations:
 	...
 	groups:
@@ -43,10 +40,9 @@ migrations:
 			generator: null
 		anotherCustomGroup:
 			...
-\--
+```
 
 
-Usage
-=====
+## Usage
 
-See [Symfony Commands | symfony-console].
+See [Symfony Commands](symfony-console.md).
