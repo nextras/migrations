@@ -23,6 +23,7 @@ jobs:
           php-version: '8.4'
           coverage: none
       - run: composer install --no-interaction --no-progress
+      - run: composer require --dev phpstan/phpstan:^2.1 --no-interaction --no-progress
       - run: vendor/bin/phpstan analyse --no-progress
 
   tests:
