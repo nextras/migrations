@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-PHP_VERSION_MIN="70100"
-PHP_VERSION_MAX="70499"
-COMPOSER_REQUIRE="$COMPOSER_REQUIRE nextras/dbal:3.1.*"
-DBAL="nextras"
