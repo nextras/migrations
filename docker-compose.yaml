@@ -50,7 +50,7 @@ services:
 
   php85:
     <<: *php-service-base
-    image: thecodingmachine/php:8.5-v4-cli
+    image: thecodingmachine/php:8.5-v5-cli
 
   postgres:
     image: postgres:9.6
