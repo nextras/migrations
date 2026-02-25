@@ -36,10 +36,10 @@ class DefaultConfiguration implements IConfiguration
 	/** @var array<string, mixed> */
 	protected $phpParams;
 
-	/** @var list<Group> */
+	/** @var list<Group>|null */
 	protected $groups;
 
-	/** @var array<string, IExtensionHandler> */
+	/** @var array<string, IExtensionHandler>|null */
 	protected $handlers;
 
 	/** @var ?IDiffGenerator */

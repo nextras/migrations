@@ -26,8 +26,8 @@ class PgSqlDriver extends BaseDriver implements IDriver
 	/** @var string */
 	protected $schema;
 
-	/** @var null|string */
-	protected $schemaQuoted;
+	/** @var string */
+	protected $schemaQuoted = '';
 
 
 	public function __construct(IDbal $dbal, string $tableName = 'migrations', string $schema = 'public')
@@ -163,7 +163,7 @@ class PgSqlDriver extends BaseDriver implements IDriver
 
 	public function getInitTableSource(): string
 	{
-		return preg_replace('#^\t{3}#m', '', trim("
+		return (string) preg_replace('#^\t{3}#m', '', trim("
 			CREATE TABLE IF NOT EXISTS {$this->schemaQuoted}.{$this->tableNameQuoted} (" . '
 				"id" serial4 NOT NULL,
 				"group" varchar(100) NOT NULL,

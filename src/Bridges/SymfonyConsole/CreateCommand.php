@@ -83,7 +83,7 @@ class CreateCommand extends BaseCommand
 		$extension = $group->generator ? $group->generator->getExtension() : 'sql';
 		$name = $this->getFileName($label, $extension);
 
-		if ($this->hasNumericSubdirectory($dir, $foundYear)) {
+		if ($this->hasNumericSubdirectory($dir, $foundYear) && $foundYear !== null) {
 			if ($this->hasNumericSubdirectory($foundYear, $foundMonth)) {
 				return $dir . date('/Y/m/') . $name;
 

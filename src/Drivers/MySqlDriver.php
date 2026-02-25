@@ -158,7 +158,7 @@ class MySqlDriver extends BaseDriver implements IDriver
 
 	public function getInitTableSource(): string
 	{
-		return preg_replace('#^\t{3}#m', '', trim("
+		return (string) preg_replace('#^\t{3}#m', '', trim("
 			CREATE TABLE IF NOT EXISTS {$this->tableNameQuoted} (
 				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 				`group` varchar(100) NOT NULL,

@@ -27,8 +27,8 @@ abstract class BaseDriver implements IDriver
 	/** @var string */
 	protected $tableName;
 
-	/** @var null|string */
-	protected $tableNameQuoted;
+	/** @var string */
+	protected $tableNameQuoted = '';
 
 
 	public function __construct(IDbal $dbal, string $tableName = 'migrations')
@@ -86,6 +86,7 @@ abstract class BaseDriver implements IDriver
 				$parseRe = '(' . preg_quote($delimiter) . "|$openRe)";
 			}
 
+			$queryLength = 0;
 			while (true) {
 				preg_match($parseRe, $content, $match, PREG_OFFSET_CAPTURE, $parseOffset); // should always match
 				$found = $match[0][0];

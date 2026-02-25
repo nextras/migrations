@@ -21,7 +21,7 @@ abstract class BaseController
 	/** @var Engine\Runner */
 	protected $runner;
 
-	/** @var string */
+	/** @var Engine\Runner::MODE_* */
 	protected $mode;
 
 	/** @var array<string, Group> (name => Group) */

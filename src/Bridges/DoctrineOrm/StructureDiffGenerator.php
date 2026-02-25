@@ -75,8 +75,12 @@ class StructureDiffGenerator implements IDiffGenerator
 		}
 
 		$content = file_get_contents($this->ignoredQueriesFile);
+		if ($content === false) {
+			return [];
+		}
+
 		$queries = preg_split('~(\s*;\s*\r?\n|\z)~', $content, -1, PREG_SPLIT_NO_EMPTY);
 
-		return $queries;
+		return $queries !== false ? $queries : [];
 	}
 }
