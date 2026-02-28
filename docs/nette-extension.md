@@ -5,7 +5,7 @@ Nextras Migrations ships with a Nette **DI extension** and Symfony **Console com
 
 ## Basic Configuration
 
-```yaml
+```neon
 extensions:
 	console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
 	migrations: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
@@ -29,9 +29,9 @@ By default, Nextras Migrations defines 3 groups located in a directory specified
 
 You can optionally overwrite these default groups with the `groups` option.
 
-```yaml
+```neon
 migrations:
-	...
+	# ...
 	groups:
 		customGroup:
 			enabled: true
@@ -39,7 +39,7 @@ migrations:
 			dependencies: [anotherCustomGroup]
 			generator: null
 		anotherCustomGroup:
-			...
+			# ...
 ```
 
 
