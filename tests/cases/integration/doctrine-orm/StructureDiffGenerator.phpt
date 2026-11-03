@@ -38,9 +38,11 @@ class StructureDiffGeneratorTest extends Tester\TestCase
 			Tester\Environment::skip('Configure tests/drivers.ini with a disposable PostgreSQL database.');
 		}
 		$options = parse_ini_file(__DIR__ . '/../../../drivers.ini', true)['pgsql'];
+		// CI preserves the legacy driver server and overrides only this schema-test endpoint.
 		$this->connection = DriverManager::getConnection([
 			'driver' => 'pdo_pgsql',
 			'host' => $options['host'],
+			'port' => (int) (getenv('NEXTRAS_ORM_PGSQL_PORT') ?: ($options['port'] ?? 5432)),
 			'dbname' => $options['database'],
 			'user' => $options['username'],
 			'password' => $options['password'],
