@@ -7,6 +7,7 @@ namespace NextrasTests\Migrations\DoctrineOrm;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\NamedObject;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -19,6 +20,7 @@ use Tester\Assert;
 
 require __DIR__ . '/../../../bootstrap.php';
 require __DIR__ . '/../../../fixtures/doctrine-orm/SchemaEntity.php';
+require __DIR__ . '/../../../fixtures/doctrine-orm/FailingStringType.php';
 
 
 class StructureDiffGeneratorTest extends Tester\TestCase
@@ -128,13 +130,72 @@ class StructureDiffGeneratorTest extends Tester\TestCase
 	}
 
 
+	public function testSchemaListenerUsesOneUnfilteredTarget(): void
+	{
+		$tool = new SchemaTool($this->entityManager);
+		$tool->createSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
+		$this->exec('ALTER TABLE managed DROP COLUMN added');
+		$this->exec('CREATE TABLE feature_flags (id INT PRIMARY KEY)');
+		$this->exec('CREATE TABLE audit_log (id INT PRIMARY KEY, value TEXT NOT NULL)');
+		$this->exec("INSERT INTO audit_log VALUES (1, 'retain audit row')");
+		$listener = new class($this->schema) {
+			public $schemaPasses = 0;
+			public $tablePasses = 0;
+			public $markers = [];
+			private $schema;
+
+			public function __construct(string $schema) { $this->schema = $schema; }
+
+			public function postGenerateSchemaTable($event): void { $this->tablePasses++; }
+
+			public function postGenerateSchema($event): void
+			{
+				$this->schemaPasses++;
+				$connection = $event->getEntityManager()->getConnection();
+				$manager = method_exists($connection, 'createSchemaManager')
+					? $connection->createSchemaManager() : $connection->getSchemaManager();
+				$visible = in_array('feature_flags', $manager->listTableNames(), true);
+				$this->markers[] = $visible;
+				if ($visible) {
+					$table = $event->getSchema()->createTable($this->schema . '.audit_log');
+					$table->addColumn('id', 'integer');
+					$table->setPrimaryKey(['id']);
+					$table->addColumn('value', 'text');
+				}
+			}
+		};
+		$this->entityManager->getEventManager()->addEventListener(
+			['postGenerateSchemaTable', 'postGenerateSchema'], $listener
+		);
+		$generator = new StructureDiffGenerator($this->entityManager);
+		$sql = $generator->generateContent();
+		$this->exec($sql);
+		$auditExists = $this->connection->fetchOne("SELECT to_regclass('" . $this->schema . ".audit_log')") !== null;
+		echo json_encode(['schemaPasses' => $listener->schemaPasses, 'tablePasses' => $listener->tablePasses,
+			'markers' => $listener->markers, 'auditExists' => $auditExists, 'sql' => $sql]) . "\n";
+		Assert::true($auditExists);
+		Assert::same('retain audit row', $this->connection->fetchOne('SELECT value FROM audit_log WHERE id = 1'));
+		Assert::same(1, $listener->schemaPasses);
+		Assert::same(1, $listener->tablePasses);
+		Assert::same([true], $listener->markers);
+		Assert::true($this->managedTable()->hasColumn('added'));
+		Assert::contains('feature_flags', $this->schemaManager()->listTableNames());
+		Assert::same($this->initialFilter, $this->connection->getConfiguration()->getSchemaAssetsFilter());
+		Assert::same('', $generator->generateContent());
+		Assert::same('', $generator->generateContent());
+		Assert::same(3, $listener->schemaPasses);
+		Assert::same(3, $listener->tablePasses);
+		Assert::same([true, true, true], $listener->markers);
+		Assert::same('retain audit row', $this->connection->fetchOne('SELECT value FROM audit_log WHERE id = 1'));
+		$this->assertUnmappedAssets();
+	}
+
+
 	public function testExistingFilterIsComposedAndRestored(): void
 	{
-		$seen = [];
-		$filter = function ($asset) use (&$seen): bool {
+		$filter = function ($asset): bool {
 			$name = $asset instanceof NamedObject ? $asset->getObjectName()->toString()
 				: ($asset instanceof AbstractAsset ? $asset->getName() : $asset);
-			$seen[] = $name;
 			// SchemaTool has always whitelisted mapped assets even if this rejects them.
 			return strpos($name, 'managed') === false && strpos($name, 'migrations') === false;
 		};
@@ -143,36 +204,82 @@ class StructureDiffGeneratorTest extends Tester\TestCase
 		$generator = new StructureDiffGenerator($this->entityManager);
 		$this->exec($generator->generateContent());
 		Assert::same($filter, $config->getSchemaAssetsFilter());
-		Assert::true(count($seen) > 0);
 		$this->exec('ALTER TABLE managed DROP COLUMN added');
 		$this->exec($generator->generateContent());
 		Assert::true($this->managedTable()->hasColumn('added'));
 		Assert::same('', $generator->generateContent());
 		Assert::same($filter, $config->getSchemaAssetsFilter());
 		// Restored application introspection must still see allowed unmapped assets.
-		Assert::contains('sentinel', implode(' ', $this->schemaManager()->listTableNames()));
+		$names = $this->schemaManager()->listTableNames();
+		Assert::contains('sentinel', $names);
+		Assert::false(in_array('managed', $names, true));
+		Assert::false(in_array('migrations', $names, true));
 		$config->setSchemaAssetsFilter($this->initialFilter);
 		$this->assertUnmappedAssets();
 	}
 
 
-	public function testFilterRestoredAfterIntrospectionFailure(): void
+	public function testNativeMappedComparatorBehavior(): void
 	{
-		$failure = new \RuntimeException('Introspection filter failed');
-		$filter = function ($asset) use ($failure): bool {
-			throw $failure;
-		};
+		$metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
+		$tool = new SchemaTool($this->entityManager);
+		$tool->createSchema($metadata);
+		$this->exec('CREATE INDEX obsolete_label_idx ON managed (label)');
+		$this->exec('ALTER TABLE managed DROP COLUMN added');
+		// Native SchemaTool admits mapped objects despite this application filter.
+		$filter = function ($asset): bool { return false; };
 		$config = $this->connection->getConfiguration();
 		$config->setSchemaAssetsFilter($filter);
+		$queries = (new \ReflectionMethod(SchemaTool::class, 'getUpdateSchemaSql'))->getNumberOfParameters() > 1
+			? $tool->getUpdateSchemaSql($metadata, true) : $tool->getUpdateSchemaSql($metadata);
+		$expected = $queries ? implode(";\n", $queries) . ";\n" : '';
+		Assert::notSame('', $expected);
 		$generator = new StructureDiffGenerator($this->entityManager);
-		Assert::exception(function () use ($generator): void {
-			$generator->generateContent();
-		}, \RuntimeException::class, $failure->getMessage());
+		Assert::same($expected, $generator->generateContent());
+		$this->exec($expected);
+		Assert::true($this->managedTable()->hasColumn('added'));
+		Assert::false($this->managedTable()->hasIndex('obsolete_label_idx'));
+		Assert::same('', $generator->generateContent());
 		Assert::same($filter, $config->getSchemaAssetsFilter());
 	}
 
 
-	public function testFilterRestoredAfterGenerationFailure(): void
+	public function testFilterRestoredAfterSqlGenerationFailure(): void
+	{
+		$failure = new \RuntimeException('SQL declaration failed after introspection');
+		$filter = function ($asset): bool { return true; };
+		$config = $this->connection->getConfiguration();
+		$config->setSchemaAssetsFilter($filter);
+		$orm3 = (new \ReflectionMethod(SchemaTool::class, 'getUpdateSchemaSql'))->getNumberOfParameters() === 1;
+		Type::addType('nextras_failing_string', FailingStringType::class);
+		$metadata = $this->entityManager->getClassMetadata(SchemaEntity::class);
+		if (is_array($metadata->fieldMappings['label'])) {
+			$metadata->fieldMappings['label']['type'] = 'nextras_failing_string';
+		} else {
+			$metadata->fieldMappings['label']->type = 'nextras_failing_string';
+		}
+		$declarations = 0;
+		FailingStringType::$onDeclaration = function () use ($failure, $filter, $config, $orm3, &$declarations): void {
+			$declarations++;
+			if ($orm3) {
+				Assert::notSame($filter, $config->getSchemaAssetsFilter());
+				// Public introspection proves the generator-local filter is installed.
+				Assert::false(in_array('sentinel', $this->schemaManager()->listTableNames(), true));
+			}
+			throw $failure;
+		};
+		$generator = new StructureDiffGenerator($this->entityManager);
+		Assert::exception(function () use ($generator): void {
+			$generator->generateContent();
+		}, \RuntimeException::class, $failure->getMessage());
+		Assert::same(1, $declarations);
+		Assert::same($filter, $config->getSchemaAssetsFilter());
+		Assert::contains('sentinel', $this->schemaManager()->listTableNames());
+		$this->assertUnmappedAssets();
+	}
+
+
+	public function testFilterUnchangedAfterMetadataFailure(): void
 	{
 		$filter = function ($asset): bool { return true; };
 		$config = $this->connection->getConfiguration();

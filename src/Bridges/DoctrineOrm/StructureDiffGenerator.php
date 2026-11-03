@@ -11,6 +11,7 @@ namespace Nextras\Migrations\Bridges\DoctrineOrm;
 
 use Doctrine\Common\Cache\ClearableCache;
 use Doctrine\DBAL\Schema\AbstractAsset;
+use Doctrine\DBAL\Schema\ComparatorConfig;
 use Doctrine\DBAL\Schema\NamedObject;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -61,19 +62,27 @@ class StructureDiffGenerator implements IDiffGenerator
 		}
 
 		$schema = $schemaTool->getSchemaFromMetadata($metadata);
-		$config = $this->entityManager->getConnection()->getConfiguration();
+		$connection = $this->entityManager->getConnection();
+		$schemaManager = $connection->createSchemaManager();
+		$config = $connection->getConfiguration();
 		$previousFilter = $config->getSchemaAssetsFilter();
-		$config->setSchemaAssetsFilter(static function ($asset) use ($schema, $previousFilter): bool {
+		$config->setSchemaAssetsFilter(static function ($asset) use ($schema): bool {
 			// DBAL passes table names as strings and sequences as schema assets.
 			$name = $asset instanceof NamedObject ? $asset->getObjectName()->toString()
 				: ($asset instanceof AbstractAsset ? $asset->getName() : $asset);
 
-			return ($previousFilter === null || $previousFilter($asset))
-				&& ($schema->hasTable($name) || $schema->hasSequence($name));
+			// Like SchemaTool, whitelist target assets even if the prior filter rejects them.
+			return $schema->hasTable($name) || $schema->hasSequence($name);
 		});
 
 		try {
-			return $schemaTool->getUpdateSchemaSql($metadata);
+			$fromSchema = $schemaManager->introspectSchema();
+			$comparator = class_exists(ComparatorConfig::class)
+				? $schemaManager->createComparator((new ComparatorConfig())->withReportModifiedIndexes(false))
+				: $schemaManager->createComparator();
+			$diff = $comparator->compareSchemas($fromSchema, $schema);
+
+			return $connection->getDatabasePlatform()->getAlterSchemaSQL($diff);
 		} finally {
 			$config->setSchemaAssetsFilter($previousFilter);
 		}
