@@ -56,3 +56,7 @@ migrations/
 ## Writing Migrations
 
 Migrations can be written as a file with any extension that has a defined extension handler. The two built-in extension handlers are SQL and PHP. Migrations can be written manually or generated through a diff generator. The only built-in diff generator is a `structures` generator for Doctrine.
+
+Doctrine structure diffs preserve tables and sequences that are not mapped by the entity metadata, including the migrations ledger. ORM 2 uses SchemaTool's native safe mode. ORM 3 uses a schema assets filter limited to the generation call; an existing filter is composed and restored even if generation fails. This does not change application-wide schema validation.
+
+Safe generation can still produce destructive changes within mapped tables, such as removing columns, indexes, or foreign keys. ORM 2 retains its native safe-mode treatment of foreign keys referencing unmapped tables; ORM 3 follows SchemaTool's behavior for foreign keys on mapped tables. Always review the generated SQL before executing a migration.

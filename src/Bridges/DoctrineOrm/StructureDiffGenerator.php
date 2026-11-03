@@ -10,6 +10,8 @@
 namespace Nextras\Migrations\Bridges\DoctrineOrm;
 
 use Doctrine\Common\Cache\ClearableCache;
+use Doctrine\DBAL\Schema\AbstractAsset;
+use Doctrine\DBAL\Schema\NamedObject;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Nextras;
@@ -53,9 +55,28 @@ class StructureDiffGenerator implements IDiffGenerator
 
 		$schemaTool = new SchemaTool($this->entityManager);
 		$metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
-		$queries = $schemaTool->getUpdateSchemaSql($metadata, true);
+		// ORM 2 has native safe mode; ORM 3 removed the second parameter.
+		if ((new \ReflectionMethod(SchemaTool::class, 'getUpdateSchemaSql'))->getNumberOfParameters() > 1) {
+			return $schemaTool->getUpdateSchemaSql($metadata, true);
+		}
 
-		return $queries;
+		$schema = $schemaTool->getSchemaFromMetadata($metadata);
+		$config = $this->entityManager->getConnection()->getConfiguration();
+		$previousFilter = $config->getSchemaAssetsFilter();
+		$config->setSchemaAssetsFilter(static function ($asset) use ($schema, $previousFilter): bool {
+			// DBAL passes table names as strings and sequences as schema assets.
+			$name = $asset instanceof NamedObject ? $asset->getObjectName()->toString()
+				: ($asset instanceof AbstractAsset ? $asset->getName() : $asset);
+
+			return ($previousFilter === null || $previousFilter($asset))
+				&& ($schema->hasTable($name) || $schema->hasSequence($name));
+		});
+
+		try {
+			return $schemaTool->getUpdateSchemaSql($metadata);
+		} finally {
+			$config->setSchemaAssetsFilter($previousFilter);
+		}
 	}
 
 
