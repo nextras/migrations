@@ -7,6 +7,7 @@ namespace NextrasTests\Migrations\DoctrineOrm;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\NamedObject;
+use Doctrine\DBAL\ServerVersionProvider;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
@@ -38,11 +39,16 @@ class StructureDiffGeneratorTest extends Tester\TestCase
 			Tester\Environment::skip('Configure tests/drivers.ini with a disposable PostgreSQL database.');
 		}
 		$options = parse_ini_file(__DIR__ . '/../../../drivers.ini', true)['pgsql'];
-		// CI preserves the legacy driver server and overrides only this schema-test endpoint.
+		$port = $options['port'] ?? 5432;
+		// ServerVersionProvider was introduced in DBAL 4, which requires PostgreSQL 10+.
+		// Keep DBAL 2/3 on the original server, including PostgreSQL 9.6 in CI.
+		if (interface_exists(ServerVersionProvider::class)) {
+			$port = getenv('NEXTRAS_ORM_DBAL4_PGSQL_PORT') ?: $port;
+		}
 		$this->connection = DriverManager::getConnection([
 			'driver' => 'pdo_pgsql',
 			'host' => $options['host'],
-			'port' => (int) (getenv('NEXTRAS_ORM_PGSQL_PORT') ?: ($options['port'] ?? 5432)),
+			'port' => (int) $port,
 			'dbname' => $options['database'],
 			'user' => $options['username'],
 			'password' => $options['password'],

@@ -37,9 +37,9 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-      # Preserve PostgreSQL 9.6 driver coverage; current DBAL schema tools need a newer server.
-      postgres_schema:
-        image: postgres:18
+      # DBAL 2/3 retain PostgreSQL 9.6 coverage; DBAL 4 requires PostgreSQL 10+.
+      postgres_dbal4:
+        image: postgres:10
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -82,4 +82,4 @@ jobs:
       - run: tests/run-unit.sh
       - run: tests/run-integration.sh
         env:
-          NEXTRAS_ORM_PGSQL_PORT: 5433
+          NEXTRAS_ORM_DBAL4_PGSQL_PORT: 5433
