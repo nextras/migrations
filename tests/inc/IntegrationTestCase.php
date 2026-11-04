@@ -156,7 +156,7 @@ abstract class IntegrationTestCase extends TestCase
 			'host' => $options['host'],
 			'user' => $options['username'],
 			'password' => $options['password'],
-			'database' => $options['database'],
+			'dbname' => $options['database'],
 			'driver' => match ($options['driver']) {
 				'mysql' => 'mysqli',
 				'pgsql' => 'pdo_pgsql',
