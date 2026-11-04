@@ -22,12 +22,6 @@ class TestSymfonyKernel extends Kernel
 	}
 
 
-	public function getRootDir(): string
-	{
-		return TEMP_DIR . '/symfony-bundle';
-	}
-
-
 	public function getProjectDir(): string
 	{
 		return TEMP_DIR . '/symfony-bundle';
