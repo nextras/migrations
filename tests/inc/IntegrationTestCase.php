@@ -141,17 +141,7 @@ abstract class IntegrationTestCase extends TestCase
 
 
 			case 'doctrine':
-				$drivers = [
-					'mysql' => 'mysqli',
-					'pgsql' => 'pdo_pgsql',
-				];
-				return new DoctrineAdapter(Doctrine\DBAL\DriverManager::getConnection([
-					'host' => $options['host'],
-					'user' => $options['username'],
-					'password' => $options['password'],
-					'database' => $options['database'],
-					'driver' => $drivers[$options['driver']],
-				]));
+				return new DoctrineAdapter($this->createDoctrineConnection($options));
 
 			case 'nette':
 				return new NetteAdapter(new Nette\Database\Connection(
@@ -176,6 +166,23 @@ abstract class IntegrationTestCase extends TestCase
 			default:
 				throw new \Exception("Unknown DBAL '$options[dbal]'.");
 		}
+	}
+
+
+	protected function createDoctrineConnection(array $options): Doctrine\DBAL\Connection
+	{
+		$drivers = [
+			'mysql' => 'mysqli',
+			'pgsql' => 'pdo_pgsql',
+		];
+
+		return Doctrine\DBAL\DriverManager::getConnection([
+			'host' => $options['host'],
+			'user' => $options['username'],
+			'password' => $options['password'],
+			'dbname' => $options['database'],
+			'driver' => $drivers[$options['driver']],
+		]);
 	}
 
 
