@@ -60,10 +60,7 @@ class StructureDiffGeneratorTest extends IntegrationTestCase
 		Assert::match('~CREATE TABLE \W?book\W?~', $diff);
 		Assert::notContains('DROP', $diff);
 
-		foreach (explode(";\n", rtrim($diff, ";\n")) as $query) {
-			$this->connection->executeStatement($query);
-		}
-
+		$this->executeDiff($diff);
 		Assert::same('', $this->generateDiff());
 		Assert::true($this->createSchemaManager()->tablesExist(['m', 'legacy']));
 
@@ -81,6 +78,32 @@ class StructureDiffGeneratorTest extends IntegrationTestCase
 
 		Assert::same('', $this->generateDiff());
 		Assert::same($filter, $configuration->getSchemaAssetsFilter());
+	}
+
+
+	public function testSchemaListenerSeesExistingTables(): void
+	{
+		$this->connection->executeStatement('CREATE TABLE feature_flag (id INT PRIMARY KEY)');
+		$this->entityManager->getEventManager()->addEventListener([Doctrine\ORM\Tools\ToolEvents::postGenerateSchema], new class {
+			public function postGenerateSchema(Doctrine\ORM\Tools\Event\GenerateSchemaEventArgs $args): void
+			{
+				$connection = $args->getEntityManager()->getConnection();
+				$schemaManager = method_exists($connection, 'createSchemaManager')
+					? $connection->createSchemaManager()
+					: $connection->getSchemaManager();
+
+				if ($schemaManager->tablesExist(['feature_flag'])) {
+					$args->getSchema()->createTable('audit_log')->addColumn('id', 'integer');
+				}
+			}
+		});
+
+		$diff = $this->generateDiff();
+		Assert::match('~CREATE TABLE \W?audit_log\W?~', $diff);
+		Assert::notContains('DROP', $diff);
+
+		$this->executeDiff($diff);
+		Assert::same('', $this->generateDiff());
 	}
 
 
@@ -134,6 +157,14 @@ class StructureDiffGeneratorTest extends IntegrationTestCase
 	private function generateDiff(): string
 	{
 		return (new StructureDiffGenerator($this->entityManager))->generateContent();
+	}
+
+
+	private function executeDiff(string $diff): void
+	{
+		foreach (explode(";\n", rtrim($diff, ";\n")) as $query) {
+			$this->connection->executeStatement($query);
+		}
 	}
 }
 

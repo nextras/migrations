@@ -10,6 +10,7 @@
 namespace Nextras\Migrations\Bridges\DoctrineOrm;
 
 use Doctrine\Common\Cache\ClearableCache;
+use Doctrine\DBAL\Schema\Schema;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Nextras;
@@ -61,7 +62,24 @@ class StructureDiffGenerator implements IDiffGenerator
 
 		// ORM 3 removed safe mode. SchemaTool always introspects tables and sequences present in the target schema
 		// and lets the schema assets filter decide about the rest. Rejecting everything hides unmapped assets,
-		// so they cannot be dropped.
+		// so they cannot be dropped. The target schema is built beforehand, so schema listeners still see
+		// the database through the original filter.
+		$schemaTool = new class ($this->entityManager, $schemaTool->getSchemaFromMetadata($metadata)) extends SchemaTool {
+			public function __construct(
+				EntityManagerInterface $entityManager,
+				private Schema $targetSchema,
+			)
+			{
+				parent::__construct($entityManager);
+			}
+
+
+			public function getSchemaFromMetadata(array $classes): Schema
+			{
+				return $this->targetSchema;
+			}
+		};
+
 		$configuration = $this->entityManager->getConnection()->getConfiguration();
 		$previousFilter = $configuration->getSchemaAssetsFilter();
 		$configuration->setSchemaAssetsFilter(static fn(): bool => false);
