@@ -10,6 +10,7 @@
 namespace Nextras\Migrations\Bridges\DoctrineOrm;
 
 use Doctrine\Common\Cache\ClearableCache;
+use Doctrine\DBAL\Schema\Schema;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Nextras;
@@ -59,9 +60,46 @@ class StructureDiffGenerator implements IDiffGenerator
 
 		$schemaTool = new SchemaTool($this->entityManager);
 		$metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
-		$queries = $schemaTool->getUpdateSchemaSql($metadata, true);
 
-		return $queries;
+		if ((new \ReflectionMethod($schemaTool, 'getUpdateSchemaSql'))->getNumberOfParameters() > 1) {
+			// ORM 2: safe mode never drops tables or sequences
+			return $schemaTool->getUpdateSchemaSql($metadata, true);
+		}
+
+		// ORM 3 removed safe mode. SchemaTool always introspects tables and sequences present in the target schema
+		// and lets the schema assets filter decide about the rest. Rejecting everything hides unmapped assets,
+		// so they cannot be dropped. The target schema is built beforehand, so schema listeners still see
+		// the database through the original filter.
+		$schemaTool = new class ($this->entityManager, $schemaTool->getSchemaFromMetadata($metadata)) extends SchemaTool {
+			/** @var Schema */
+			private $targetSchema;
+
+
+			public function __construct(EntityManagerInterface $entityManager, Schema $targetSchema)
+			{
+				parent::__construct($entityManager);
+				$this->targetSchema = $targetSchema;
+			}
+
+
+			public function getSchemaFromMetadata(array $classes): Schema
+			{
+				return $this->targetSchema;
+			}
+		};
+
+		$configuration = $this->entityManager->getConnection()->getConfiguration();
+		$previousFilter = $configuration->getSchemaAssetsFilter();
+		$configuration->setSchemaAssetsFilter(static function (): bool {
+			return false;
+		});
+
+		try {
+			return $schemaTool->getUpdateSchemaSql($metadata);
+
+		} finally {
+			$configuration->setSchemaAssetsFilter($previousFilter);
+		}
 	}
 
 
