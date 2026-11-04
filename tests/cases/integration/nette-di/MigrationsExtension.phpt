@@ -89,6 +89,45 @@ class MigrationsExtensionTest extends TestCase
 	}
 
 
+	public function testDynamicContainerParameterAsWholeDir(): void
+	{
+		if (!method_exists(Nette\DI\Compiler::class, 'setDynamicParameterNames')) {
+			Environment::skip('Required Nette >= 2.4.7');
+		}
+
+		$container = $this->createContainer('dynamicParameters.bareDir', [
+			'migrationsDir' => '__migrationsDir__',
+		]);
+
+		$config = $container->getService('migrations.configuration');
+		$groups = $config->getGroups();
+		Assert::same('__migrationsDir__/structures', $groups[0]->directory);
+		Assert::same('__migrationsDir__/basic-data', $groups[1]->directory);
+		Assert::same('__migrationsDir__/dummy-data', $groups[2]->directory);
+	}
+
+
+	public function testDynamicContainerParametersInGroups(): void
+	{
+		if (!method_exists(Nette\DI\Compiler::class, 'setDynamicParameterNames')) {
+			Environment::skip('Required Nette >= 2.4.7');
+		}
+
+		$container = $this->createContainer('dynamicParameters.groups', [
+			'rootDir' => '__rootDir__',
+			'structuresDir' => '__structuresDir__',
+		]);
+
+		$config = $container->getService('migrations.configuration');
+		$groups = $config->getGroups();
+		Assert::count(2, $groups);
+		Assert::same('structures', $groups[0]->name);
+		Assert::same('__structuresDir__', $groups[0]->directory);
+		Assert::same('basic-data', $groups[1]->name);
+		Assert::same('__rootDir__/basic-data', $groups[1]->directory);
+	}
+
+
 	public function testOptionsAsService(): void
 	{
 		$container = $this->createContainer('optionsAsService');
