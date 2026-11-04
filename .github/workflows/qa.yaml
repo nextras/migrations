@@ -53,6 +53,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+
+      # PHP < 7.4 cannot authenticate with MySQL 8 default caching_sha2_password plugin
+      - name: Allow mysql_native_password authentication
+        run: mysql --host 127.0.0.1 --user root --password=root --execute "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root'"
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
