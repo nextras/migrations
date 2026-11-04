@@ -129,16 +129,7 @@ abstract class IntegrationTestCase extends TestCase
 					'pgsql' => 'postgre',
 				},
 			])),
-			'doctrine' => new DoctrineAdapter(Doctrine\DBAL\DriverManager::getConnection([
-				'host' => $options['host'],
-				'user' => $options['username'],
-				'password' => $options['password'],
-				'database' => $options['database'],
-				'driver' => match ($options['driver']) {
-					'mysql' => 'mysqli',
-					'pgsql' => 'pdo_pgsql',
-				},
-			])),
+			'doctrine' => new DoctrineAdapter($this->createDoctrineConnection($options)),
 			'nette' => new NetteAdapter(new Nette\Database\Connection(
 				"$options[driver]:host=$options[host];dbname=$options[database]",
 				$options['username'],
@@ -156,6 +147,21 @@ abstract class IntegrationTestCase extends TestCase
 			])),
 			default => throw new \Exception("Unknown DBAL '$options[dbal]'."),
 		};
+	}
+
+
+	protected function createDoctrineConnection(array $options): Doctrine\DBAL\Connection
+	{
+		return Doctrine\DBAL\DriverManager::getConnection([
+			'host' => $options['host'],
+			'user' => $options['username'],
+			'password' => $options['password'],
+			'dbname' => $options['database'],
+			'driver' => match ($options['driver']) {
+				'mysql' => 'mysqli',
+				'pgsql' => 'pdo_pgsql',
+			},
+		]);
 	}
 
 
