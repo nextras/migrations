@@ -56,3 +56,5 @@ migrations/
 ## Writing Migrations
 
 Migrations can be written as a file with any extension that has a defined extension handler. The two built-in extension handlers are SQL and PHP. Migrations can be written manually or generated through a diff generator. The only built-in diff generator is a `structures` generator for Doctrine.
+
+The Doctrine generator never drops tables or sequences that are not mapped to entities, such as the migrations table itself. It can still drop columns, indexes and foreign keys of mapped tables, so review the generated SQL before running it.

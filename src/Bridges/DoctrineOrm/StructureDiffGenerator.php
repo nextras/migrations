@@ -53,9 +53,25 @@ class StructureDiffGenerator implements IDiffGenerator
 
 		$schemaTool = new SchemaTool($this->entityManager);
 		$metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
-		$queries = $schemaTool->getUpdateSchemaSql($metadata, true);
 
-		return $queries;
+		if ((new \ReflectionMethod($schemaTool, 'getUpdateSchemaSql'))->getNumberOfParameters() > 1) {
+			// ORM 2: safe mode never drops tables or sequences
+			return $schemaTool->getUpdateSchemaSql($metadata, true);
+		}
+
+		// ORM 3 removed safe mode. SchemaTool always introspects tables and sequences present in the target schema
+		// and lets the schema assets filter decide about the rest. Rejecting everything hides unmapped assets,
+		// so they cannot be dropped.
+		$configuration = $this->entityManager->getConnection()->getConfiguration();
+		$previousFilter = $configuration->getSchemaAssetsFilter();
+		$configuration->setSchemaAssetsFilter(static fn(): bool => false);
+
+		try {
+			return $schemaTool->getUpdateSchemaSql($metadata);
+
+		} finally {
+			$configuration->setSchemaAssetsFilter($previousFilter);
+		}
 	}
 
 
