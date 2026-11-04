@@ -5,6 +5,9 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$DIR")"
 PHP_VERSION="$(php --run "echo PHP_VERSION_ID;")"
 
+# the matrix intentionally tests EOL versions (e.g. symfony/yaml 4.4) which have unpatched security advisories
+export COMPOSER_NO_SECURITY_BLOCKING=1
+
 
 run()
 {
