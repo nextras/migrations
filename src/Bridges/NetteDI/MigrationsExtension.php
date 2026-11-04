@@ -12,8 +12,8 @@ namespace Nextras\Migrations\Bridges\NetteDI;
 use Doctrine;
 use Dibi;
 use Nette;
-use Nette\DI\ServiceDefinition;
-use Nette\DI\Statement;
+use Nette\DI\Definitions\ServiceDefinition;
+use Nette\DI\Definitions\Statement;
 use Nette\Utils\Validators;
 use Nextras;
 use Symfony;
@@ -66,15 +66,15 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		$config = $this->validateConfig($this->defaults);
 
 		// dbal
-		Validators::assertField($config, 'dbal', 'null|string|Nette\DI\Statement');
+		Validators::assertField($config, 'dbal', 'null|string|Nette\DI\Definitions\Statement');
 		$dbal = $this->getDbalDefinition($config['dbal']);
 
 		// driver
-		Validators::assertField($config, 'driver', 'null|string|Nette\DI\Statement');
+		Validators::assertField($config, 'driver', 'null|string|Nette\DI\Definitions\Statement');
 		$driver = $this->getDriverDefinition($config['driver'], $dbal);
 
 		// printer
-		Validators::assertField($config, 'printer', 'null|string|Nette\DI\Statement');
+		Validators::assertField($config, 'printer', 'null|string|Nette\DI\Definitions\Statement');
 		$printer = $this->getPrinterDefinition($config['printer']);
 
 		// diffGenerator
@@ -85,7 +85,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 		// groups
 		if ($config['groups'] === null) {
-			Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral|Nette\PhpGenerator\Literal|Nette\DI\Statement');
+			Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral|Nette\PhpGenerator\Literal|Nette\DI\Definitions\Statement');
 			Validators::assertField($config, 'withDummyData', 'bool');
 			$config['groups'] = $this->createDefaultGroupConfiguration($config['dir'], $config['withDummyData']);
 		}
@@ -313,7 +313,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		$groupDefinitions = [];
 
 		foreach ($groups as $groupName => $groupConfig) {
-			Validators::assertField($groupConfig, 'directory', 'string|Nette\PhpGenerator\PhpLiteral|Nette\PhpGenerator\Literal|Nette\DI\Statement');
+			Validators::assertField($groupConfig, 'directory', 'string|Nette\PhpGenerator\PhpLiteral|Nette\PhpGenerator\Literal|Nette\DI\Definitions\Statement');
 
 			$enabled = $groupConfig['enabled'] ?? true;
 			$directory = $groupConfig['directory'];
