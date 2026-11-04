@@ -3,7 +3,7 @@ extensions:
 
 migrations:
 	dir: migrations
-	driver: Nextras\Migrations\Drivers\MySqlDriver(@Nextras\Migrations\IDbal)
+	driver: Nextras\Migrations\Drivers\MySqlDriver()
 
 services:
 	- Dibi\Connection(%dibiConfig%)
