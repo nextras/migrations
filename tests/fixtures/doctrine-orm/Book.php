@@ -11,6 +11,7 @@ class Book
 {
 	#[ORM\Id]
 	#[ORM\Column(type: 'integer')]
+	#[ORM\GeneratedValue]
 	public int $id;
 
 	#[ORM\ManyToOne(targetEntity: Author::class)]

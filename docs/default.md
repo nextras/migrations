@@ -57,4 +57,4 @@ migrations/
 
 Migrations can be written as a file with any extension that has a defined extension handler. The two built-in extension handlers are SQL and PHP. Migrations can be written manually or generated through a diff generator. The only built-in diff generator is a `structures` generator for Doctrine.
 
-The Doctrine generator never drops tables or sequences that are not mapped to entities, such as the migrations table itself. It can still drop columns, indexes and foreign keys of mapped tables, so review the generated SQL before running it.
+The Doctrine generator never drops tables or sequences that are not mapped to entities, such as the migrations table itself. It can still drop columns, indexes and foreign keys of mapped tables, so review the generated SQL before running it. With Doctrine ORM 3 this includes foreign keys from mapped tables to unmapped ones, which ORM 2 keeps. To leave such queries out of generated migrations, list them in a file passed as the `ignoredQueriesFile` option (`ignored_queries_file` in Symfony).

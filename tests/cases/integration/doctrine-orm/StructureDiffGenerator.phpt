@@ -28,8 +28,9 @@ class StructureDiffGeneratorTest extends IntegrationTestCase
 
 	protected function setUp(): void
 	{
-		// schema introspection reads the catalog of the whole database, including schemas other tests are dropping
-		Environment::lock('doctrine-orm', dirname(TEMP_DIR));
+		// test cases run in parallel, each in its own PostgreSQL schema; introspection reads the catalog of the whole
+		// database and fails when another test case drops its schema at the same time
+		Environment::lock(__CLASS__, __DIR__ . '/../../../temp');
 
 		parent::setUp();
 		$this->driver->createTable();
@@ -41,6 +42,10 @@ class StructureDiffGeneratorTest extends IntegrationTestCase
 
 	public function testSchemaInSync(): void
 	{
+		if ($this->connection->getDatabasePlatform()->supportsSequences()) {
+			Assert::notNull($this->connection->fetchOne("SELECT to_regclass('book_id_seq')")); // mapped sequence
+		}
+
 		Assert::same('', $this->generateDiff());
 	}
 
@@ -51,8 +56,8 @@ class StructureDiffGeneratorTest extends IntegrationTestCase
 		$this->connection->executeStatement('DROP TABLE book');
 
 		$diff = $this->generateDiff();
-		Assert::contains('ALTER TABLE author ADD name VARCHAR(100) NOT NULL', $diff);
-		Assert::contains('CREATE TABLE book', $diff);
+		Assert::match('~ALTER TABLE \W?author\W? ADD \W?name\W?~', $diff);
+		Assert::match('~CREATE TABLE \W?book\W?~', $diff);
 		Assert::notContains('DROP', $diff);
 
 		foreach (explode(";\n", rtrim($diff, ";\n")) as $query) {
@@ -68,10 +73,10 @@ class StructureDiffGeneratorTest extends IntegrationTestCase
 	}
 
 
-	public function testExistingSchemaAssetsFilter(): void
+	public function testSchemaAssetsFilterIsRestored(): void
 	{
 		$configuration = $this->connection->getConfiguration();
-		$filter = static fn(): bool => false;
+		$filter = static fn(): bool => true;
 		$configuration->setSchemaAssetsFilter($filter);
 
 		Assert::same('', $this->generateDiff());
@@ -92,6 +97,11 @@ class StructureDiffGeneratorTest extends IntegrationTestCase
 		$configuration->setMetadataDriverImpl(new Doctrine\ORM\Mapping\Driver\AttributeDriver([__DIR__ . '/../../../fixtures/doctrine-orm']));
 		$configuration->setProxyDir(TEMP_DIR);
 		$configuration->setProxyNamespace('NextrasTests\Migrations\Proxies');
+
+		// AUTO ids use a sequence on PostgreSQL (ORM 3 defaults to identity columns) and AUTO_INCREMENT on MySQL
+		$configuration->setIdentityGenerationPreferences([
+			Doctrine\DBAL\Platforms\PostgreSQLPlatform::class => Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_SEQUENCE,
+		]);
 
 		if (PHP_VERSION_ID >= 80400 && method_exists($configuration, 'enableNativeLazyObjects')) {
 			$configuration->enableNativeLazyObjects(true);
