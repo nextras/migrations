@@ -1,0 +1,15 @@
+extensions:
+	migrations: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
+
+migrations:
+	driver: mysql
+	dbal: dibi
+	groups:
+		structures:
+			directory: %structuresDir%
+		basic-data:
+			directory: %rootDir%/basic-data
+			dependencies: [structures]
+
+services:
+	- Dibi\Connection(%dibiConfig%)

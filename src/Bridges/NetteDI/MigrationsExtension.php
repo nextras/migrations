@@ -12,9 +12,8 @@ namespace Nextras\Migrations\Bridges\NetteDI;
 use Doctrine;
 use Dibi;
 use Nette;
-use Nette\DI\ContainerBuilder;
-use Nette\DI\ServiceDefinition;
-use Nette\DI\Statement;
+use Nette\DI\Definitions\ServiceDefinition;
+use Nette\DI\Definitions\Statement;
 use Nette\Utils\Validators;
 use Nextras;
 use Symfony;
@@ -67,15 +66,15 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		$config = $this->validateConfig($this->defaults);
 
 		// dbal
-		Validators::assertField($config, 'dbal', 'null|string|Nette\DI\Statement');
+		Validators::assertField($config, 'dbal', 'null|string|Nette\DI\Definitions\Statement');
 		$dbal = $this->getDbalDefinition($config['dbal']);
 
 		// driver
-		Validators::assertField($config, 'driver', 'null|string|Nette\DI\Statement');
+		Validators::assertField($config, 'driver', 'null|string|Nette\DI\Definitions\Statement');
 		$driver = $this->getDriverDefinition($config['driver'], $dbal);
 
 		// printer
-		Validators::assertField($config, 'printer', 'null|string|Nette\DI\Statement');
+		Validators::assertField($config, 'printer', 'null|string|Nette\DI\Definitions\Statement');
 		$printer = $this->getPrinterDefinition($config['printer']);
 
 		// diffGenerator
@@ -86,7 +85,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 		// groups
 		if ($config['groups'] === null) {
-			Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral');
+			Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral|Nette\PhpGenerator\Literal|Nette\DI\Definitions\Statement');
 			Validators::assertField($config, 'withDummyData', 'bool');
 			$config['groups'] = $this->createDefaultGroupConfiguration($config['dir'], $config['withDummyData']);
 		}
@@ -265,15 +264,16 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @return array<string, array{enabled?: bool, directory: string, dependencies?: list<string>, generator?: ServiceDefinition|null}>
+	 * @param  string|Nette\PhpGenerator\PhpLiteral|Nette\PhpGenerator\Literal|Statement $dir  literal or statement when using dynamic parameters
+	 * @return array<string, array{enabled?: bool, directory: string|Statement, dependencies?: list<string>, generator?: ServiceDefinition|null}>
 	 */
-	private function createDefaultGroupConfiguration(string|Nette\PhpGenerator\PhpLiteral $dir, bool $withDummyData): array
+	private function createDefaultGroupConfiguration(string|Nette\PhpGenerator\PhpLiteral|Nette\PhpGenerator\Literal|Statement $dir, bool $withDummyData): array
 	{
-		if ($dir instanceof Nette\PhpGenerator\PhpLiteral) {
-			$append = fn(string $path): Nette\PhpGenerator\PhpLiteral => ContainerBuilder::literal('? . ?', [$dir, $path]);
+		if (is_string($dir)) {
+			$append = fn(string $path): string => $dir . $path;
 
 		} else {
-			$append = fn(string $path): string => $dir . $path;
+			$append = fn(string $path): Statement => new Statement('? . ?', [$dir, $path]);
 		}
 
 		$builder = $this->getContainerBuilder();
@@ -304,7 +304,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param  array<string, array{enabled?: bool, directory: string, dependencies?: list<string>, generator?: ServiceDefinition}> $groups
+	 * @param  array<string, array{enabled?: bool, directory: string|Nette\PhpGenerator\Literal|Statement, dependencies?: list<string>, generator?: ServiceDefinition}> $groups
 	 * @return list<ServiceDefinition>
 	 */
 	private function createGroupDefinitions(array $groups): array
@@ -313,7 +313,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		$groupDefinitions = [];
 
 		foreach ($groups as $groupName => $groupConfig) {
-			Validators::assertField($groupConfig, 'directory', 'string|Nette\PhpGenerator\PhpLiteral');
+			Validators::assertField($groupConfig, 'directory', 'string|Nette\PhpGenerator\PhpLiteral|Nette\PhpGenerator\Literal|Nette\DI\Definitions\Statement');
 
 			$enabled = $groupConfig['enabled'] ?? true;
 			$directory = $groupConfig['directory'];
@@ -405,14 +405,6 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 	private function filterArguments(array $arguments): array
 	{
-		if (method_exists(Nette\DI\Helpers::class, 'filterArguments')) {
-			return Nette\DI\Helpers::filterArguments($arguments);
-
-		} elseif (method_exists(Nette\DI\Compiler::class, 'filterArguments')) {
-			return Nette\DI\Compiler::filterArguments($arguments);
-
-		} else {
-			throw new Nextras\Migrations\LogicException();
-		}
+		return Nette\DI\Helpers::filterArguments($arguments);
 	}
 }
