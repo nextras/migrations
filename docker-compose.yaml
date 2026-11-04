@@ -61,6 +61,7 @@ services:
 
   mysql:
     image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password # PHP < 7.4 cannot use caching_sha2_password
     environment:
       MYSQL_DATABASE: nextras_migrations_test
       MYSQL_ROOT_PASSWORD: root
