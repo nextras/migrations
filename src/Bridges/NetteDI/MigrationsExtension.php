@@ -89,7 +89,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 		// groups
 		if ($config['groups'] === null) {
-			Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral');
+			Validators::assertField($config, 'dir', 'string|Nette\PhpGenerator\PhpLiteral|Nette\PhpGenerator\Literal|Nette\DI\Definitions\Statement');
 			Validators::assertField($config, 'withDummyData', 'bool');
 			$config['groups'] = $this->createDefaultGroupConfiguration($config['dir'], $config['withDummyData']);
 		}
@@ -294,19 +294,24 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param  string|Nette\PhpGenerator\PhpLiteral $dir
+	 * @param  string|Nette\PhpGenerator\PhpLiteral|Nette\PhpGenerator\Literal|Nette\DI\Definitions\Statement $dir  literal or statement when using dynamic parameters
 	 * @return array<string, array{enabled?: bool, directory: string, dependencies?: list<string>, generator?: ServiceDefinition|null}>
 	 */
 	private function createDefaultGroupConfiguration($dir, bool $withDummyData): array
 	{
-		if ($dir instanceof Nette\PhpGenerator\PhpLiteral) {
-			$append = function (string $path) use ($dir): Nette\PhpGenerator\PhpLiteral {
-				return ContainerBuilder::literal('? . ?', [$dir, $path]);
-			};
-
-		} else {
+		if (is_string($dir)) {
 			$append = function (string $path) use ($dir): string {
 				return $dir . $path;
+			};
+
+		} elseif (class_exists(Nette\DI\Definitions\Statement::class)) { // nette/di 3.x
+			$append = function (string $path) use ($dir): Nette\DI\Definitions\Statement {
+				return new Nette\DI\Definitions\Statement('? . ?', [$dir, $path]);
+			};
+
+		} else { // nette/di 2.4
+			$append = function (string $path) use ($dir): Nette\PhpGenerator\PhpLiteral {
+				return ContainerBuilder::literal('? . ?', [$dir, $path]);
 			};
 		}
 
@@ -347,7 +352,7 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		$groupDefinitions = [];
 
 		foreach ($groups as $groupName => $groupConfig) {
-			Validators::assertField($groupConfig, 'directory', 'string|Nette\PhpGenerator\PhpLiteral');
+			Validators::assertField($groupConfig, 'directory', 'string|Nette\PhpGenerator\PhpLiteral|Nette\PhpGenerator\Literal|Nette\DI\Definitions\Statement');
 
 			$enabled = isset($groupConfig['enabled']) ? $groupConfig['enabled'] : true;
 			$directory = $groupConfig['directory'];
