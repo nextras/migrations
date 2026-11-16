@@ -61,7 +61,7 @@ The Doctrine generator never drops tables or sequences that are not mapped to en
 
 ## SQLite
 
-SQLite is supported with Nette Database, Doctrine DBAL and dibi; Nextras DBAL has no SQLite driver.
+SQLite is supported with Nette Database, Doctrine DBAL, dibi and Nextras DBAL 6.0+ (older Nextras DBAL versions have no SQLite driver).
 
 - SQLite has no advisory locks, so the driver locks the database by `flock()` on a `<database file>.lock` file next to the database. The lock is released by the operating system even if the process crashes. In-memory and temporary databases are not locked.
 - `PRAGMA foreign_keys = OFF` is set on the connection, the same way as `foreign_key_checks = 0` on MySQL, so that migrations can add columns with foreign keys and default values (`ALTER TABLE ... ADD ... REFERENCES ...`).

@@ -139,7 +139,7 @@ abstract class IntegrationTestCase extends TestCase
 					$options['password']
 				),
 			}),
-			'nextras' => new NextrasAdapter(new Nextras\Dbal\Connection([
+			'nextras' => new NextrasAdapter(new Nextras\Dbal\Connection(array_merge([
 				'host' => $options['host'],
 				'username' => $options['username'],
 				'password' => $options['password'],
@@ -147,8 +147,9 @@ abstract class IntegrationTestCase extends TestCase
 				'driver' => match ($options['driver']) {
 					'mysql' => 'mysqli',
 					'pgsql' => 'pgsql',
+					'sqlite' => 'pdo_sqlite', // since Nextras DBAL 6.0
 				},
-			])),
+			], $options['driver'] === 'sqlite' ? ['filename' => $this->getSqliteFile()] : []))),
 			default => throw new \Exception("Unknown DBAL '$options[dbal]'."),
 		};
 	}
