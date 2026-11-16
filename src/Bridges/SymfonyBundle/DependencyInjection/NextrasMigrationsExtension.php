@@ -29,6 +29,7 @@ class NextrasMigrationsExtension extends Extension
 	protected array $drivers = [
 		'mysql' => Nextras\Migrations\Drivers\MySqlDriver::class,
 		'pgsql' => Nextras\Migrations\Drivers\PgSqlDriver::class,
+		'sqlite' => Nextras\Migrations\Drivers\SqliteDriver::class,
 	];
 
 	/** @var array<string, class-string> */

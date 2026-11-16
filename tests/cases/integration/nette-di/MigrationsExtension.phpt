@@ -44,6 +44,15 @@ class MigrationsExtensionTest extends TestCase
 	}
 
 
+	public function testSqliteDriver(): void
+	{
+		$dic = $this->createContainer('sqlite');
+
+		Assert::type(Nextras\Migrations\Drivers\SqliteDriver::class, $dic->getByType(Nextras\Migrations\IDriver::class));
+		Assert::count(3, $dic->findByType(Symfony\Component\Console\Command\Command::class));
+	}
+
+
 	/**
 	 * @dataProvider provideDiffGeneratorData
 	 */

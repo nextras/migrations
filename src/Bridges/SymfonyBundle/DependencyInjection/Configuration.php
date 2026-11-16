@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface
 				->cannotBeEmpty()
 				->end()
 			->enumNode('driver')
-				->values(['mysql', 'pgsql'])
+				->values(['mysql', 'pgsql', 'sqlite'])
 				->isRequired()
 				->cannotBeEmpty()
 				->end()

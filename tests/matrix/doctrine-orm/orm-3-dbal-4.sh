@@ -4,3 +4,4 @@ PHP_VERSION_MAX="80699"
 COMPOSER_REQUIRE="$COMPOSER_REQUIRE doctrine/orm:^3.0"
 COMPOSER_REQUIRE="$COMPOSER_REQUIRE doctrine/dbal:^4.0"
 DBAL="doctrine"
+DBAL_DRIVERS="mysql pgsql" # the Doctrine schema comparator reports false differences on SQLite

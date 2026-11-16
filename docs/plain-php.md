@@ -24,6 +24,7 @@ $dbal = new Bridges\NextrasDbal\NextrasAdapter($conn);
 
 $driver = new Drivers\PgSqlDriver($dbal);
 // or     new Drivers\MySqlDriver($dbal);
+// or     new Drivers\SqliteDriver($dbal);
 
 $controller = new Controllers\HttpController($driver);
 // or         new Controllers\ConsoleController($driver);

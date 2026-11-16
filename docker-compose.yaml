@@ -10,6 +10,8 @@ x-php-service-base: &php-service-base
     environment:
       PHP_EXTENSION_PGSQL: 1
       PHP_EXTENSION_PDO_PGSQL: 1
+      PHP_EXTENSION_SQLITE3: 1
+      PHP_EXTENSION_PDO_SQLITE: 1
 
 services:
   php80:

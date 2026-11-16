@@ -1,0 +1,16 @@
+parameters:
+  kernel.secret: 'foobar'
+
+
+doctrine:
+  dbal:
+    driver: 'pdo_sqlite'
+    path: '%doctrine_dbal_path%'
+    logging: false
+
+  orm: ~
+
+
+nextras_migrations:
+  driver: '%nextras_migrations_driver%'
+  dir: '%nextras_migrations_dir%'

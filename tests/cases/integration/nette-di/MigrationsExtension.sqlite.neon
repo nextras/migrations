@@ -1,0 +1,10 @@
+extensions:
+	migrations: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
+
+migrations:
+	dir: migrations
+	driver: sqlite
+	dbal: dibi
+
+services:
+	- Dibi\Connection([driver: sqlite3, database: ':memory:'])

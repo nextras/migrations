@@ -1,6 +1,6 @@
 # Nextras Migrations
 
-- **Supported databases:** PostgreSQL, MySQL
+- **Supported databases:** PostgreSQL, MySQL, SQLite (see [SQLite notes](#sqlite))
 - **Supported DBALs:** [Nextras DBAL](https://github.com/nextras/dbal), [Nette Database](https://github.com/nette/database), [Doctrine DBAL](https://github.com/doctrine/dbal) and [dibi](https://github.com/dg/dibi)
 - **Integrations:** [Nette Extension](nette-extension.md), [Symfony Bundle](symfony-bundle.md), [Symfony Console](symfony-console.md) and [plain PHP](plain-php.md)
 
@@ -58,3 +58,12 @@ migrations/
 Migrations can be written as a file with any extension that has a defined extension handler. The two built-in extension handlers are SQL and PHP. Migrations can be written manually or generated through a diff generator. The only built-in diff generator is a `structures` generator for Doctrine.
 
 The Doctrine generator never drops tables or sequences that are not mapped to entities, such as the migrations table itself. It can still drop columns, indexes and foreign keys of mapped tables, so review the generated SQL before running it. With Doctrine ORM 3 this includes foreign keys from mapped tables to unmapped ones, which ORM 2 keeps. To leave such queries out of generated migrations, list them in a file passed as the `ignoredQueriesFile` option (`ignored_queries_file` in Symfony).
+
+## SQLite
+
+SQLite is supported with Nette Database, Doctrine DBAL, dibi and Nextras DBAL 6.0+ (older Nextras DBAL versions have no SQLite driver).
+
+- SQLite has no advisory locks, so the driver locks the database by `flock()` on a `<database file>.lock` file next to the database. The lock is released by the operating system even if the process crashes. In-memory and temporary databases are not locked.
+- `PRAGMA foreign_keys = OFF` is set on the connection, the same way as `foreign_key_checks = 0` on MySQL, so that migrations can add columns with foreign keys and default values (`ALTER TABLE ... ADD ... REFERENCES ...`).
+- The `executed` column is always stored as `Y-m-d H:i:s` text, regardless of the DBAL.
+- The Doctrine `structures` diff generator is not supported on SQLite: Doctrine's schema comparison reports differences on SQLite even for a schema that is in sync.

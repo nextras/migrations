@@ -18,6 +18,7 @@ run()
 	PHP_VERSION_MAX=""
 	COMPOSER_REQUIRE=""
 	DBAL=""
+	DBAL_DRIVERS="mysql pgsql sqlite"
 
 	source "$FILENAME"
 
@@ -34,7 +35,7 @@ run()
 	echo "# $FILENAME"
 	echo
 
-	create_dbals_ini "$DBAL"
+	create_dbals_ini "$DBAL" "$DBAL_DRIVERS"
 
 	composer_prepare_dependencies "$COMPOSER_REQUIRE"
 	tester_run_integration_group "$INTEGRATION_GROUP"
@@ -44,17 +45,17 @@ run()
 create_dbals_ini()
 {
 	DBAL="$1"
+	DBAL_DRIVERS="$2"
 	INI_PATH="$PROJECT_DIR/tests/dbals.ini"
 
 	rm --force "$INI_PATH"
 	if [[ ! -z "$DBAL" ]]; then
-		echo "[$DBAL.mysql]" >> "$INI_PATH"
-		echo "dbal = $DBAL" >> "$INI_PATH"
-		echo "driver = mysql" >> "$INI_PATH"
-		echo >> "$INI_PATH"
-		echo "[$DBAL.pgsql]" >> "$INI_PATH"
-		echo "dbal = $DBAL" >> "$INI_PATH"
-		echo "driver = pgsql" >> "$INI_PATH"
+		for DRIVER in $DBAL_DRIVERS; do
+			echo "[$DBAL.$DRIVER]" >> "$INI_PATH"
+			echo "dbal = $DBAL" >> "$INI_PATH"
+			echo "driver = $DRIVER" >> "$INI_PATH"
+			echo >> "$INI_PATH"
+		done
 	fi
 }
 

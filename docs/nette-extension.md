@@ -12,7 +12,7 @@ extensions:
 
 migrations:
 	dir: %appDir%/../migrations # migrations base directory
-	driver: pgsql               # pgsql or mysql
+	driver: pgsql               # pgsql, mysql or sqlite
 	dbal: nextras               # nextras, nette, doctrine or dibi
 	withDummyData: %debugMode%
 ```

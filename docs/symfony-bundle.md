@@ -22,7 +22,7 @@ Create file `config/packages/nextras_migrations.yaml` with the following content
 ```yaml
 nextras_migrations:
     dir: '%kernel.project_dir%/migrations' # migrations base directory
-    driver: pgsql                          # pgsql or mysql
+    driver: pgsql                          # pgsql, mysql or sqlite
     dbal: nextras                          # nextras, nette, doctrine or dibi
     with_dummy_data: '%kernel.debug%'
 ```

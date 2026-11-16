@@ -56,7 +56,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: json, ctype, mysqli, pgsql, pdo_mysql, pdo_pgsql
+          extensions: json, ctype, mysqli, pgsql, pdo_mysql, pdo_pgsql, sqlite3, pdo_sqlite
           coverage: none
 
       - name: Prepare Env

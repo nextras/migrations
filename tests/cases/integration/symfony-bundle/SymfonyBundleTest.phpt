@@ -33,6 +33,15 @@ class SymfonyBundleTest extends TestCase
 		$driversConfig = parse_ini_file(__DIR__ . '/../../../drivers.ini', true);
 		$dbalOptions = $driversConfig[$options['driver']];
 
+		if ($options['driver'] === 'sqlite') {
+			$this->symfonyKernel = new TestSymfonyKernel(__DIR__ . '/SymfonyBundleTest.sqlite.yaml', [
+				'doctrine_dbal_path' => TEMP_DIR . '/symfony-bundle.sqlite',
+				'nextras_migrations_driver' => $options['driver'],
+				'nextras_migrations_dir' => __DIR__ . "/../../../fixtures/$options[driver]",
+			]);
+			return;
+		}
+
 		$doctrineDriver = $options['driver'] === 'mysql' ? 'pdo_mysql' : 'pdo_pgsql';
 		$serverVersion = $options['driver'] === 'mysql' ? '5.6' : '9.6';
 
